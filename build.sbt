@@ -1,4 +1,4 @@
-version in ThisBuild              := "0.1.1-SNAPSHOT"
+version in ThisBuild              := "0.1.2-SNAPSHOT"
 
 organization in ThisBuild         := "com.dslplatform"
 
@@ -19,3 +19,8 @@ pomIncludeRepository in ThisBuild := { _ => false }
 homepage in ThisBuild             := Some(url("https://dsl-platform.com/"))
 
 packagedArtifacts                 := Map.empty
+
+credentials in ThisBuild          ++= {
+                                    val creds = Path.userHome / ".config" / "dsl-client-java" / "element.sonatype"
+                                    if (creds.exists) Some(Credentials(creds)) else None
+                                  }.toSeq 
