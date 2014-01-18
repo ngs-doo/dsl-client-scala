@@ -84,11 +84,10 @@ class HttpClient(
 
   private def makeNingHeaders(additionalHeaders: Map[String, Set[String]]): java.util.Map[String, java.util.Collection[String]] = {
     val headers = new java.util.HashMap[String, java.util.Collection[String]]()
-    if (logger.isTraceEnabled())
-      for (h <- commonHeaders ++ additionalHeaders) {
-        logger.trace("Added header: %s:%s" format (h._1, h._2.mkString("[", ",", "]")))
-        headers.put(h._1, asJavaCollection(h._2))
-      }
+    for (h <- commonHeaders ++ additionalHeaders) {
+      if (logger.isTraceEnabled) logger.trace("Added header: %s:%s" format (h._1, h._2.mkString("[", ",", "]")))
+      headers.put(h._1, asJavaCollection(h._2))
+    }
     headers
   }
 
@@ -97,7 +96,7 @@ class HttpClient(
     new AsyncCompletionHandler[Unit] {
 
       def onCompleted(response: Response) {
-        if (logger.isTraceEnabled()) logger.trace("Received response status[%s] body: %s" format (response.getStatusCode(), response.getResponseBody()))
+        if (logger.isTraceEnabled) logger.trace("Received response status[%s] body: %s" format (response.getStatusCode(), response.getResponseBody()))
         if (expectedHeaders contains response.getStatusCode())
           resp success response.getResponseBodyAsBytes()
 
@@ -125,7 +124,7 @@ class HttpClient(
       .setHeaders(makeNingHeaders(additionalHeaders))
       .setMethod(method)
 
-    if (logger.isTraceEnabled()) logger.trace("Sending request %s [%s]" format (method, url))
+    if (logger.isTraceEnabled) logger.trace("Sending request %s [%s]" format (method, url))
     optBody.foreach {
       body =>
         logger.trace("payload: {}", new String(body, "UTF-8"))
