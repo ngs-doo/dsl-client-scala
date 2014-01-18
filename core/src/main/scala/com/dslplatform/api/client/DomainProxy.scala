@@ -70,7 +70,7 @@ trait DomainProxy {
   def search[TSearchable <: Searchable: ClassTag](
       specification: Specification[TSearchable]): Future[IndexedSeq[TSearchable]] =
     search(Some(specification))
-    
+
   /**
    * Helper method for searching domain objects.
    * Returns a IndexedSeq of domain objects satisfying {@link Specification specification}
@@ -102,7 +102,7 @@ trait DomainProxy {
    * @return              future to number of domain objects which satisfy specification
    */
   def count[TSearchable <: Searchable: ClassTag](
-      specification: Specification[TSearchable]): Future[Long] = 
+      specification: Specification[TSearchable]): Future[Long] =
         count(Some(specification))
 
   /**

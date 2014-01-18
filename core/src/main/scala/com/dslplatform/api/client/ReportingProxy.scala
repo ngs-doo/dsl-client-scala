@@ -99,7 +99,7 @@ trait ReportingProxy {
 	  templater: String,
       specification: Specification[TSearchable],
       dimensions: TraversableOnce[String],
-      facts: TraversableOnce[String]): Future[Array[Byte]] = 
+      facts: TraversableOnce[String]): Future[Array[Byte]] =
         olapCube(templater, Some(specification), dimensions, facts)
 
   /**

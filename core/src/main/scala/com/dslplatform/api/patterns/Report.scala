@@ -23,4 +23,4 @@ package com.dslplatform.api.patterns
  * }
  * </pre></blockquote>
  */
-trait Report[TResult] 
+trait Report[TResult]

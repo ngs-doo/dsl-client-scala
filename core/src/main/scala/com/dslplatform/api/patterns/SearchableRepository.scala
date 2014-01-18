@@ -48,7 +48,7 @@ trait SearchableRepository[TSearchable <: Searchable] {
    * @return              future to domain objects which satisfy search predicate
    */
   def search(
-    specification: Specification[TSearchable]): Future[Seq[TSearchable]] = 
+    specification: Specification[TSearchable]): Future[Seq[TSearchable]] =
       search(Some(specification))
 
   /**
@@ -62,7 +62,7 @@ trait SearchableRepository[TSearchable <: Searchable] {
    */
   def search(
     specification: Specification[TSearchable],
-    limit: Int): Future[Seq[TSearchable]] = 
+    limit: Int): Future[Seq[TSearchable]] =
       search(Some(specification), Some(limit))
 
   /**

@@ -28,7 +28,7 @@ trait DomainEventStore {
    * @return      future containing modified aggregate root
    */
   def submit[TAggregate <: AggregateRoot : ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
-      event: TEvent, 
+      event: TEvent,
       uri: String): Future[TAggregate]
 
   /**
@@ -40,6 +40,6 @@ trait DomainEventStore {
    * @return          future containing modified aggregate root
    */
   def submit[TAggregate <: AggregateRoot: ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
-      event: TEvent, 
+      event: TEvent,
       aggregate: TAggregate): Future[TAggregate];
 }
