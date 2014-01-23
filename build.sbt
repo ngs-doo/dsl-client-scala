@@ -1,4 +1,4 @@
-version in ThisBuild              := "0.1.2-SNAPSHOT"
+version in ThisBuild              := "0.1.3-SNAPSHOT"
 
 organization in ThisBuild         := "com.dslplatform"
 
@@ -23,4 +23,4 @@ packagedArtifacts                 := Map.empty
 credentials in ThisBuild          ++= {
                                     val creds = Path.userHome / ".config" / "dsl-client-java" / "element.sonatype"
                                     if (creds.exists) Some(Credentials(creds)) else None
-                                  }.toSeq 
+                                  }.toSeq
