@@ -1,14 +1,20 @@
 package com.dslplatform.api.client
 
-import com.dslplatform.api.patterns._
+import com.dslplatform.api.patterns.PersistableRepository
+import com.dslplatform.api.patterns.SearchableRepository
+import com.dslplatform.api.patterns.ServiceLocator
+import com.dslplatform.api.patterns.Repository
+
 import java.io.InputStream
 import java.io.FileInputStream
 import java.util.Properties
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import scala.concurrent.ExecutionContext
+
 import java.util.concurrent.Executors
 import java.util.concurrent.ExecutorService
+import scala.concurrent.ExecutionContext
 
 /**
  * DSL client Java initialization.

@@ -2,13 +2,17 @@ package com.dslplatform.api.client
 
 import com.dslplatform.api.patterns.ServiceLocator
 import scala.collection.mutable.{ Map => MMap }
+import org.slf4j.Logger
+
+import java.lang.reflect.Constructor
+import java.lang.reflect.Type
+import java.lang.reflect.TypeVariable
+import java.lang.reflect.ParameterizedType
+
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
+
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
-import org.slf4j.Logger
-import java.lang.reflect.TypeVariable
-import java.lang.reflect.Type
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
-import java.lang.reflect.Constructor
 import java.util.concurrent.ConcurrentHashMap
 
 class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends ServiceLocator {
@@ -98,7 +102,7 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends Ser
     }
   }
 
-  private def resolveType(typ: ParameterizedTypeImpl, checkErrors: Boolean): Option[AnyRef] = {
+  private def resolveType(typ: ParameterizedType, checkErrors: Boolean): Option[AnyRef] = {
     logger.trace("Getting type: " + typ.toString())
     components.get(typ) flatMap {
       case component: Class[_] =>
@@ -162,7 +166,7 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends Ser
   }
 
   @annotation.tailrec
-  private def tryConstruct(target: ParameterizedTypeImpl, ctors: Traversable[Constructor[_]]): Option[AnyRef] = {
+  private def tryConstruct(target: ParameterizedType, ctors: Traversable[Constructor[_]]): Option[AnyRef] = {
     if (ctors.isEmpty) None
     else {
       val ctor = ctors.head
@@ -171,7 +175,7 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends Ser
         p match {
           case ct: ClassTag[_] =>
             None
-          case pi: ParameterizedTypeImpl =>
+          case pi: ParameterizedType =>
             val typ = target.getActualTypeArguments()(0)
             val ctt = ClassTag.apply(typ.asInstanceOf[Class[_]])
             Some(ctt)

@@ -1,10 +1,10 @@
-package com.dslplatform.api
-package client
+package com.dslplatform.api.client
 
-import patterns.AggregateRoot
-import patterns.Identifiable
-import scala.reflect.ClassTag
+import com.dslplatform.api.patterns.AggregateRoot
+import com.dslplatform.api.patterns.Identifiable
+
 import scala.concurrent.Future
+import scala.reflect.ClassTag
 
 /**
  * Proxy service to remote CRUD REST-like API.

@@ -2,10 +2,11 @@ package com.dslplatform.api.client
 
 import com.dslplatform.api.patterns.Searchable
 import com.dslplatform.api.patterns.SearchableRepository
-import com.dslplatform.api.patterns.Specification
-import scala.concurrent.Future
-import com.dslplatform.api.patterns.ServiceLocator
 import com.dslplatform.api.patterns.SearchBuilder
+import com.dslplatform.api.patterns.Specification
+import com.dslplatform.api.patterns.ServiceLocator
+
+import scala.concurrent.Future
 import scala.reflect.ClassTag
 /**
  * Common base implementation for {@link SearchableRepository searchable repository}.

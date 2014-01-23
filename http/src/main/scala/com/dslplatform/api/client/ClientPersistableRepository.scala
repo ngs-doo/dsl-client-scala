@@ -1,10 +1,12 @@
 package com.dslplatform.api.client
 
 import com.dslplatform.api.patterns.AggregateRoot
-import com.dslplatform.api.patterns.ServiceLocator
-import scala.concurrent._
-import scala.reflect.ClassTag
 import com.dslplatform.api.patterns.PersistableRepository
+import com.dslplatform.api.patterns.ServiceLocator
+
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.reflect.ClassTag
 /**
  * Common base implementation for {@link PersistableRepository persistable repository}.
  * It redirects calls to proxy services.
@@ -30,6 +32,7 @@ import com.dslplatform.api.patterns.PersistableRepository
 class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: ServiceLocator)
     extends ClientRepository[T](locator)
     with PersistableRepository[T] {
+
   private implicit val executionContext: ExecutionContext = locator.resolve(classOf[ExecutionContext])
 
   private val standardProxy: StandardProxy = locator.resolve[StandardProxy]

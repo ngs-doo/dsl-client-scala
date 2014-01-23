@@ -1,11 +1,11 @@
-package com.dslplatform.api
-package client
+package com.dslplatform.api.client
 
-import patterns.Identifiable
-import patterns.ServiceLocator
+import com.dslplatform.api.patterns.Identifiable
+import com.dslplatform.api.patterns.Repository
+import com.dslplatform.api.patterns.ServiceLocator
+
 import scala.concurrent.Future
 import scala.reflect.ClassTag
-import com.dslplatform.api.patterns.Repository
 /**
  * Common base implementation for {@link Repository repository}.
  * It redirects calls to proxy services.
@@ -30,6 +30,7 @@ class ClientRepository[TIdentifiable <: Identifiable: ClassTag](
   locator: ServiceLocator)
     extends ClientSearchableRepository[TIdentifiable](locator)
     with Repository[TIdentifiable] {
+
   protected val crudProxy: CrudProxy = locator.resolve[CrudProxy]
   /**
    * Generated class will provide class manifest and locator

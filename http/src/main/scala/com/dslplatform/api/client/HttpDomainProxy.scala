@@ -1,13 +1,14 @@
 package com.dslplatform.api.client
 
-import com.dslplatform.api.patterns.Identifiable
-import scala.reflect.ClassTag
-import scala.concurrent.Future
-import com.dslplatform.api.patterns.Specification
-import com.dslplatform.api.patterns.Searchable
 import com.dslplatform.api.patterns.AggregateDomainEvent
 import com.dslplatform.api.patterns.AggregateRoot
 import com.dslplatform.api.patterns.DomainEvent
+import com.dslplatform.api.patterns.Identifiable
+import com.dslplatform.api.patterns.Searchable
+import com.dslplatform.api.patterns.Specification
+
+import scala.reflect.ClassTag
+import scala.concurrent.Future
 
 class HttpDomainProxy(httpClient: HttpClient) extends DomainProxy {
   import HttpClientUtil._

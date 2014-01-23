@@ -1,4 +1,4 @@
-package com.dslplatform.api.patterns;
+package com.dslplatform.api.patterns
 
 /**
  * Aggregate root is a meaningful object in the domain.

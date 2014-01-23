@@ -2,12 +2,13 @@ package com.dslplatform.api.client
 
 import scala.reflect.ClassTag
 import scala.concurrent.Future
-import HttpClientUtil._
 
 class HttpApplicationProxy(httpClient: HttpClient)
     extends ApplicationProxy {
 
   val APPLICATION_URI = "RestApplication.svc"
+
+  import HttpClientUtil._
 
   def get[TResult: ClassTag](
     command: String, expectedStatus: Set[Int]): Future[TResult] =

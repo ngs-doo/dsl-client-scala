@@ -1,12 +1,12 @@
-package com.dslplatform.api
-package client
+package com.dslplatform.api.client
+
+import com.dslplatform.api.patterns.Identifiable
+import com.dslplatform.api.patterns.Searchable
+import com.dslplatform.api.patterns.Specification
+import com.dslplatform.api.patterns.TemplaterService
 
 import scala.concurrent.Future
 import scala.reflect.ClassTag
-import patterns.TemplaterService
-import patterns.Identifiable
-import patterns.Searchable
-import patterns.Specification
 
 class ClientTemplaterService(proxy: ReportingProxy)
     extends TemplaterService {

@@ -98,10 +98,10 @@ class JsonSerialization(locator: ServiceLocator) {
       //.registerModule(DefaultScalaModule)
       .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
       .registerModule(serializationModule)
-  //.configure(MapperFeature.AUTO_DETECT_GETTERS, false)
-  //.configure(MapperFeature.AUTO_DETECT_FIELDS, false)
-  //.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false)
-  //.configure(MapperFeature.AUTO_DETECT_SETTERS, false)
+      //.configure(MapperFeature.AUTO_DETECT_GETTERS, false)
+      //.configure(MapperFeature.AUTO_DETECT_FIELDS, false)
+      //.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false)
+      //.configure(MapperFeature.AUTO_DETECT_SETTERS, false)
 
   // ----deserializationModule----------------------------------------------------
 

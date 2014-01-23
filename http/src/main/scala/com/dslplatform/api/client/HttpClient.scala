@@ -1,13 +1,13 @@
 package com.dslplatform.api.client
 
-import java.io.IOException
-import java.util.concurrent.Executors
-import com.fasterxml.jackson.databind.JavaType
-import scala.concurrent._
-import java.net.URLEncoder
-import scala.reflect._
+import com.dslplatform.api.patterns.Identifiable
 import com.dslplatform.api.patterns.ServiceLocator
+
+import com.fasterxml.jackson.databind.JavaType
+import java.io.IOException
+import java.net.URLEncoder
 import org.slf4j.Logger
+
 import com.ning.http.util.Base64
 import com.ning.http.client.Request
 import com.ning.http.client.RequestBuilder
@@ -16,10 +16,14 @@ import com.ning.http.client.AsyncCompletionHandler
 import com.ning.http.client.Response
 import com.ning.http.client.AsyncHttpClient
 import com.ning.http.client.AsyncHttpClientConfig
-import scala.collection.JavaConversions._
-import com.dslplatform.api.patterns.Identifiable
 
-object HttpClientUtil {
+import java.util.concurrent.Executors
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.Promise
+import scala.reflect.ClassTag
+
+private[client] object HttpClientUtil {
 
   def encode(uri: String) = java.net.URLEncoder.encode(uri, "UTF-8")
 
@@ -66,27 +70,35 @@ class HttpClient(
     "Content-Type" -> Set(MIME_TYPE),
     "Authorization" -> Set(basicAuth))
 
-  private[client] def getDslName[T: ClassTag] =
-    classTag[T].runtimeClass.getName.substring(domainPrefixLength).replace("$", "")
+  private[client] def getDslName[T](implicit ct: ClassTag[T]): String =
+    getDslName(ct.runtimeClass)
 
-  private[client] def getDslName(clazz: Class[_]) =
+  private[client] def getDslName(clazz: Class[_]): String =
     clazz.getName.substring(domainPrefixLength).replace("$", "")
 
   private val configBuilder = new AsyncHttpClientConfig.Builder()
   configBuilder.setExecutorService(executorService)
+
   private val config = configBuilder.build()
   private val ahc = new AsyncHttpClient(config)
   // ---------------------------
 
   if (logger.isDebugEnabled()) {
-    logger.debug("Initialized with: \n    username [{}] \n    api: [{}] \n    pid: [{}]", projectSettings.get("username"), projectSettings.get("api-url"), projectSettings.get("project-id"));
+    logger.debug("""Initialized with:
+    username [{}]
+    api: [{}]
+    pid: [{}]""",
+      projectSettings.get("username"),
+      projectSettings.get("api-url"),
+      projectSettings.get("project-id"));
   }
 
   private def makeNingHeaders(additionalHeaders: Map[String, Set[String]]): java.util.Map[String, java.util.Collection[String]] = {
     val headers = new java.util.HashMap[String, java.util.Collection[String]]()
+
     for (h <- commonHeaders ++ additionalHeaders) {
       if (logger.isTraceEnabled) logger.trace("Added header: %s:%s" format (h._1, h._2.mkString("[", ",", "]")))
-      headers.put(h._1, asJavaCollection(h._2))
+      headers.put(h._1, scala.collection.JavaConversions.asJavaCollection(h._2))
     }
     headers
   }

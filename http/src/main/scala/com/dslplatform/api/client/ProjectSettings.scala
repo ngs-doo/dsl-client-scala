@@ -1,7 +1,7 @@
 package com.dslplatform.api.client
 
-import java.util.Properties
 import java.io.InputStream
+import java.util.Properties
 /**
  * Project.ini key->value pairs
  *  Stream to project.ini file

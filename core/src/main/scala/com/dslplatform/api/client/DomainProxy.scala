@@ -1,12 +1,12 @@
-package com.dslplatform.api
-package client
+package com.dslplatform.api.client
 
-import patterns.AggregateDomainEvent
-import patterns.AggregateRoot
-import patterns.DomainEvent
-import patterns.Identifiable
-import patterns.Searchable
-import patterns.Specification
+import com.dslplatform.api.patterns.AggregateDomainEvent
+import com.dslplatform.api.patterns.AggregateRoot
+import com.dslplatform.api.patterns.DomainEvent
+import com.dslplatform.api.patterns.Identifiable
+import com.dslplatform.api.patterns.Searchable
+import com.dslplatform.api.patterns.Specification
+
 import scala.reflect.ClassTag
 import scala.concurrent.Future
 

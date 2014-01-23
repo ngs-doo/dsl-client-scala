@@ -2,6 +2,16 @@ package com.fasterxml.jackson
 package module.scala
 package ser
 
+import com.fasterxml.jackson.module.scala.deser.OptionDeserializerModule
+import com.fasterxml.jackson.module.scala.introspect.ScalaClassIntrospectorModule
+import com.fasterxml.jackson.module.scala.deser.UntypedObjectDeserializerModule
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.annotation.JsonTypeName
+import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeSerializer
+import com.fasterxml.jackson.databind.ser.BeanSerializer
+import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter
+import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase
+
 import util.Implicits._
 import modifiers.OptionTypeModifierModule
 import core.JsonGenerator
@@ -14,17 +24,8 @@ import `type`.CollectionLikeType
 import jsonFormatVisitors.JsonFormatVisitorWrapper
 import java.lang.reflect.Type
 import java.{ util => ju }
-import scala.Some
+
 import scala.collection.JavaConverters._
-import com.fasterxml.jackson.module.scala.deser.OptionDeserializerModule
-import com.fasterxml.jackson.module.scala.introspect.ScalaClassIntrospectorModule
-import com.fasterxml.jackson.module.scala.deser.UntypedObjectDeserializerModule
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.annotation.JsonTypeName
-import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeSerializer
-import com.fasterxml.jackson.databind.ser.BeanSerializer
-import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter
-import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase
 
 private class CustomBeanSerializer(bsb: BeanSerializerBase) extends BeanSerializer(bsb) {
 

@@ -1,13 +1,14 @@
 package com.dslplatform.api.client
 
-import scala.reflect.ClassTag
 import com.dslplatform.api.patterns.Searchable
 import com.dslplatform.api.patterns.ServiceLocator
-import scala.concurrent.Future
-import HttpClientUtil._
+
 import scala.collection.generic.MutableMapFactory
 import scala.collection.mutable.{ Map => MMap }
 import scala.collection.mutable.Buffer
+
+import scala.concurrent.Future
+import scala.reflect.ClassTag
 
 /**
  * In case when specification is not defined on the server,
@@ -97,7 +98,7 @@ class GenericSearchBuilder[TSearchable <: Searchable: ClassTag] {
     val domainName: String = httpClient.getDslName[TSearchable]
 
     httpClient.sendRequestForCollection[TSearchable](
-      PUT(filters),
+      HttpClientUtil.PUT(filters),
       "Domain.svc/search-generic/" + domainName + urlParams,
       Set(200));
   }

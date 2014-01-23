@@ -1,6 +1,8 @@
 package com.dslplatform.api.client
 
-import com.dslplatform.api.patterns._
+import com.dslplatform.api.patterns.AggregateRoot
+import com.dslplatform.api.patterns.Identifiable
+
 import scala.reflect.ClassTag
 import scala.concurrent.Future
 

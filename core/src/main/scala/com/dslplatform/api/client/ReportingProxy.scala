@@ -1,8 +1,15 @@
-package com.dslplatform.api
-package client
+package com.dslplatform.api.client
+
+import com.dslplatform.api.patterns.AggregateRoot
+import com.dslplatform.api.patterns.Cube
+import com.dslplatform.api.patterns.History
+import com.dslplatform.api.patterns.Identifiable
+import com.dslplatform.api.patterns.Report
+import com.dslplatform.api.patterns.Repository
+import com.dslplatform.api.patterns.Searchable
+import com.dslplatform.api.patterns.Specification
 
 import scala.concurrent.Future
-import patterns._
 import scala.reflect.ClassTag
 
 /**
@@ -74,7 +81,7 @@ trait ReportingProxy {
    * @return              future to document content
    */
   def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable : ClassTag](
-	  templater: String,
+    templater: String,
       specification: Option[Specification[TSearchable]] = None,
       dimensions: TraversableOnce[String] = Nil,
       facts: TraversableOnce[String] = Nil,
@@ -96,7 +103,7 @@ trait ReportingProxy {
    * @return              future to document content
    */
   def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable : ClassTag](
-	  templater: String,
+    templater: String,
       specification: Specification[TSearchable],
       dimensions: TraversableOnce[String],
       facts: TraversableOnce[String]): Future[Array[Byte]] =

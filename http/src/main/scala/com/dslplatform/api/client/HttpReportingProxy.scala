@@ -1,14 +1,15 @@
 package com.dslplatform.api.client
 
-import scala.reflect._
-import scala.concurrent.Future
-import com.dslplatform.api.patterns.Searchable
-import com.dslplatform.api.patterns.Specification
-import com.dslplatform.api.patterns.History
-import com.dslplatform.api.patterns.Report
-import com.dslplatform.api.patterns.Identifiable
 import com.dslplatform.api.patterns.AggregateRoot
 import com.dslplatform.api.patterns.Cube
+import com.dslplatform.api.patterns.History
+import com.dslplatform.api.patterns.Identifiable
+import com.dslplatform.api.patterns.Report
+import com.dslplatform.api.patterns.Searchable
+import com.dslplatform.api.patterns.Specification
+
+import scala.reflect.ClassTag
+import scala.concurrent.Future
 
 class HttpReportingProxy(httpClient: HttpClient) extends ReportingProxy {
   import HttpClientUtil._

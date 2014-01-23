@@ -1,9 +1,12 @@
 package com.dslplatform.api.client
 
-import scala.reflect.ClassTag
-import com.dslplatform.api.patterns.{ AggregateRoot, Specification, Searchable }
-import scala.concurrent._
+import com.dslplatform.api.patterns.AggregateRoot
 import com.dslplatform.api.patterns.Cube
+import com.dslplatform.api.patterns.Searchable
+import com.dslplatform.api.patterns.Specification
+
+import scala.concurrent.Future
+import scala.reflect.ClassTag
 
 class HttpStandardProxy(
   httpClient: HttpClient,

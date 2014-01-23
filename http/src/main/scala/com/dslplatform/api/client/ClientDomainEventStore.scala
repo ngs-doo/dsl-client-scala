@@ -1,9 +1,10 @@
 package com.dslplatform.api.client
 
-import com.dslplatform.api.patterns.DomainEventStore
-import com.dslplatform.api.patterns.DomainEvent
-import com.dslplatform.api.patterns.AggregateRoot
 import com.dslplatform.api.patterns.AggregateDomainEvent
+import com.dslplatform.api.patterns.AggregateRoot
+import com.dslplatform.api.patterns.DomainEvent
+import com.dslplatform.api.patterns.DomainEventStore
+
 import scala.concurrent.Future
 import scala.reflect.ClassTag
 
