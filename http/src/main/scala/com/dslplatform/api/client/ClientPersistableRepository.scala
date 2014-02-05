@@ -50,8 +50,6 @@ class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: Service
     deletes: TraversableOnce[T]): Future[IndexedSeq[String]] =
     standardProxy.persist(inserts, updates, deletes)
 
-  def insert(inserts: T*): Future[IndexedSeq[String]] = insert(inserts)
-
   def insert(inserts: TraversableOnce[T]): Future[IndexedSeq[String]] =
     standardProxy.persist[T](inserts, Nil, Nil)
 
@@ -61,14 +59,10 @@ class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: Service
   def update(updates: TraversableOnce[T]): Future[_] =
     standardProxy.persist(Nil, updates.map { t => (t, t) }, Nil)
 
-  def update(updates: T*): Future[_] = update(updates)
-
   def update(update: T): Future[T] = crudProxy.update(update)
 
   def delete(deletes: TraversableOnce[T]): Future[IndexedSeq[String]] =
     standardProxy.persist(Nil, Map.empty, deletes)
-
-  def delete(deletes: T*): Future[IndexedSeq[String]] = delete(deletes)
 
   def delete(delete: T): Future[_] = crudProxy.delete(delete.URI)
 }

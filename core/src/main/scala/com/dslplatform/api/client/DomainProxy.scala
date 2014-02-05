@@ -22,17 +22,6 @@ trait DomainProxy {
    * Only found objects will be returned (IndexedSeq will be empty if no objects are found).
    *
    * @param manifest domain object class
-   * @param uris     array of unique identifiers
-   * @return         future to found domain objects
-   */
-  def find[TIdentifiable <: Identifiable: ClassTag](
-      uris: String*): Future[IndexedSeq[TIdentifiable]]
-
-  /**
-   * Returns a IndexedSeq of domain objects uniquely represented with their URIs.
-   * Only found objects will be returned (IndexedSeq will be empty if no objects are found).
-   *
-   * @param manifest domain object class
    * @param uris     sequence of unique identifiers
    * @return         future to found domain objects
    */

@@ -21,9 +21,6 @@ trait Repository[T <: Identifiable]
    */
   def find(uris: TraversableOnce[String]): Future[IndexedSeq[T]]
 
-  /** @see Repository#find(TraversableOnce) */
-  def find(uris: String*): Future[IndexedSeq[T]]
-
   /**
    * Returns a domain object uniquely represented with its URI.
    * If object is not found, an exception will be thrown

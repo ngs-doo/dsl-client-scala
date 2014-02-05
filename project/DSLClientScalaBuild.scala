@@ -116,35 +116,11 @@ object Projects
     )
   ) dependsOn(core)
 
-  lazy val test = Project(
-    "test",
-    file("test"),
-    settings = defaultSettings ++ Seq(
-      name := "DSL Client Scala Test",
-      libraryDependencies ++= Seq(
-        spec2,
-        junit,
-        logback
-      ),
-      unmanagedSourceDirectories in Compile := Seq(
-        sourceDirectory.value / "generated" / "scala"
-      ),
-      unmanagedResourceDirectories in Compile := Seq(
-        sourceDirectory.value / "generated" / "resources",
-        sourceDirectory.value / "main" / "resources"
-      ),
-      unmanagedSourceDirectories in Test := Seq(
-        (scalaSource in Test).value
-      ),
-      EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
-    )
-  ) dependsOn(core, http)
-
   lazy val root = Project(
     "root",
     file("."),
     settings = defaultSettings ++ Seq(
       name := "DSL Client Scala"
     )
-  ) aggregate(core, http, test)
+  ) aggregate(core, http)
 }

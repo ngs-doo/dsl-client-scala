@@ -61,7 +61,6 @@ class HttpReportingProxy(httpClient: HttpClient)
 
   def getHistory[TAggregate <: AggregateRoot: ClassTag](
     uris: TraversableOnce[String]): Future[IndexedSeq[History[TAggregate]]] = {
-    val domainName: String = httpClient.getDslName
     httpClient.sendRequest[IndexedSeq[History[TAggregate]]](
       PUT(uris.toArray),
       ReportingUri / "history" / httpClient.getDslName,
