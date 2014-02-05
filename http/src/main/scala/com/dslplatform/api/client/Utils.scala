@@ -2,7 +2,6 @@ package com.dslplatform.api.client
 
 import com.dslplatform.api.patterns.Searchable
 import com.dslplatform.api.patterns.SearchableRepository
-import com.dslplatform.api.patterns.Specification
 
 object Utils {
   protected[client] def buildArguments(

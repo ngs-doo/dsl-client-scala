@@ -1,23 +1,17 @@
 package com.dslplatform.api.client
 
-import com.dslplatform.api.patterns.Identifiable
 import com.dslplatform.api.patterns.ServiceLocator
 
-import com.fasterxml.jackson.databind.JavaType
 import java.io.IOException
-import java.net.URLEncoder
 import org.slf4j.Logger
 
 import com.ning.http.util.Base64
-import com.ning.http.client.Request
 import com.ning.http.client.RequestBuilder
-import com.ning.http.client.AsyncHandler
 import com.ning.http.client.AsyncCompletionHandler
 import com.ning.http.client.Response
 import com.ning.http.client.AsyncHttpClient
 import com.ning.http.client.AsyncHttpClientConfig
 
-import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.Promise

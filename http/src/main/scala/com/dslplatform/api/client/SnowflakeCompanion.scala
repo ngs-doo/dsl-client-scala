@@ -1,7 +1,6 @@
 package com.dslplatform.api.client
 
 import com.dslplatform.api.patterns.Snowflake
-import com.dslplatform.api.patterns.Identifiable
 import com.dslplatform.api.patterns.ServiceLocator
 import com.dslplatform.api.patterns.Specification
 import com.dslplatform.api.patterns.AggregateRoot

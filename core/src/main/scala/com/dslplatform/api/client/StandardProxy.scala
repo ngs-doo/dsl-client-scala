@@ -23,7 +23,7 @@ trait StandardProxy {
    * @param deletes aggregate roots which will be deleted
    * @return        future uris of newly created aggregates
    */
-  def persist[TAggregate <: AggregateRoot: ClassTag](
+  def persist[TAggregate <: AggregateRoot : ClassTag](
       inserts: TraversableOnce[TAggregate] = Nil,
       updates: TraversableOnce[(TAggregate, TAggregate)] = Nil,
       deletes: TraversableOnce[TAggregate] = Nil): Future[IndexedSeq[String]]
@@ -35,9 +35,31 @@ trait StandardProxy {
    * @param inserts new aggregate roots
    * @return        future uris of newly created aggregates
    */
-  def insert[TAggregate <: AggregateRoot: ClassTag](
+  def insert[TAggregate <: AggregateRoot : ClassTag](
       inserts: TraversableOnce[TAggregate]): Future[IndexedSeq[String]] =
     persist(inserts)
+
+  /**
+   * Helper method for persist.
+   * Apply local changes to the remote server.
+   *
+   * @param updates aggregate roots to update
+   * @return        empty future which completes when done.
+   */
+  def update[TAggregate <: AggregateRoot : ClassTag](
+      updates: TraversableOnce[TAggregate]): Future[_] =
+    persist(updates = updates.map(t => (t, t)))
+
+  /**
+   * Helper method for persist.
+   * Apply local changes to the remote server.
+   *
+   * @param deletes aggregate roots to update
+   * @return        empty future which completes when done.
+   */
+  def delete[TAggregate <: AggregateRoot : ClassTag](
+      deletes: TraversableOnce[TAggregate]): Future[_] =
+    persist(deletes = deletes)
 
   /**
    * Perform data analysis on specified data source.
@@ -51,7 +73,7 @@ trait StandardProxy {
    * @param order         custom order for result
    * @return              future with deserialized collection from analysis result
    */
-  def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable: ClassTag, TResult: ClassTag](
+  def olapCube[TCube <: Cube[TSearchable] : ClassTag, TSearchable <: Searchable : ClassTag, TResult: ClassTag](
       specification: Option[Specification[TSearchable]] = None,
       dimensions: TraversableOnce[String] = Nil,
       facts: TraversableOnce[String] = Nil,
@@ -71,7 +93,7 @@ trait StandardProxy {
    * @param facts         analyze using facts
    * @return              future with deserialized collection from analysis result
    */
-  def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable: ClassTag](
+  def olapCube[TCube <: Cube[TSearchable] : ClassTag, TSearchable <: Searchable : ClassTag](
       specification: Specification[TSearchable],
       dimensions: TraversableOnce[String],
       facts: TraversableOnce[String]): Future[IndexedSeq[Map[String, Any]]] =

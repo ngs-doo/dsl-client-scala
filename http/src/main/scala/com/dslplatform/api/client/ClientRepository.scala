@@ -27,12 +27,13 @@ import scala.reflect.ClassTag
  * </pre>
  * @param [T] domain object type
  */
-class ClientRepository[TIdentifiable <: Identifiable: ClassTag](
-  locator: ServiceLocator)
+class ClientRepository[TIdentifiable <: Identifiable : ClassTag](
+    locator: ServiceLocator)
     extends ClientSearchableRepository[TIdentifiable](locator)
     with Repository[TIdentifiable] {
 
   protected val crudProxy: CrudProxy = locator.resolve[CrudProxy]
+
   /**
    * Generated class will provide class manifest and locator
    *
@@ -41,8 +42,6 @@ class ClientRepository[TIdentifiable <: Identifiable: ClassTag](
    */
 
   def find(uris: TraversableOnce[String]): Future[IndexedSeq[TIdentifiable]] = domainProxy.find(uris)
-
-  def find(uris: String*): Future[IndexedSeq[TIdentifiable]] = find(uris)
 
   def find(uri: String): Future[TIdentifiable] = crudProxy.read(uri)
 }

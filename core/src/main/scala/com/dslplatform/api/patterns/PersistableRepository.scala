@@ -37,9 +37,6 @@ trait PersistableRepository[T <: AggregateRoot]
    */
   def insert(inserts: TraversableOnce[T]): Future[IndexedSeq[String]]
 
-  /** @see PersistableRepository#insert(TraversableOnce) */
-  def insert(inserts: T*): Future[IndexedSeq[String]]
-
   /**
    * Insert a single {@link AggregateRoot aggregate}.
    *
@@ -57,9 +54,6 @@ trait PersistableRepository[T <: AggregateRoot]
    */
   def update(updates: TraversableOnce[T]): Future[_]
 
-  /** @see PersistableRepository#update(TraversableOnce) */
-  def update(updates: T*): Future[_]
-
   /**
    * Changing state of an aggregate root.
    *
@@ -76,9 +70,6 @@ trait PersistableRepository[T <: AggregateRoot]
    * @return       future for error checking
    */
   def delete(deletes: TraversableOnce[T]): Future[_]
-
-  /** @see #delete(TraversableOnce) */
-  def delete(deletes: T*): Future[_]
 
   /**
    * Deleting an {@link AggregateRoot aggregate}.

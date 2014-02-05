@@ -5,7 +5,6 @@ import com.dslplatform.api.patterns.Cube
 import com.dslplatform.api.patterns.History
 import com.dslplatform.api.patterns.Identifiable
 import com.dslplatform.api.patterns.Report
-import com.dslplatform.api.patterns.Repository
 import com.dslplatform.api.patterns.Searchable
 import com.dslplatform.api.patterns.Specification
 

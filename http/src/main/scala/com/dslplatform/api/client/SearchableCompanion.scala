@@ -5,7 +5,6 @@ import com.dslplatform.api.patterns.ServiceLocator
 import com.dslplatform.api.patterns.Specification
 
 import scala.concurrent.Await
-import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 
