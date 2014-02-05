@@ -9,7 +9,6 @@ import com.dslplatform.api.patterns.Cube
 import com.dslplatform.api.patterns.Searchable
 import com.dslplatform.api.patterns.ServiceLocator
 import com.dslplatform.api.patterns.Specification
-import scala.reflect.runtime.universe
 
 /**
  * Utility class for building olap cube analysis.

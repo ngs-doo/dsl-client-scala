@@ -7,6 +7,7 @@ import com.dslplatform.api.patterns.Specification
 
 import scala.concurrent.Future
 import scala.reflect.ClassTag
+
 /**
  * Common base implementation for {@link SearchableRepository searchable repository}.
  * It redirects calls to proxy services.
@@ -29,16 +30,16 @@ import scala.reflect.ClassTag
  * </pre>
  * @param [T] domain object type
  */
-class ClientSearchableRepository[TSearchable <: Searchable: ClassTag](locator: ServiceLocator)
+class ClientSearchableRepository[TSearchable <: Searchable : ClassTag](locator: ServiceLocator)
     extends SearchableRepository[TSearchable] {
 
   protected val domainProxy: DomainProxy = locator.resolve[DomainProxy]
 
   def search(
-    specification: Option[Specification[TSearchable]],
-    limit: Option[Int],
-    offset: Option[Int],
-    order: Map[String, Boolean]): Future[IndexedSeq[TSearchable]] =
+      specification: Option[Specification[TSearchable]],
+      limit: Option[Int],
+      offset: Option[Int],
+      order: Map[String, Boolean]): Future[IndexedSeq[TSearchable]] =
     domainProxy.search(specification, limit, offset, order)
 
   def count(specification: Option[Specification[TSearchable]]): Future[Long] =
