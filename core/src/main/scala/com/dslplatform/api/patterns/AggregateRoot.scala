@@ -27,6 +27,5 @@ package com.dslplatform.api.patterns
  * </pre></blockquote>
  *
  */
-trait AggregateRoot extends Identifiable {
-  def isNewAggregate(): Boolean
-}
+trait AggregateRoot
+    extends Identifiable

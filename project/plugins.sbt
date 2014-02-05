@@ -20,13 +20,6 @@ externalResolvers := Resolver.withDefaultResolvers(resolvers.value, mavenCentral
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.4.0")
 
 // +-------------------------------------------------------------------------------------+
-// | SBT Assembly (https://github.com/sbt/sbt-assembly)                                  |
-// | Creates single jar releases from multiple projects                                  |
-// +-------------------------------------------------------------------------------------+
-
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.10.2")
-
-// +-------------------------------------------------------------------------------------+
 // | Dependency graph SBT plugin (https://github.com/jrudolph/sbt-dependency-graph)      |
 // | Lists all library dependencies in a nicely formatted way for easy inspection.       |
 // +-------------------------------------------------------------------------------------+

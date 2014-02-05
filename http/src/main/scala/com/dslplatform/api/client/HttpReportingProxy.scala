@@ -11,16 +11,18 @@ import com.dslplatform.api.patterns.Specification
 import scala.reflect.ClassTag
 import scala.concurrent.Future
 
-class HttpReportingProxy(httpClient: HttpClient) extends ReportingProxy {
+class HttpReportingProxy(httpClient: HttpClient)
+    extends ReportingProxy {
+
   import HttpClientUtil._
 
-  private val REPORTING_URI = "Reporting.svc"
+  private val ReportingUri = "Reporting.svc"
 
   def populate[TResult: ClassTag](report: Report[TResult]): Future[TResult] = {
     val domainName: String = httpClient.getDslName(report.getClass)
     httpClient.sendRequest[TResult](
       PUT(report),
-      REPORTING_URI / "report" / domainName,
+      ReportingUri / "report" / domainName,
       Set(200))
   }
 
@@ -29,7 +31,7 @@ class HttpReportingProxy(httpClient: HttpClient) extends ReportingProxy {
     templater: String): Future[Array[Byte]] =
     httpClient.sendRequest[Array[Byte]](
       PUT(report),
-      REPORTING_URI / "report" / httpClient.getDslName(report.getClass) / templater,
+      ReportingUri / "report" / httpClient.getDslName(report.getClass) / templater,
       Set(201))
 
   def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable: ClassTag](
@@ -49,11 +51,11 @@ class HttpReportingProxy(httpClient: HttpClient) extends ReportingProxy {
         val specName: String = if (parentName == cubeName) parentName + "/" else ""
         httpClient.sendRequest[Array[Byte]](
           PUT(specification),
-          REPORTING_URI / "olap" / cubeName / specName + specClass.getSimpleName().replace("$", "") / templater + args,
+          ReportingUri / "olap" / cubeName / specName + specClass.getSimpleName().replace("$", "") / templater + args,
           Set(200))
       case _ =>
         httpClient.sendRequest[Array[Byte]](
-          GET, REPORTING_URI / "olap" / cubeName / templater + args, Set(200))
+          GET, ReportingUri / "olap" / cubeName / templater + args, Set(200))
     }
   }
 
@@ -62,7 +64,7 @@ class HttpReportingProxy(httpClient: HttpClient) extends ReportingProxy {
     val domainName: String = httpClient.getDslName
     httpClient.sendRequest[IndexedSeq[History[TAggregate]]](
       PUT(uris.toArray),
-      REPORTING_URI / "history" / httpClient.getDslName,
+      ReportingUri / "history" / httpClient.getDslName,
       Set(200))
   }
 
@@ -75,7 +77,7 @@ class HttpReportingProxy(httpClient: HttpClient) extends ReportingProxy {
     val domainName = httpClient.getDslName
     httpClient.sendRawRequest(
       GET,
-      REPORTING_URI / "templater" / file / domainName + "?uri=" + encode(uri),
+      ReportingUri / "templater" / file / domainName + "?uri=" + encode(uri),
       Set(200),
       prepareHeaders(toPdf))
   }
@@ -94,13 +96,13 @@ class HttpReportingProxy(httpClient: HttpClient) extends ReportingProxy {
         val specClass: Class[_] = spec.getClass()
         httpClient.sendRawRequest(
           PUT(specification),
-          REPORTING_URI / "templater" / file / domainName / specClass.getSimpleName().replace("$", ""),
+          ReportingUri / "templater" / file / domainName / specClass.getSimpleName().replace("$", ""),
           Set(200),
           prepareHeaders(toPdf))
       case _ =>
         httpClient.sendRawRequest(
           GET,
-          REPORTING_URI / "templater" / file / domainName,
+          ReportingUri / "templater" / file / domainName,
           Set(200),
           prepareHeaders(toPdf))
     }

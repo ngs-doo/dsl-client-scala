@@ -1,4 +1,4 @@
-package com.dslplatform.api.patterns;
+package com.dslplatform.api.patterns
 
 import scala.concurrent.Future
 import scala.reflect.ClassTag
@@ -17,7 +17,8 @@ trait DomainEventStore {
    * @param event event to raise
    * @return      future containing string value of event URI
    */
-  def submit[T <: DomainEvent](event: T): Future[String]
+  def submit[T <: DomainEvent](
+      event: T): Future[String]
 
   /**
    * Apply domain event to a single aggregate. Server will return modified aggregate root.
@@ -41,5 +42,5 @@ trait DomainEventStore {
    */
   def submit[TAggregate <: AggregateRoot: ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
       event: TEvent,
-      aggregate: TAggregate): Future[TAggregate];
+      aggregate: TAggregate): Future[TAggregate]
 }

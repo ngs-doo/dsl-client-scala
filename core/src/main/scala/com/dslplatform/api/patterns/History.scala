@@ -16,7 +16,9 @@ package com.dslplatform.api.patterns
  * </pre></blockquote>
  * @param <T> aggregate root type
  */
-class History[T <: AggregateRoot](snapshots: IndexedSeq[Snapshot[T]])
-  extends Identifiable {
+case class History[T <: AggregateRoot](
+    snapshots: IndexedSeq[Snapshot[T]]
+  ) extends Identifiable {
+
   def URI: String = snapshots(0).URI
 }

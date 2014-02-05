@@ -16,5 +16,4 @@ package com.dslplatform.api.patterns
  * }
  * </pre></blockquote>
  */
-
 trait Searchable

@@ -1,4 +1,4 @@
-package com.dslplatform.api.client;
+package com.dslplatform.api.client
 
 import scala.concurrent.Future
 import scala.reflect.ClassTag
@@ -19,8 +19,8 @@ trait ApplicationProxy {
    * @return               future with deserialized result
    */
   def get[TResult: ClassTag](
-    command: String,
-    expectedStatus: Set[Int]): Future[TResult]
+      command: String,
+      expectedStatus: Set[Int]): Future[TResult]
 
   /**
    * When remote service require an argument message with serialized payload will be sent.
@@ -33,7 +33,7 @@ trait ApplicationProxy {
    * @return               future with deserialized result
    */
   def post[TArgument, TResult: ClassTag](
-    command: String,
-    argument: TArgument,
-    expectedStatus: Set[Int]): Future[TResult]
+      command: String,
+      argument: TArgument,
+      expectedStatus: Set[Int]): Future[TResult]
 }

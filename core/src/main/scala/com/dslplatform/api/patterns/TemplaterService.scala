@@ -24,8 +24,8 @@ trait TemplaterService {
    * @return          document content future
    */
   def populate[TIdentifiable <: Identifiable](
-    file: String,
-    aggregate: TIdentifiable): Future[Array[Byte]]
+      file: String,
+      aggregate: TIdentifiable): Future[Array[Byte]]
 
   /**
    * Returns a document generated from template named {@code file}
@@ -36,8 +36,8 @@ trait TemplaterService {
    * @return          document content future
    */
   def populatePdf[TIdentifiable <: Identifiable](
-    file: String,
-    aggregate: TIdentifiable): Future[Array[Byte]]
+      file: String,
+      aggregate: TIdentifiable): Future[Array[Byte]]
 
   /**
    * Returns a document generated from template named {@code file}
@@ -48,8 +48,8 @@ trait TemplaterService {
    * @return              document content future
    */
   def populate[TSearchable <: Searchable: ClassTag](
-    file: String,
-    specification: Option[Specification[TSearchable]]): Future[Array[Byte]]
+      file: String,
+      specification: Option[Specification[TSearchable]]): Future[Array[Byte]]
 
   /**
    * Returns a document generated from template named {@code file}
@@ -61,6 +61,6 @@ trait TemplaterService {
    * @return              document content future
    */
   def populatePdf[TSearchable <: Searchable: ClassTag](
-    file: String,
-    specification: Option[Specification[TSearchable]]): Future[Array[Byte]]
+      file: String,
+      specification: Option[Specification[TSearchable]]): Future[Array[Byte]]
 }

@@ -9,16 +9,17 @@ import scala.concurrent.Future
 import scala.reflect.ClassTag
 
 class HttpStandardProxy(
-  httpClient: HttpClient,
-  json: JsonSerialization)
-    extends StandardProxy {
+    httpClient: HttpClient,
+    json: JsonSerialization
+  ) extends StandardProxy {
+
+  import HttpClientUtil._
 
   private case class PersistArg(RootName: String, ToInsert: String, ToUpdate: String, ToDelete: String)
   private case class Pair[T <: AggregateRoot](Key: T, Value: T)
 
-  private val STANDARD_URI = "Commands.svc"
-  private val APPLICATION_URI = "RestApplication.svc"
-  import HttpClientUtil._
+  private val StandardUri = "Commands.svc"
+  private val ApplicationUri = "RestApplication.svc"
 
   def persist[TAggregate <: AggregateRoot: ClassTag](
     inserts: TraversableOnce[TAggregate],
@@ -31,7 +32,7 @@ class HttpStandardProxy(
 
     httpClient.sendStandardRequest(
       POST(PersistArg(httpClient.getDslName[TAggregate], toInsert, toUpdate, toDelete)),
-      APPLICATION_URI / "PersistAggregateRoot",
+      ApplicationUri / "PersistAggregateRoot",
       Set(200, 201))
   }
 
@@ -50,16 +51,16 @@ class HttpStandardProxy(
         val specName: String = if (parentName != cubeName) parentName + "%2B" else ""
         val specificationName = specName + specClazz.getSimpleName.replace("$", "")
         val url: String =
-          STANDARD_URI / "olap" / cubeName +
+          StandardUri / "olap" / cubeName +
             Utils.buildOlapArguments(dimensions, facts, limit, offset, order, Some(specificationName))
         httpClient.sendRequestForCollection[TResult](PUT(specification), url, Set(200, 201))
       case _ =>
-        val url: String = STANDARD_URI / "olap" / cubeName + Utils.buildOlapArguments(dimensions, facts, limit, offset, order)
+        val url: String = StandardUri / "olap" / cubeName + Utils.buildOlapArguments(dimensions, facts, limit, offset, order)
         httpClient.sendRequestForCollection[TResult](GET, url, Set(200, 201))
     }
   }
 
   def execute[TArgument, TResult: ClassTag](
     command: String, argument: TArgument): Future[TResult] =
-    httpClient.sendRequest[TResult](POST[TArgument](argument), STANDARD_URI / "execute" / command, Set(200, 201))
+    httpClient.sendRequest[TResult](POST[TArgument](argument), StandardUri / "execute" / command, Set(200, 201))
 }

@@ -6,21 +6,23 @@ import com.dslplatform.api.patterns.Identifiable
 import scala.reflect.ClassTag
 import scala.concurrent.Future
 
-class HttpCrudProxy(httpClient: HttpClient) extends CrudProxy {
+class HttpCrudProxy(httpClient: HttpClient)
+    extends CrudProxy {
+
   import HttpClientUtil._
 
-  private val CRUD_URI = "Crud.svc"
+  private val CrudUri = "Crud.svc"
 
   def read[TIdentifiable <: Identifiable: ClassTag](
     uri: String): Future[TIdentifiable] = {
     val domainName: String = httpClient.getDslName[TIdentifiable]
     httpClient.sendRequest[TIdentifiable](
-      GET, CRUD_URI / domainName + "?uri=" + encode(uri), Set(200))
+      GET, CrudUri / domainName + "?uri=" + encode(uri), Set(200))
   }
 
   def create[TAggregateRoot <: AggregateRoot: ClassTag](
     aggregate: TAggregateRoot): Future[TAggregateRoot] = {
-    val service: String = CRUD_URI / httpClient.getDslName[TAggregateRoot]
+    val service: String = CrudUri / httpClient.getDslName[TAggregateRoot]
     httpClient.sendRequest[TAggregateRoot](
       POST(aggregate), service, Set(201))
   }
@@ -31,7 +33,7 @@ class HttpCrudProxy(httpClient: HttpClient) extends CrudProxy {
     val domainName: String = httpClient.getDslName[TAggregate]
     httpClient.sendRequest[TAggregate](
       PUT(aggregate),
-      CRUD_URI / domainName + "?uri=" + encode(uri),
+      CrudUri / domainName + "?uri=" + encode(uri),
       Set(200));
   }
 
@@ -40,7 +42,7 @@ class HttpCrudProxy(httpClient: HttpClient) extends CrudProxy {
     val domainName: String = httpClient.getDslName[TAggregateRoot]
     httpClient.sendRequest[TAggregateRoot](
       DELETE,
-      CRUD_URI / domainName + "?uri=" + encode(uri),
+      CrudUri / domainName + "?uri=" + encode(uri),
       Set(200))
   }
 }

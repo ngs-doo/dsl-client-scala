@@ -22,7 +22,8 @@ trait CrudProxy {
    * @param uri      domain object identity
    * @return         future to found domain object
    */
-  def read[TIdentifiable <: Identifiable: ClassTag](uri: String): Future[TIdentifiable]
+  def read[TIdentifiable <: Identifiable: ClassTag](
+      uri: String): Future[TIdentifiable]
 
   /**
    * Create new aggregate root on the remote server.
@@ -32,7 +33,8 @@ trait CrudProxy {
    * @param aggregate new aggregate root
    * @return          future to aggregate root with new identity
    */
-  def create[TAggregateRoot <: AggregateRoot: ClassTag](aggregate: TAggregateRoot): Future[TAggregateRoot]
+  def create[TAggregateRoot <: AggregateRoot: ClassTag](
+      aggregate: TAggregateRoot): Future[TAggregateRoot]
 
   /**
    * Modify existing aggregate root on the remote server.
@@ -41,7 +43,8 @@ trait CrudProxy {
    * @param aggregate modified aggregate root
    * @return          future to aggregate root with updated attributes
    */
-  def update[TAggregateRoot <: AggregateRoot: ClassTag](aggregate: TAggregateRoot): Future[TAggregateRoot]
+  def update[TAggregateRoot <: AggregateRoot: ClassTag](
+      aggregate: TAggregateRoot): Future[TAggregateRoot]
 
   /**
    * Delete existing aggregate root from the remote server.
@@ -51,5 +54,6 @@ trait CrudProxy {
    * @param uri      aggregate root identity
    * @return         future to deleted aggregate root instance
    */
-  def delete[TAggregateRoot <: AggregateRoot: ClassTag](uri: String): Future[TAggregateRoot]
+  def delete[TAggregateRoot <: AggregateRoot: ClassTag](
+      uri: String): Future[TAggregateRoot]
 }

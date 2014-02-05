@@ -1,7 +1,8 @@
-package com.dslplatform.api.patterns;
+package com.dslplatform.api.patterns
+
+import com.dslplatform.api.client.DomainProxy
 
 import scala.concurrent.Future
-import com.dslplatform.api.client.DomainProxy
 
 /**
  * Service for searching and counting domain objects.
@@ -48,8 +49,8 @@ trait SearchableRepository[TSearchable <: Searchable] {
    * @return              future to domain objects which satisfy search predicate
    */
   def search(
-    specification: Specification[TSearchable]): Future[Seq[TSearchable]] =
-      search(Some(specification))
+      specification: Specification[TSearchable]): Future[Seq[TSearchable]] =
+    search(Option(specification))
 
   /**
    * Helper method for searching domain objects.
@@ -61,9 +62,9 @@ trait SearchableRepository[TSearchable <: Searchable] {
    * @return              future to domain objects which satisfy search predicate
    */
   def search(
-    specification: Specification[TSearchable],
-    limit: Int): Future[Seq[TSearchable]] =
-      search(Some(specification), Some(limit))
+      specification: Specification[TSearchable],
+      limit: Int): Future[Seq[TSearchable]] =
+    search(Option(specification), Option(limit))
 
   /**
    * Returns a number of elements satisfying provided specification.
@@ -80,14 +81,7 @@ trait SearchableRepository[TSearchable <: Searchable] {
    * @param specification search predicate
    * @return              future to number of domain objects which satisfy specification
    */
-  def count(specification: Specification[TSearchable]): Future[Long] =
-    count(Some(specification))
-
-  /**
-   * Returns an instance of {@link SearchBuilder search builder} for this repository.
-   * Search builder is helper class with fluent API for building search.
-   *
-   * @return utility class for building a search.
-   */
-  def builder(): SearchBuilder[TSearchable] =  new SearchBuilder[TSearchable](this)
+  def count(
+      specification: Specification[TSearchable]): Future[Long] =
+    count(Option(specification))
 }

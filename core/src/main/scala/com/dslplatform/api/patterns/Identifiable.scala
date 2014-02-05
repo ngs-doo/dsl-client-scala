@@ -1,4 +1,4 @@
-package com.dslplatform.api.patterns;
+package com.dslplatform.api.patterns
 
 /**
  * Domain object uniquely represented by its URI.
@@ -6,7 +6,9 @@ package com.dslplatform.api.patterns;
  * identified by its identity, instead of attributes.
  * While entity does not implement Identifiable, aggregate root does.
  */
-trait Identifiable extends Searchable {
+trait Identifiable
+    extends Searchable {
+
   /**
    * Domain object identity.
    * This identity can be used to lookup domain object

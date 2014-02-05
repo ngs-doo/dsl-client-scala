@@ -7,8 +7,9 @@ import org.joda.time.DateTime
  *
  * @param [TAggregateRoot] type of aggregate root
  */
-class Snapshot[TAggregateRoot <: AggregateRoot](
-    val URI: String,
-    val At: DateTime,
-    val Action: String,
-    val Value: TAggregateRoot) extends Identifiable
+case class Snapshot[TAggregateRoot <: AggregateRoot](
+    URI: String,
+    at: DateTime,
+    action: String,
+    value: TAggregateRoot
+  ) extends Identifiable

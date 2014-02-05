@@ -7,6 +7,7 @@ import com.dslplatform.api.patterns.ServiceLocator
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.reflect.ClassTag
+
 /**
  * Common base implementation for {@link PersistableRepository persistable repository}.
  * It redirects calls to proxy services.

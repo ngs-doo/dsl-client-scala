@@ -1,7 +1,8 @@
 package com.dslplatform.api.client
 
-import com.dslplatform.api.patterns.Specification
 import com.dslplatform.api.patterns.Searchable
+import com.dslplatform.api.patterns.SearchableRepository
+import com.dslplatform.api.patterns.Specification
 
 object Utils {
   protected[client] def buildArguments(
@@ -55,4 +56,15 @@ object Utils {
       val list = iterSource.toList
       orders.keySet.forall(list.contains(_))
     }
+
+  implicit class SearchPimp[TSearchable <: Searchable](
+      repository: SearchableRepository[TSearchable]) {
+    /**
+     * Returns an instance of {@link SearchBuilder search builder} for this repository.
+     * Search builder is helper class with fluent API for building search.
+     *
+     * @return utility class for building a search.
+     */
+    def builder() = new SearchBuilder[TSearchable](repository)
+  }
 }

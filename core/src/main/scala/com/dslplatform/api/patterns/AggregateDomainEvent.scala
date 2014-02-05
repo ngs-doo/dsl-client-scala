@@ -1,4 +1,4 @@
-package com.dslplatform.api.patterns;
+package com.dslplatform.api.patterns
 
 /**
  * {@link DomainEvent Domain event} which should be used when there is an action
@@ -20,4 +20,5 @@ package com.dslplatform.api.patterns;
  * </pre></blockquote>
  * @param <T> aggregate root type
  */
-trait AggregateDomainEvent[T <: AggregateRoot] extends Identifiable
+trait AggregateDomainEvent[T <: AggregateRoot]
+    extends Identifiable

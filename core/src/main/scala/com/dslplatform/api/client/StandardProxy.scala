@@ -1,12 +1,12 @@
-package com.dslplatform.api
-package client
+package com.dslplatform.api.client
+
+import com.dslplatform.api.patterns.AggregateRoot
+import com.dslplatform.api.patterns.Cube
+import com.dslplatform.api.patterns.Searchable
+import com.dslplatform.api.patterns.Specification
 
 import scala.concurrent.Future
-import patterns.AggregateRoot
-import patterns.Searchable
-import patterns.Specification
 import scala.reflect.ClassTag
-import com.dslplatform.api.patterns.Cube
 
 /**
  * Proxy service to various domain operations such as bulk persistence,
@@ -37,7 +37,7 @@ trait StandardProxy {
    */
   def insert[TAggregate <: AggregateRoot: ClassTag](
       inserts: TraversableOnce[TAggregate]): Future[IndexedSeq[String]] =
-        persist(inserts)
+    persist(inserts)
 
   /**
    * Perform data analysis on specified data source.
@@ -75,7 +75,7 @@ trait StandardProxy {
       specification: Specification[TSearchable],
       dimensions: TraversableOnce[String],
       facts: TraversableOnce[String]): Future[IndexedSeq[Map[String, Any]]] =
-        olapCube[TCube, TSearchable, Map[String, Any]](Some(specification), dimensions, facts)
+    olapCube[TCube, TSearchable, Map[String, Any]](Some(specification), dimensions, facts)
 
   /**
    * Execute remote service (server implementation for IServerService<TArgument, TResult>)

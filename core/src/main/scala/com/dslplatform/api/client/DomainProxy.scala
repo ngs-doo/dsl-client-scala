@@ -103,7 +103,7 @@ trait DomainProxy {
    */
   def count[TSearchable <: Searchable: ClassTag](
       specification: Specification[TSearchable]): Future[Long] =
-        count(Some(specification))
+    count(Some(specification))
 
   /**
    * Send domain event to the server. Server will return identity under which it was stored.

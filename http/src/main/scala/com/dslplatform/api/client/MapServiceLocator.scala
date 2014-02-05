@@ -3,21 +3,24 @@ package com.dslplatform.api.client
 import com.dslplatform.api.patterns.ServiceLocator
 import scala.collection.mutable.{ Map => MMap }
 import org.slf4j.Logger
-
 import java.lang.reflect.Constructor
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import java.lang.reflect.ParameterizedType
-
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
-
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 import java.util.concurrent.ConcurrentHashMap
+import java.lang.reflect.Modifier
 
-class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends ServiceLocator {
+class MapServiceLocator(logger: Logger, cacheResult: Boolean = true)
+    extends ServiceLocator {
+
   private val components: MMap[Object, AnyRef] =
-    MMap(classOf[ServiceLocator] -> this, classOf[Logger] -> logger)
+    MMap(
+      classOf[ServiceLocator] -> this,
+      classOf[Logger] -> logger
+    )
 
   def register(target: Class[_], service: AnyRef): MapServiceLocator = {
     logger.trace("About to register class " + target.getName() + " " + service)
@@ -48,22 +51,24 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends Ser
     this
   }
 
-  def resolve[T](clazz: Class[T]): T = {
-    logger.trace("Resolving with class type: " + clazz.getName())
-    resolveClass(clazz, true) match {
-      case Some(inst) =>
-        inst.asInstanceOf[T]
-      case _ =>
-        throw new RuntimeException("Container could not construct class of type: " + clazz.getName())
+  override def resolve[T](tpe: Type): T = {
+    logger.trace("Resolving with type: " + tpe)
+    val found = tpe match {
+      case pt: ParameterizedType => resolveType(pt, true)
+      case clazz: Class[_] => resolveClass(clazz, true)
+      case _ => None
     }
+    found.map(_.asInstanceOf[T]).getOrElse(
+      throw new RuntimeException("Container could not construct type: " + tpe)
+    )
   }
 
   private val mirror = runtimeMirror(getClass.getClassLoader)
 
-  def resolve[T: TypeTag]: T = {
+  def resolveUnsafe[T: TypeTag]: T = {
     typeOf[T] match {
       case TypeRef(_, sym, args) if args.isEmpty =>
-        resolve(mirror.runtimeClass(sym.asClass).asInstanceOf[Class[T]])
+        resolve(mirror.runtimeClass(sym.asClass))
       case TypeRef(_, sym, args) =>
         val symClass = mirror.runtimeClass(sym.asClass).asInstanceOf[Class[T]]
         val typeArgs = args.map(t => mirror.runtimeClass(t))
@@ -94,7 +99,8 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends Ser
         logger.trace("found component for class " + clazz.getName() + ": " + component)
         Some(component)
     } orElse {
-      if (clazz.isInterface()) {
+      if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
+        //TODO: return None!?
         throw new RuntimeException(clazz + " is not registered in the container")
       }
       logger.trace(clazz.getName + " has not been mapped. Trying to construct.")
@@ -116,7 +122,7 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends Ser
       typ match {
         case ti: ParameterizedTypeImpl =>
           val clazz = ti.getRawType()
-          if (clazz.isInterface()) {
+          if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
             components.get(clazz) flatMap { impl =>
               impl match {
                 case mt: Class[_] =>
@@ -129,8 +135,7 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends Ser
               }
             }
           } else {
-            val tiClazz = ti.getRawType()
-            tryConstruct(ti, tiClazz.getConstructors())
+            tryConstruct(ti, clazz.getConstructors())
           }
         case _ =>
           logger.trace("Unknown type " + typ)
@@ -147,11 +152,9 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends Ser
       logger.trace("About to construct class " + target + " with " + ctor)
       val params = ctor.getGenericParameterTypes() map { p =>
         p match {
-          case pi: ParameterizedTypeImpl =>
-            resolveType(pi, false)
-          case cl: Class[_] =>
-            resolveClass(cl, false)
-          case _ => throw new RuntimeException("Unknown type argument: " + p)
+          case pi: ParameterizedType => resolveType(pi, false)
+          case cl: Class[_] => resolveClass(cl, false)
+          case _ => None
         }
       }
       if (params.length == 0 || params.forall(_.nonEmpty)) {
@@ -176,12 +179,21 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true) extends Ser
           case ct: ClassTag[_] =>
             None
           case pi: ParameterizedType =>
-            val typ = target.getActualTypeArguments()(0)
-            val ctt = ClassTag.apply(typ.asInstanceOf[Class[_]])
-            Some(ctt)
+            target.getActualTypeArguments()(0) match {
+              case cl: Class[_] =>
+                Some(ClassTag(cl))
+              case tv: TypeVariable[_] =>
+                //TODO generic type!?
+                logger.trace("Generic type found!?" + tv)
+                None
+              case _ =>
+                None
+            }
           case cl: Class[_] =>
             resolveClass(cl, false)
-          case _ => throw new RuntimeException("Unknown type argument: " + p)
+          case _ =>
+            logger.trace("Unknown type argument: " + p)
+            None
         }
       }
       if (params.length == 0 || params.forall(_.nonEmpty)) {

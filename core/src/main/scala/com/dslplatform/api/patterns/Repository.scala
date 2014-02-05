@@ -1,4 +1,4 @@
-package com.dslplatform.api.patterns;
+package com.dslplatform.api.patterns
 
 import scala.concurrent.Future
 
@@ -9,7 +9,8 @@ import scala.concurrent.Future
  *
  * @param [T] IIdentifiable domain object type
  */
-trait Repository[T <: Identifiable] extends SearchableRepository[T] {
+trait Repository[T <: Identifiable]
+    extends SearchableRepository[T] {
 
   /**
    * Returns a Seq of domain objects uniquely represented with their URIs.

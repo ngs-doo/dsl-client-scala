@@ -2,29 +2,35 @@ package com.fasterxml.jackson
 package module.scala
 package ser
 
-import com.fasterxml.jackson.module.scala.deser.OptionDeserializerModule
-import com.fasterxml.jackson.module.scala.introspect.ScalaClassIntrospectorModule
-import com.fasterxml.jackson.module.scala.deser.UntypedObjectDeserializerModule
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.annotation.JsonTypeName
-import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeSerializer
-import com.fasterxml.jackson.databind.ser.BeanSerializer
-import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter
-import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase
-
-import util.Implicits._
-import modifiers.OptionTypeModifierModule
+import annotation.JsonTypeInfo
+import annotation.JsonTypeName
 import core.JsonGenerator
-import databind._
-import jsontype.TypeSerializer
-import jsonschema.{ JsonSchema, SchemaAware }
-import ser.{ ContextualSerializer, BeanPropertyWriter, BeanSerializerModifier, Serializers }
-import ser.std.StdSerializer
-import `type`.CollectionLikeType
-import jsonFormatVisitors.JsonFormatVisitorWrapper
-import java.lang.reflect.Type
-import java.{ util => ju }
+import databind.BeanDescription
+import databind.BeanProperty
+import databind.JavaType
+import databind.JsonNode
+import databind.JsonSerializer
+import databind.SerializationConfig
+import databind.SerializerProvider
+import databind.`type`.CollectionLikeType
+import databind.jsonFormatVisitors.JsonFormatVisitorWrapper
+import databind.jsonschema.JsonSchema
+import databind.jsonschema.SchemaAware
+import databind.jsontype.TypeSerializer
+import databind.ser.BeanPropertyWriter
+import databind.ser.BeanSerializer
+import databind.ser.BeanSerializerModifier
+import databind.ser.ContextualSerializer
+import databind.ser.Serializers
+import databind.ser.std.BeanSerializerBase
+import databind.ser.std.StdSerializer
+import deser.OptionDeserializerModule
+import deser.UntypedObjectDeserializerModule
+import introspect.ScalaClassIntrospectorModule
+import modifiers.OptionTypeModifierModule
+import util.Implicits.mkOptionW
 
+import java.lang.reflect.Type
 import scala.collection.JavaConverters._
 
 private class CustomBeanSerializer(bsb: BeanSerializerBase) extends BeanSerializer(bsb) {
@@ -162,7 +168,7 @@ private object CustomOptionBeanSerializerModifier extends BeanSerializerModifier
 
   override def changeProperties(config: SerializationConfig,
     beanDesc: BeanDescription,
-    beanProperties: ju.List[BeanPropertyWriter]): ju.List[BeanPropertyWriter] = {
+    beanProperties: java.util.List[BeanPropertyWriter]): java.util.List[BeanPropertyWriter] = {
 
     beanProperties.asScala.transform { w =>
       if (classOf[Option[_]].isAssignableFrom(w.getPropertyType))

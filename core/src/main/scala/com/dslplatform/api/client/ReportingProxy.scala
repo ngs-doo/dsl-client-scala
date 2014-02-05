@@ -42,7 +42,8 @@ trait ReportingProxy {
    * @param report specification
    * @return       future to populated results
    */
-  def populate[TResult: ClassTag](report: Report[TResult]): Future[TResult]
+  def populate[TResult: ClassTag](
+      report: Report[TResult]): Future[TResult]
 
   /**
    * Create document from report. Send message to server with serialized report specification.
@@ -81,7 +82,7 @@ trait ReportingProxy {
    * @return              future to document content
    */
   def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable : ClassTag](
-    templater: String,
+      templater: String,
       specification: Option[Specification[TSearchable]] = None,
       dimensions: TraversableOnce[String] = Nil,
       facts: TraversableOnce[String] = Nil,
@@ -103,11 +104,11 @@ trait ReportingProxy {
    * @return              future to document content
    */
   def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable : ClassTag](
-    templater: String,
+      templater: String,
       specification: Specification[TSearchable],
       dimensions: TraversableOnce[String],
       facts: TraversableOnce[String]): Future[Array[Byte]] =
-        olapCube(templater, Some(specification), dimensions, facts)
+    olapCube(templater, Some(specification), dimensions, facts)
 
   /**
    * Get aggregate root history.

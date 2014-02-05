@@ -1,4 +1,4 @@
-package com.dslplatform.api.patterns;
+package com.dslplatform.api.patterns
 
 import scala.concurrent.Future
 
@@ -12,7 +12,9 @@ import scala.concurrent.Future
  *
  * @param [T] type of {@link AggregateRoot aggregate root}
  */
-trait PersistableRepository[T <: AggregateRoot] extends Repository[T] {
+trait PersistableRepository[T <: AggregateRoot]
+    extends Repository[T] {
+
   /**
    * Apply local changes to the remote server.
    *

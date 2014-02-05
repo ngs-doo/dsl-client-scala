@@ -3,15 +3,12 @@ import Keys._
 
 import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 import net.virtualvoid.sbt.graph.Plugin._
-import sbtassembly.Plugin._, AssemblyKeys._
 
-object Default {
-  val settings =
+trait Default {
+  val defaultSettings =
     Defaults.defaultSettings ++
     eclipseSettings ++
-    assemblySettings ++
-    graphSettings ++
-    Seq(
+    graphSettings ++ Seq(
       javaHome := sys.env.get("JDK16_HOME").map(file(_)),
       javacOptions := Seq(
         "-deprecation",
@@ -27,9 +24,7 @@ object Default {
         "-deprecation",
         "-optimise",
         "-encoding", "UTF-8",
-        //, "-explaintypes",
         "-Xcheckinit",
-        //, "-Xfatal-warnings",
         "-Yclosure-elim",
         "-Ydead-code",
         "-Yinline",
@@ -41,19 +36,22 @@ object Default {
         "-Yinline-warnings",
         "-feature",
         "-language:postfixOps",
+        "-language:reflectiveCalls",
         "-language:implicitConversions",
         "-language:existentials"
       ),
       scalacOptions in Test ++= Seq("-Yrangepos"),
       javacOptions in doc := Seq("-source", "1.6"),
       unmanagedSourceDirectories in Compile := (scalaSource in Compile).value :: Nil,
-      unmanagedSourceDirectories in Test := (scalaSource in Test).value :: Nil,
-      EclipseKeys.projectFlavor := EclipseProjectFlavor.Scala,
-      EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
+      unmanagedResourceDirectories in Compile := Nil,
+      unmanagedSourceDirectories in Test := Nil,
+      unmanagedResourceDirectories in Test := Nil,
+      EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE16),
+      EclipseKeys.eclipseOutput := Some(".target")
     )
 }
 
-object Dependencies {
+trait Dependencies {
   val scalaReflect = Def.setting { "org.scala-lang" % "scala-reflect" % scalaVersion.value }
 
   // JodaTime
@@ -61,7 +59,9 @@ object Dependencies {
   val jodaConvert = "org.joda" % "joda-convert" % "1.5" % "compile"
 
   // Json serialization
-  val jackson = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.3.0"
+  val jackson         = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.3.1"
+  val jacksonDatabind = "com.fasterxml.jackson.core" % "jackson-databind" % "2.3.1"
+
   // do not remove! fix for Array[Byte] deserialization
   val paranamer = "com.thoughtworks.paranamer" % "paranamer" % "2.6"
 
@@ -83,15 +83,16 @@ object Dependencies {
   val logback = "ch.qos.logback" % "logback-classic" % "1.0.13" % "test"
 }
 
-object Projects extends Build {
-  import Default._
-  import Dependencies._
+object Projects 
+    extends Build 
+    with Default 
+    with Dependencies {
 
   lazy val core = Project(
     "core",
     file("core"),
-    settings = Default.settings ++ Seq(
-      name := "DSL-Client-Scala-Core",
+    settings = defaultSettings ++ Seq(
+      name := "DSL Client Scala Core",
       libraryDependencies ++= Seq(
         jodaTime,
         jodaConvert,
@@ -103,28 +104,47 @@ object Projects extends Build {
   lazy val http = Project(
     "http",
     file("http"),
-    settings = Default.settings ++ Seq(
-      name := "DSL-Client-Scala-HTTP",
+    settings = defaultSettings ++ Seq(
+      name := "DSL Client Scala HTTP",
       libraryDependencies ++= Seq(
         asyncHttpClient,
         jackson,
+        jacksonDatabind,
         paranamer,
-        slf4j,
-        spec2,
-        junit,
-        logback
+        slf4j
       )
     )
   ) dependsOn(core)
 
+  lazy val test = Project(
+    "test",
+    file("test"),
+    settings = defaultSettings ++ Seq(
+      name := "DSL Client Scala Test",
+      libraryDependencies ++= Seq(
+        spec2,
+        junit,
+        logback
+      ),
+      unmanagedSourceDirectories in Compile := Seq(
+        sourceDirectory.value / "generated" / "scala"
+      ),
+      unmanagedResourceDirectories in Compile := Seq(
+        sourceDirectory.value / "generated" / "resources",
+        sourceDirectory.value / "main" / "resources"
+      ),
+      unmanagedSourceDirectories in Test := Seq(
+        (scalaSource in Test).value
+      ),
+      EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
+    )
+  ) dependsOn(core, http)
+
   lazy val root = Project(
     "root",
     file("."),
-    settings = Default.settings ++ Seq(
-      name := "DSL-Client-Scala",
-      mainClass in assembly := Some("com.dslplatform.api.client.Bootstrap"),
-      jarName in assembly := "dsl-client-scala_%s-%s.jar" format(scalaVersion.value, version.value),
-      excludedJars in assembly := (fullClasspath in assembly).value.filter(_.data.getName endsWith ".jar")
+    settings = defaultSettings ++ Seq(
+      name := "DSL Client Scala"
     )
-  ) aggregate(core, http)
+  ) aggregate(core, http, test)
 }

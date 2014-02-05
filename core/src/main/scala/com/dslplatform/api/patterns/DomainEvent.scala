@@ -29,7 +29,9 @@ import org.joda.time.DateTime
  * </pre></blockquote>
  *
  */
-trait DomainEvent extends Identifiable {
+trait DomainEvent
+    extends Identifiable {
+
   def createdAt: DateTime
   def processedAt: Option[DateTime]
 }

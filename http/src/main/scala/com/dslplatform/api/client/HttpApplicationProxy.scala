@@ -6,20 +6,20 @@ import scala.concurrent.Future
 class HttpApplicationProxy(httpClient: HttpClient)
     extends ApplicationProxy {
 
-  val APPLICATION_URI = "RestApplication.svc"
+  private val ApplicationUri = "RestApplication.svc"
 
   import HttpClientUtil._
 
   def get[TResult: ClassTag](
     command: String, expectedStatus: Set[Int]): Future[TResult] =
     httpClient.sendRequest[TResult](
-      GET, APPLICATION_URI / command, expectedStatus)
+      GET, ApplicationUri / command, expectedStatus)
 
   def post[TArgument, TResult: ClassTag](
     command: String,
     argument: TArgument,
     expectedStatus: Set[Int]): Future[TResult] =
     httpClient.sendRequest[TResult](
-      POST[TArgument](argument), APPLICATION_URI / command,
+      POST[TArgument](argument), ApplicationUri / command,
       expectedStatus)
 }

@@ -63,11 +63,11 @@ class HttpClient(
   private val domainPrefixLength = domainPrefix.length() + 1
   private val token = projectSettings.get("username") + ':' + projectSettings.get("project-id");
   private val basicAuth = "Basic " + new String(Base64.encode(token.getBytes("UTF-8")))
-  private val MIME_TYPE = "application/json"
+  private val MimeType = "application/json"
   private implicit val ec = ExecutionContext.fromExecutorService(executorService)
   private val commonHeaders = Map(
-    "Accept" -> Set(MIME_TYPE),
-    "Content-Type" -> Set(MIME_TYPE),
+    "Accept" -> Set(MimeType),
+    "Content-Type" -> Set(MimeType),
     "Authorization" -> Set(basicAuth))
 
   private[client] def getDslName[T](implicit ct: ClassTag[T]): String =
@@ -109,15 +109,16 @@ class HttpClient(
 
       def onCompleted(response: Response) {
         if (logger.isTraceEnabled) logger.trace("Received response status[%s] body: %s" format (response.getStatusCode(), response.getResponseBody()))
-        if (expectedHeaders contains response.getStatusCode())
+        if (expectedHeaders contains response.getStatusCode()) {
           resp success response.getResponseBodyAsBytes()
-
-        else
+        }
+        else {
           resp failure new IOException(
             "Unexpected return code: "
               + response.getStatusCode()
               + ", response: "
               + response.getResponseBody())
+        }
       }
 
       override def onThrowable(t: Throwable) {

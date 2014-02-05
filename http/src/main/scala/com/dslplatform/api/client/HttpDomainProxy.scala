@@ -10,16 +10,18 @@ import com.dslplatform.api.patterns.Specification
 import scala.reflect.ClassTag
 import scala.concurrent.Future
 
-class HttpDomainProxy(httpClient: HttpClient) extends DomainProxy {
+class HttpDomainProxy(httpClient: HttpClient)
+    extends DomainProxy {
+
   import HttpClientUtil._
 
-  private val DOMAIN_URI = "Domain.svc";
+  private val DomainUri = "Domain.svc";
 
   def find[TIdentifiable <: Identifiable: ClassTag](
     uris: TraversableOnce[String]): Future[IndexedSeq[TIdentifiable]] = {
     httpClient.sendRequestForCollection[TIdentifiable](
       PUT(uris.toArray),
-      DOMAIN_URI / "find" / httpClient.getDslName,
+      DomainUri / "find" / httpClient.getDslName,
       Set(200))
   }
 
@@ -44,13 +46,13 @@ class HttpDomainProxy(httpClient: HttpClient) extends DomainProxy {
             order)
         httpClient.sendRequestForCollection(
           PUT(specification),
-          DOMAIN_URI / "search" / parentName + urlParams,
+          DomainUri / "search" / parentName + urlParams,
           Set(200))
       case _ =>
         val urlParams: String = Utils.buildArguments(None, limit, offset, order)
         httpClient.sendRequestForCollection(
           GET,
-          DOMAIN_URI / "search" / parentName + urlParams,
+          DomainUri / "search" / parentName + urlParams,
           Set(200))
     }
   }
@@ -62,12 +64,12 @@ class HttpDomainProxy(httpClient: HttpClient) extends DomainProxy {
         val specClass: Class[_] = specification.getClass()
         httpClient.sendRequest[Long](
           PUT(specification),
-          DOMAIN_URI / "count" / parentName / specClass.getSimpleName().replace("$", ""),
+          DomainUri / "count" / parentName / specClass.getSimpleName().replace("$", ""),
           Set(200))
       case _ =>
         httpClient.sendRequest[Long](
           GET,
-          DOMAIN_URI / "count" / parentName,
+          DomainUri / "count" / parentName,
           Set(200))
     }
   }
@@ -75,7 +77,7 @@ class HttpDomainProxy(httpClient: HttpClient) extends DomainProxy {
   def submit[TEvent <: DomainEvent](domainEvent: TEvent): Future[String] = {
     val domainName: String = httpClient.getDslName(domainEvent.getClass())
     httpClient.sendRequest[String](
-      POST(domainEvent), DOMAIN_URI / "submit" / domainName, Set(201))
+      POST(domainEvent), DomainUri / "submit" / domainName, Set(201))
   }
 
   def submit[TAggregate <: AggregateRoot: ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
@@ -85,7 +87,7 @@ class HttpDomainProxy(httpClient: HttpClient) extends DomainProxy {
     val domainName: String = httpClient.getDslName
     httpClient.sendRequest[TAggregate](
       POST(domainEvent),
-      DOMAIN_URI / "submit" / domainName / eventClazz.getSimpleName().replace("$", "") + "?uri=" + encode(uri),
+      DomainUri / "submit" / domainName / eventClazz.getSimpleName().replace("$", "") + "?uri=" + encode(uri),
       Set(201))
   }
 }

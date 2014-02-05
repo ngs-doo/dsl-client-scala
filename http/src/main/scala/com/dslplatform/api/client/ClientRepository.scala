@@ -6,6 +6,7 @@ import com.dslplatform.api.patterns.ServiceLocator
 
 import scala.concurrent.Future
 import scala.reflect.ClassTag
+
 /**
  * Common base implementation for {@link Repository repository}.
  * It redirects calls to proxy services.

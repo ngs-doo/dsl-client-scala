@@ -1,4 +1,4 @@
-package com.dslplatform.api.patterns;
+package com.dslplatform.api.patterns
 
 /**
  * Search predicate which can be used to filter domain objects from the remote

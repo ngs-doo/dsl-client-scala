@@ -1,3 +1,8 @@
 package com.dslplatform.api.client
 
-trait EventCompanion[TEvent <: com.dslplatform.api.patterns.DomainEvent]
+import com.dslplatform.api.patterns.DomainEvent
+
+abstract class EventCompanion[TEvent <: DomainEvent : scala.reflect.ClassTag]
+    extends IdentifiableCompanion[TEvent] {
+  //TODO missing helper methods
+}

@@ -1,7 +1,11 @@
-package com.dslplatform.api.patterns;
+package com.dslplatform.api.client
 
-import scala.concurrent.Future
+import com.dslplatform.api.patterns.Searchable
+import com.dslplatform.api.patterns.SearchableRepository
+import com.dslplatform.api.patterns.Specification
+
 import scala.collection.mutable.Buffer
+import scala.concurrent.Future
 
 /**
  * Utility class for building a search over a {@link SearchableRepository searchable repository}.
@@ -12,11 +16,14 @@ import scala.collection.mutable.Buffer
  * @param [TSearchable] domain object type.
  */
 class SearchBuilder[TSearchable <: Searchable](
-    repository: SearchableRepository[TSearchable],
-    private var specification: Option[Specification[TSearchable]] = None,
-    private var limit: Option[Int] = None,
-    private var offset: Option[Int] = None,
-    order: Buffer[(String, Boolean)] = Buffer.empty) {
+    repository: SearchableRepository[TSearchable]) {
+
+  require (repository ne null, "repository not provided")
+
+  private var specification: Option[Specification[TSearchable]] = None
+  private var limit: Option[Int] = None
+  private var offset: Option[Int] = None
+  private val order: Buffer[(String, Boolean)] = Buffer.empty
 
   /**
    * Provide {@link Specification[TSearchable] search predicate} for filtering results.
