@@ -1,8 +1,9 @@
 import sbt._
-import Keys._
+import sbt.Keys._
 
 import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 import net.virtualvoid.sbt.graph.Plugin._
+import scala.Some
 
 trait Default {
   val defaultSettings =
@@ -17,7 +18,7 @@ trait Default {
         "-source", "1.6",
         "-target", "1.6"
       ),
-      crossScalaVersions := Seq("2.10.4-RC1"),
+      crossScalaVersions := Seq("2.10.4"),
       scalaVersion := crossScalaVersions.value.last,
       scalacOptions := Seq(
         "-unchecked",
@@ -106,6 +107,9 @@ object Projects
     file("http"),
     settings = defaultSettings ++ Seq(
       name := "DSL Client Scala HTTP",
+      unmanagedResourceDirectories in Compile := Seq(
+        sourceDirectory.value / "main" / "resources"
+      ),
       libraryDependencies ++= Seq(
         asyncHttpClient,
         jackson,
@@ -114,13 +118,5 @@ object Projects
         slf4j
       )
     )
-  ) dependsOn(core)
-
-  lazy val root = Project(
-    "root",
-    file("."),
-    settings = defaultSettings ++ Seq(
-      name := "DSL Client Scala"
-    )
-  ) aggregate(core, http)
+  ) dependsOn (core)
 }

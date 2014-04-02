@@ -58,7 +58,7 @@ class HttpClient(
   private val token = projectSettings.get("username") + ':' + projectSettings.get("project-id");
   private val basicAuth = "Basic " + new String(Base64.encode(token.getBytes("UTF-8")))
   private val MimeType = "application/json"
-  private implicit val ec = ExecutionContext.fromExecutorService(executorService)
+  private [client] implicit val ec = ExecutionContext.fromExecutorService(executorService)
   private val commonHeaders = Map(
     "Accept" -> Set(MimeType),
     "Content-Type" -> Set(MimeType),
