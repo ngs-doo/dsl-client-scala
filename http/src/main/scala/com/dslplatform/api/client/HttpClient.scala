@@ -197,7 +197,7 @@ class HttpClient(
     method: HttpMethod,
     service: String,
     expectedStatus: Set[Int],
-    additionalHeaders: Map[String, Set[String]] = Map.empty): Future[IndexedSeq[TResult]] =
+    additionalHeaders: Map[String, Set[String]]): Future[IndexedSeq[TResult]] =
     sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserializeList(returnClass, _))
 
   def shutdown() {

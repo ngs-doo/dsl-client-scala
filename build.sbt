@@ -1,5 +1,7 @@
 version in ThisBuild              := "0.2.2-SNAPSHOT"
 
+name                              := "dsl-client-scala"
+
 organization in ThisBuild         := "com.dslplatform"
 
 publishTo in ThisBuild            := Some(if (version.value endsWith "SNAPSHOT") Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging)
@@ -18,9 +20,4 @@ pomIncludeRepository in ThisBuild := { _ => false }
 
 homepage in ThisBuild             := Some(url("https://dsl-platform.com/"))
 
-packagedArtifacts                 := Map.empty
-
-credentials in ThisBuild          ++= {
-                                    val creds = Path.userHome / ".config" / "dsl-client-scala" / "element.sonatype"
-                                    if (creds.exists) Some(Credentials(creds)) else None
-                                  }.toSeq
+credentials in ThisBuild          += Credentials(Path.userHome / ".config" / "sonatype" / "element")
