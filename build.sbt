@@ -1,4 +1,4 @@
-version in ThisBuild              := "0.2.2-SNAPSHOT"
+version in ThisBuild              := "0.3.0-SNAPSHOT"
 
 name                              := "dsl-client-scala"
 

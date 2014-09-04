@@ -19,6 +19,8 @@ import scala.reflect.ClassTag
 
 private[client] object HttpClientUtil {
 
+  type Headers = Map[String, Set[String]]
+
   def encode(uri: String) = java.net.URLEncoder.encode(uri, "UTF-8")
 
   implicit class implicitStringSlashString(str: String) {
@@ -52,17 +54,33 @@ class HttpClient(
     executorService: java.util.concurrent.ExecutorService) {
 
   import HttpClientUtil._
-  private val remoteUrl = projectSettings.get("api-url")
-  private val domainPrefix = projectSettings.get("package-name")
-  private val domainPrefixLength = domainPrefix.length() + 1
-  private val token = projectSettings.get("username") + ':' + projectSettings.get("project-id");
-  private val basicAuth = "Basic " + new String(Base64.encode(token.getBytes("UTF-8")))
+  private val remoteUrl = Option(projectSettings.get("api-url")).getOrElse(
+    throw new RuntimeException("Missing api-url from the properties.")
+  )
+  private val domainPrefix = Option(projectSettings.get("package-name")).getOrElse {
+    logger.warn("Could not find package-name in the properties defaulting to \"\"")
+    ""
+  }
+  private val domainPrefixLength = if (domainPrefix.length > 0) domainPrefix.length + 1 else 0
+  private val basicAuth = makeBasicAuth
   private val MimeType = "application/json"
   private [client] implicit val ec = ExecutionContext.fromExecutorService(executorService)
-  private val commonHeaders = Map(
+  private val commonHeaders: Headers = Map(
     "Accept" -> Set(MimeType),
-    "Content-Type" -> Set(MimeType),
-    "Authorization" -> Set(basicAuth))
+    "Content-Type" -> Set(MimeType)
+  ) ++ makeBasicAuth
+
+  private def makeBasicAuth: Headers = {
+    val username = projectSettings.get("username")
+    val password = projectSettings.get("project-id")
+
+    if (username == null || password == null) Map.empty
+    else {
+      val token = username + ':' + password
+      val basicAuth = "Basic " + new String(Base64.encode(token.getBytes("UTF-8")))
+      Map("Authorization" -> Set(basicAuth))
+    }
+  }
 
   private[client] def getDslName[T](implicit ct: ClassTag[T]): String =
     getDslName(ct.runtimeClass)
