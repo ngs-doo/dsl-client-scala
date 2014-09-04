@@ -1,5 +1,5 @@
 import sbt._
-import Keys._
+import sbt.Keys._
 
 import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 import net.virtualvoid.sbt.graph.Plugin._
@@ -17,7 +17,7 @@ trait Default {
         "-source", "1.6",
         "-target", "1.6"
       ),
-      crossScalaVersions := Seq("2.10.4-RC1"),
+      crossScalaVersions := Seq("2.10.4", "2.11.2"),
       scalaVersion := crossScalaVersions.value.last,
       scalacOptions := Seq(
         "-unchecked",
@@ -32,7 +32,6 @@ trait Default {
         "-Yrepl-sync",
         "-Xlint",
         "-Xverify",
-        "-Ywarn-all",
         "-Yinline-warnings",
         "-feature",
         "-language:postfixOps",
@@ -42,10 +41,8 @@ trait Default {
       ),
       scalacOptions in Test ++= Seq("-Yrangepos"),
       javacOptions in doc := Seq("-source", "1.6"),
-      unmanagedSourceDirectories in Compile := (scalaSource in Compile).value :: Nil,
-      unmanagedResourceDirectories in Compile := Nil,
-      unmanagedSourceDirectories in Test := Nil,
-      unmanagedResourceDirectories in Test := Nil,
+      unmanagedSourceDirectories in Compile := Seq((scalaSource in Compile).value),
+      unmanagedSourceDirectories in Test := Seq((scalaSource in Test).value),
       EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE16),
       EclipseKeys.eclipseOutput := Some(".target")
     )
@@ -53,34 +50,27 @@ trait Default {
 
 trait Dependencies {
   val scalaReflect = Def.setting { "org.scala-lang" % "scala-reflect" % scalaVersion.value }
-
+  val scalaXML = "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
   // JodaTime
-  val jodaTime    = "joda-time" % "joda-time" % "2.3"
-  val jodaConvert = "org.joda" % "joda-convert" % "1.5" % "compile"
+  val jodaTime    = "joda-time" % "joda-time" % "2.4"
+  val jodaConvert = "org.joda" % "joda-convert" % "1.7" % "compile"
 
   // Json serialization
-  val jackson         = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.3.1"
-  val jacksonDatabind = "com.fasterxml.jackson.core" % "jackson-databind" % "2.3.1"
-
-  // do not remove! fix for Array[Byte] deserialization
-  val paranamer = "com.thoughtworks.paranamer" % "paranamer" % "2.6"
+  val jackson         = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.4.2"
+  val jacksonDatabind = "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.2"
 
   // Logging Facade
-  val slf4j = "org.slf4j" % "slf4j-api" % "1.7.5"
+  val slf4j = "org.slf4j" % "slf4j-api" % "1.7.7"
 
   //Asynchronous Http and WebSocket Client library
-  val asyncHttpClient = "com.ning" % "async-http-client" % "1.7.23"
-
-  // Apache commons
-  val commonsIo    = "commons-io" % "commons-io" % "2.4"
-  val commonsCodec = "commons-codec" % "commons-codec" % "1.9"
+  val asyncHttpClient = "com.ning" % "async-http-client" % "1.8.13"
 
   // Test Facade
-  val spec2 = "org.specs2" %% "specs2" % "2.3.7" % "test"
-  val junit = "junit" % "junit" % "4.11" % "test"
+  val spec2 = "org.specs2" %% "specs2" % "2.3.7"
+  val junit = "junit" % "junit" % "4.11"
 
   // Logging for testing
-  val logback = "ch.qos.logback" % "logback-classic" % "1.0.13" % "test"
+  val logback = "ch.qos.logback" % "logback-classic" % "1.0.13"
 }
 
 object Projects 
@@ -110,17 +100,31 @@ object Projects
         asyncHttpClient,
         jackson,
         jacksonDatabind,
-        paranamer,
         slf4j
+      ) ++ (CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, x)) if x > 10 =>
+          Seq(scalaXML)
+        case _ => Seq.empty
+      }
+        )
       )
-    )
-  ) dependsOn(core)
+  ) dependsOn (core)
 
-  lazy val root = Project(
-    "root",
-    file("."),
-    settings = defaultSettings ++ Seq(
-      name := "DSL Client Scala"
-    )
-  ) aggregate(core, http)
+  def aggregatedCompile =  ScopeFilter(inProjects(core, http), inConfigurations(Compile))
+
+  def aggregatedTest = ScopeFilter(inProjects(core, http), inConfigurations(Test))
+
+  def rootSettings = Seq(
+    sources in Compile                        := sources.all(aggregatedCompile).value.flatten,
+    unmanagedSources in Compile               := unmanagedSources.all(aggregatedCompile).value.flatten,
+    unmanagedSourceDirectories in Compile     := unmanagedSourceDirectories.all(aggregatedCompile).value.flatten,
+    unmanagedResourceDirectories in Compile   := unmanagedResourceDirectories.all(aggregatedCompile).value.flatten,
+    sources in Test                           := sources.all(aggregatedTest).value.flatten,
+    unmanagedSources in Test                  := unmanagedSources.all(aggregatedTest).value.flatten,
+    unmanagedSourceDirectories in Test        := unmanagedSourceDirectories.all(aggregatedTest).value.flatten,
+    unmanagedResourceDirectories in Test      := unmanagedResourceDirectories.all(aggregatedTest).value.flatten,
+    libraryDependencies                       := libraryDependencies.all(aggregatedCompile).value.flatten
+  )
+
+  val root = (project in file(".")) settings ((defaultSettings ++ rootSettings): _*)
 }

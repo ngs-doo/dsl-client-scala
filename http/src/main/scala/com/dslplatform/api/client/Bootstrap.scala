@@ -7,9 +7,7 @@ import com.dslplatform.api.patterns.Repository
 
 import java.io.InputStream
 import java.io.FileInputStream
-import java.util.Properties
 
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import java.util.concurrent.Executors
@@ -36,7 +34,7 @@ object Bootstrap {
     if (staticLocator == null)
       throw new RuntimeException("Bootstrap has not been initialized, call Bootstrap.init");
 
-    staticLocator;
+    staticLocator
   }
 
   /**
@@ -78,9 +76,9 @@ object Bootstrap {
   def init(iniPath: String): ServiceLocator = {
     val iniStream: InputStream = new FileInputStream(iniPath)
     try {
-      init(iniStream);
+      init(iniStream)
     } finally {
-      iniStream.close();
+      iniStream.close()
     }
   }
 }

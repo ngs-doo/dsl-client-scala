@@ -5,7 +5,7 @@ import com.dslplatform.api.patterns.Cube
 import com.dslplatform.api.patterns.Searchable
 import com.dslplatform.api.patterns.Specification
 
-import scala.concurrent.{Promise, Future}
+import scala.concurrent.Future
 import scala.reflect.ClassTag
 
 class HttpStandardProxy(
@@ -31,12 +31,12 @@ class HttpStandardProxy(
     val toUpdate = if (updates != null && updates.nonEmpty) json.serialize(updates.map(t => Pair(t._1, t._2)).toArray) else null
     val toDelete = if (deletes != null && deletes.nonEmpty) json.serialize(deletes.toArray) else null
 
-    if (toInsert == null && toUpdate == null && toDelete == null) Promise successful ( IndexedSeq.empty[String] ) future
+    if (toInsert == null && toUpdate == null && toDelete == null) Future successful (IndexedSeq.empty[String])
     else
-    httpClient.sendStandardRequest(
-      POST(PersistArg(httpClient.getDslName[TAggregate], toInsert, toUpdate, toDelete)),
-      ApplicationUri / "PersistAggregateRoot",
-      Set(200, 201))
+      httpClient.sendStandardRequest(
+        POST(PersistArg(httpClient.getDslName[TAggregate], toInsert, toUpdate, toDelete)),
+        ApplicationUri / "PersistAggregateRoot",
+        Set(200, 201))
   }
 
   def olapCube[TCube <: Cube[TSearchable] : ClassTag, TSearchable <: Searchable : ClassTag, TResult: ClassTag](

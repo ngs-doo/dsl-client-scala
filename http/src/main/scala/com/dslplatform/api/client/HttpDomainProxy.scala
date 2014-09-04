@@ -8,7 +8,7 @@ import com.dslplatform.api.patterns.Searchable
 import com.dslplatform.api.patterns.Specification
 
 import scala.reflect.ClassTag
-import scala.concurrent.{Promise, Future}
+import scala.concurrent.Future
 
 class HttpDomainProxy(httpClient: HttpClient)
     extends DomainProxy {
@@ -16,10 +16,11 @@ class HttpDomainProxy(httpClient: HttpClient)
   import HttpClientUtil._
 
   private val DomainUri = "Domain.svc";
+  private implicit val eC = httpClient.ec
 
   def find[TIdentifiable <: Identifiable : ClassTag](
       uris: TraversableOnce[String]): Future[IndexedSeq[TIdentifiable]] = {
-    if (uris.isEmpty) Promise successful ( IndexedSeq.empty[TIdentifiable] ) future
+    if (uris.isEmpty) Future successful (IndexedSeq.empty[TIdentifiable])
     else
       httpClient.sendRequestForCollection[TIdentifiable](
         PUT(uris.toArray),
