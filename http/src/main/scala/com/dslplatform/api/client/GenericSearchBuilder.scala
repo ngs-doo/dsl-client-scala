@@ -286,21 +286,20 @@ class GenericSearchBuilder[TSearchable <: Searchable: ClassTag] {
    * @param ignoreCase should string comparison ignore casing
    * @return           itself
    */
-  def doesntStartsWith(property: String, value: String, ignoreCase: Boolean) = {
+  def doesntStartsWith(property: String, value: String, ignoreCase: Boolean) =
     if (ignoreCase) filter(property, NOT_STARTS_WITH_CASE_INSENSITIVE_VALUE, value)
     else filter(property, NOT_STARTS_WITH_VALUE, value)
 
-    /**
-     * Define startsWith [ value.startsWith(property) ] condition for specification.
-     * Case sensitive comparison will be performed.
-     * Server will return only results that satisfy this and every other specified condition.
-     *
-     * @param property name of property to check
-     * @param value    comparison value
-     * @return         itself
-     */
-    def valueStartsWith(property: String, value: String) = filter(property, VALUE_STARTS_WITH, value);
-  }
+  /**
+   * Define startsWith [ value.startsWith(property) ] condition for specification.
+   * Case sensitive comparison will be performed.
+   * Server will return only results that satisfy this and every other specified condition.
+   *
+   * @param property name of property to check
+   * @param value    comparison value
+   * @return         itself
+   */
+   def valueStartsWith(property: String, value: String) = filter(property, VALUE_STARTS_WITH, value)
 
   /**
    * Define startsWith and case sensitivity [ value.startsWith(property, case sensitivity) ] condition for specification.
