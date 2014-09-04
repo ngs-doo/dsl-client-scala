@@ -10,7 +10,6 @@ import java.lang.reflect.ParameterizedType
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
-import java.util.concurrent.ConcurrentHashMap
 import java.lang.reflect.Modifier
 
 class MapServiceLocator(logger: Logger, cacheResult: Boolean = true)
