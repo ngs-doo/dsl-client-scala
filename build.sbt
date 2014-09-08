@@ -1,23 +1,23 @@
-version in ThisBuild              := "0.3.0-SNAPSHOT"
+version               := "0.9.0"
 
-name                              := "dsl-client-scala"
+name                  := "dsl-client-scala"
 
-organization in ThisBuild         := "com.dslplatform"
+organization          := "com.dslplatform"
 
-publishTo in ThisBuild            := Some(if (version.value endsWith "SNAPSHOT") Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging)
+publishTo             := Some(if (version.value endsWith "SNAPSHOT") Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging)
 
-licenses in ThisBuild             += ("BSD-style", url("http://opensource.org/licenses/BSD-3-Clause"))
+licenses              += ("BSD-style", url("http://opensource.org/licenses/BSD-3-Clause"))
 
-startYear in ThisBuild            := Some(2013)
+startYear             := Some(2013)
 
-scmInfo in ThisBuild              := Some(ScmInfo(url("https://github.com/ngs-doo/dsl-client-scala.git"), "scm:git:https://github.com/ngs-doo/dsl-client-scala.git"))
+scmInfo               := Some(ScmInfo(url("https://github.com/ngs-doo/dsl-client-scala.git"), "scm:git:https://github.com/ngs-doo/dsl-client-scala.git"))
 
-pomExtra in ThisBuild             ~= (_ ++ {Developers.toXml})
+pomExtra              ~= (_ ++ {Developers.toXml})
 
-publishMavenStyle in ThisBuild    := true
+publishMavenStyle     := true
 
-pomIncludeRepository in ThisBuild := { _ => false }
+pomIncludeRepository  := { _ => false }
 
-homepage in ThisBuild             := Some(url("https://dsl-platform.com/"))
+homepage              := Some(url("https://dsl-platform.com/"))
 
-credentials in ThisBuild          += Credentials(Path.userHome / ".config" / "sonatype" / "element")
+credentials           += Credentials(Path.userHome / ".config" / "sonatype" / "element")
