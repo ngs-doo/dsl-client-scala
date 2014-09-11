@@ -29,10 +29,11 @@ class HttpReportingProxy(httpClient: HttpClient)
   def createReport[TResult](
     report: Report[TResult],
     templater: String): Future[Array[Byte]] =
-    httpClient.sendRequest[Array[Byte]](
+    httpClient.sendRawRequest(
       PUT(report),
       ReportingUri / "report" / httpClient.getDslName(report.getClass) / templater,
-      Set(201))
+      Set(201),
+      Map("Accept" -> Set("application/octet-stream")))
 
   def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable: ClassTag](
     templater: String,
@@ -49,12 +50,12 @@ class HttpReportingProxy(httpClient: HttpClient)
       case Some(spec) =>
         val specClass = spec.getClass
         val specName: String = if (parentName == cubeName) parentName + "/" else ""
-        httpClient.sendRequest[Array[Byte]](
+        httpClient.sendRawRequest(
           PUT(specification),
           ReportingUri / "olap" / cubeName / specName + specClass.getSimpleName().replace("$", "") / templater + args,
           Set(200))
       case _ =>
-        httpClient.sendRequest[Array[Byte]](
+        httpClient.sendRawRequest(
           GET, ReportingUri / "olap" / cubeName / templater + args, Set(200))
     }
   }

@@ -143,7 +143,7 @@ class HttpClient(
     optBody: Option[Array[Byte]],
     url: String,
     expectedStatus: Set[Int],
-    additionalHeaders: Map[String, Set[String]]): Future[Array[Byte]] = {
+    additionalHeaders: Headers): Future[Array[Byte]] = {
     val request = new RequestBuilder()
       .setUrl(url)
       .setHeaders(makeNingHeaders(additionalHeaders))
@@ -164,7 +164,7 @@ class HttpClient(
     promisedResponse future
   }
 
-  private[client] def sendRawRequest(
+  def sendRawRequest(
     method: HttpMethod,
     service: String,
     expectedStatus: Set[Int],
@@ -193,7 +193,7 @@ class HttpClient(
       case _               => None
     }
 
-    doRequest(method.name, optBody, url, expectedStatus, additionalHeaders) map (json.deserializeList[String](_))
+    doRequest(method.name, optBody, url, expectedStatus, additionalHeaders) map (json.deserializeList[String])
   }
 
   private[client] def sendRequest[TResult: ClassTag](
@@ -201,14 +201,14 @@ class HttpClient(
     service: String,
     expectedStatus: Set[Int],
     additionalHeaders: Map[String, Set[String]] = Map.empty): Future[TResult] =
-    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserialize[TResult](_))
+    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserialize[TResult])
 
   private[client] def sendRequestForCollection[TResult: ClassTag](
     method: HttpMethod,
     service: String,
     expectedStatus: Set[Int],
     additionalHeaders: Map[String, Set[String]] = Map.empty): Future[IndexedSeq[TResult]] =
-    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserializeList[TResult](_))
+    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserializeList[TResult])
 
   private[client] def sendRequestForCollection[TResult](
     returnClass: Class[_],
