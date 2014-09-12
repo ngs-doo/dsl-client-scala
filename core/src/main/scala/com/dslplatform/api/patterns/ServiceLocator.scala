@@ -1,9 +1,8 @@
 package com.dslplatform.api.patterns
 
-import scala.reflect.runtime.universe.TypeTag
 import scala.reflect.ClassTag
-import java.lang.reflect.Type
-import java.lang.reflect.ParameterizedType
+import scala.reflect.runtime.universe.TypeTag
+import java.lang.reflect.{ParameterizedType, Type}
 
 /**
  * Service for resolving other services.
@@ -18,7 +17,7 @@ trait ServiceLocator {
   /**
    * Resolve a service registered in the locator.
    *
-   * @param clazz class or interface
+   * @param tpe   class or interface
    * @return      registered implementation
    */
   def resolve[T](tpe: Type): T

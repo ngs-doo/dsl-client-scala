@@ -8,18 +8,17 @@ import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import java.lang.reflect.ParameterizedType
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
-import scala.reflect.ClassTag
+import scala.reflect.{ClassTag, classTag}
 import scala.reflect.runtime.universe._
 import java.lang.reflect.Modifier
 
-class MapServiceLocator(logger: Logger, cacheResult: Boolean = true)
+class MapServiceLocator(initialComponents: Map[Object, AnyRef], cacheResult: Boolean = true)
     extends ServiceLocator {
 
-  private val components: MMap[Object, AnyRef] =
-    MMap(
-      classOf[ServiceLocator] -> this,
-      classOf[Logger] -> logger
-    )
+  private val logger = initialComponents.get(classOf[Logger]).asInstanceOf[Some[Logger]]
+    .getOrElse(throw new RuntimeException("Logger was not provided with initial components."))
+
+  private val components: MMap[Object, AnyRef] = MMap.empty ++ initialComponents + (classOf[ServiceLocator] -> this)
 
   def register(target: Class[_], service: AnyRef): MapServiceLocator = {
     logger.trace("About to register class " + target.getName() + " " + service)
@@ -129,7 +128,7 @@ class MapServiceLocator(logger: Logger, cacheResult: Boolean = true)
                   val genType = ParameterizedTypeImpl.make(mt, args, null)
                   val genClazz = genType.getRawType()
                   tryConstruct(typ, genClazz.getConstructors())
-                case _ =>
+                case impl =>
                   Some(impl)
               }
             }

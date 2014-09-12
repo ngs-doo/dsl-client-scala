@@ -1,0 +1,4 @@
+username=testUser@dsl-platform.com
+project-id=test-password
+api-url=https://dsl-platform.com/test
+package-name=test.package
