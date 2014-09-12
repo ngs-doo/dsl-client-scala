@@ -34,24 +34,11 @@ trait ServiceLocator {
 
   /**
    * Resolve a service registered in the locator.
-   * Warning: generic types are erased at compile time.
-   *
-   * @param T class info
-   * @return  registered implementation
-   */
-  def resolve[T](implicit ct: ClassTag[T]) : T =
-    resolve(ct.runtimeClass)
-
-  /**
-   * Resolve a service registered in the locator.
-   * Warning: Scala TypeTag is not thread safe, calling code must be
-   * guarded with synchronized block
-   * As a workaround, use TypeReference method
    *
    * @param T Type info
    * @return  registered implementation
    */
-  def resolveUnsafe[T: TypeTag]: T
+  def resolve[T: TypeTag]: T
 
   /**
    * Resolve a service registered in the locator.

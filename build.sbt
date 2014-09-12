@@ -19,5 +19,3 @@ publishMavenStyle     := true
 pomIncludeRepository  := { _ => false }
 
 homepage              := Some(url("https://dsl-platform.com/"))
-
-credentials           += Credentials(Path.userHome / ".config" / "sonatype" / "element")

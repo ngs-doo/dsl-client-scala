@@ -8,7 +8,7 @@ import com.dslplatform.api.patterns.Repository
 import java.io.InputStream
 import java.io.FileInputStream
 
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
 import java.util.concurrent.Executors
 import java.util.concurrent.ExecutorService
@@ -44,23 +44,41 @@ object Bootstrap {
    * @return             initialized service locator
    * @throws IOException in case of failure to read stream
    */
-  def init(iniStream: InputStream): ServiceLocator = {
-    val threadPool = Executors.newCachedThreadPool()
-    val locator =
-      new MapServiceLocator(LoggerFactory.getLogger("dsl-client-http"))
-        .register[ProjectSettings](new ProjectSettings(iniStream))
-        .register[JsonSerialization]
-        .register[ExecutorService](threadPool)
-        .register[ExecutionContext](ExecutionContext.fromExecutorService(threadPool))
-        .register[HttpClient]
-        .register[ApplicationProxy, HttpApplicationProxy]
-        .register[CrudProxy, HttpCrudProxy]
-        .register[DomainProxy, HttpDomainProxy]
-        .register[StandardProxy, HttpStandardProxy]
-        .register[ReportingProxy, HttpReportingProxy]
-        .register(classOf[Repository[_]], classOf[ClientRepository[_]])
-        .register(classOf[SearchableRepository[_]], classOf[ClientSearchableRepository[_]])
-        .register(classOf[PersistableRepository[_]], classOf[ClientPersistableRepository[_]])
+  def init(iniStream: InputStream, initialComponents: Map[Object, AnyRef]): ServiceLocator = {
+    val locator = new MapServiceLocator(
+      initialComponents ++
+        (if (initialComponents.contains(classOf[Logger]))
+          Map.empty
+        else Map(classOf[Logger] -> LoggerFactory.getLogger("dsl-client-scala")))
+    )
+    init(iniStream, locator)
+  }
+
+  private def init(
+    iniStream: InputStream,
+    locator: MapServiceLocator
+  ) = {
+    val threadPool = if (!locator.contains[ExecutorService]) {
+      val pool: ExecutorService = Executors.newCachedThreadPool()
+      locator.register[ExecutorService](pool)
+      pool
+    } else {
+      locator.resolve[ExecutorService]
+    }
+    if (!locator.contains[ExecutionContext])
+      locator.register[ExecutionContext](ExecutionContext.fromExecutorService(threadPool))
+    locator
+      .register[ProjectSettings](new ProjectSettings(iniStream))
+      .register[JsonSerialization]
+      .register[HttpClient]
+      .register[ApplicationProxy, HttpApplicationProxy]
+      .register[CrudProxy, HttpCrudProxy]
+      .register[DomainProxy, HttpDomainProxy]
+      .register[StandardProxy, HttpStandardProxy]
+      .register[ReportingProxy, HttpReportingProxy]
+      .register(classOf[Repository[_]], classOf[ClientRepository[_]])
+      .register(classOf[SearchableRepository[_]], classOf[ClientSearchableRepository[_]])
+      .register(classOf[PersistableRepository[_]], classOf[ClientPersistableRepository[_]])
 
     staticLocator = locator
     locator
@@ -73,12 +91,21 @@ object Bootstrap {
    * @return             initialized service locator
    * @throws IOException in case of failure to read project.ini
    */
-  def init(iniPath: String): ServiceLocator = {
-    val iniStream: InputStream = new FileInputStream(iniPath)
+  def init(iniPath: String, initialComponents: Map[Object , AnyRef] = Map.empty): ServiceLocator = {
+    val iniStream: InputStream = {
+      val file: java.io.File = new java.io.File(iniPath)
+      if (file.exists()) {
+        new FileInputStream(file)
+      } else {
+        getClass.getResourceAsStream(iniPath)
+      }
+    }
+    if (iniStream == null) throw new RuntimeException(s"$iniPath was not found in the file system or the classpath.")
     try {
-      init(iniStream)
+      init(iniStream, initialComponents)
     } finally {
       iniStream.close()
     }
   }
+
 }
