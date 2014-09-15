@@ -1,5 +1,7 @@
 package com.dslplatform.api.client
 
+import java.util.Properties
+
 import com.dslplatform.api.patterns.ServiceLocator
 
 import java.io.IOException
@@ -48,39 +50,25 @@ private[client] object HttpClientUtil {
 
 class HttpClient(
     locator: ServiceLocator,
-    projectSettings: ProjectSettings,
+    properties: Properties,
     json: JsonSerialization,
+    authHeaders: HttpHeaderProvider,
     logger: Logger,
     executorService: java.util.concurrent.ExecutorService) {
 
   import HttpClientUtil._
-  private val remoteUrl = Option(projectSettings.get("api-url")).getOrElse(
-    throw new RuntimeException("Missing api-url from the properties.")
-  )
-  private val domainPrefix = Option(projectSettings.get("package-name")).getOrElse {
-    logger.warn("Could not find package-name in the properties defaulting to \"\"")
-    ""
-  }
+  private val remoteUrl = Option(properties.getProperty("api-url"))
+    .getOrElse(throw new RuntimeException("Missing api-url from the properties."))
+  private val domainPrefix = Option(properties.getProperty("package-name"))
+    .getOrElse{throw new RuntimeException("Missing package-name from the properties.")}
   private val domainPrefixLength = if (domainPrefix.length > 0) domainPrefix.length + 1 else 0
-  private val basicAuth = makeBasicAuth
+  private val auth = authHeaders.getHeaders.mapValues(Set(_))
   private val MimeType = "application/json"
   private [client] implicit val ec = ExecutionContext.fromExecutorService(executorService)
   private val commonHeaders: Headers = Map(
     "Accept" -> Set(MimeType),
     "Content-Type" -> Set(MimeType)
-  ) ++ makeBasicAuth
-
-  private def makeBasicAuth: Headers = {
-    val username = projectSettings.get("username")
-    val password = projectSettings.get("project-id")
-
-    if (username == null || password == null) Map.empty
-    else {
-      val token = username + ':' + password
-      val basicAuth = "Basic " + new String(Base64.encode(token.getBytes("UTF-8")))
-      Map("Authorization" -> Set(basicAuth))
-    }
-  }
+  ) ++ auth
 
   private[client] def getDslName[T](implicit ct: ClassTag[T]): String =
     getDslName(ct.runtimeClass)
@@ -100,9 +88,9 @@ class HttpClient(
     username [{}]
     api: [{}]
     pid: [{}]""",
-      projectSettings.get("username"),
-      projectSettings.get("api-url"),
-      projectSettings.get("project-id"));
+      properties.get("username"),
+      properties.get("api-url"),
+      properties.get("project-id"));
   }
 
   private def makeNingHeaders(additionalHeaders: Map[String, Set[String]]): java.util.Map[String, java.util.Collection[String]] = {
@@ -143,7 +131,7 @@ class HttpClient(
     optBody: Option[Array[Byte]],
     url: String,
     expectedStatus: Set[Int],
-    additionalHeaders: Map[String, Set[String]]): Future[Array[Byte]] = {
+    additionalHeaders: Headers): Future[Array[Byte]] = {
     val request = new RequestBuilder()
       .setUrl(url)
       .setHeaders(makeNingHeaders(additionalHeaders))
@@ -164,7 +152,7 @@ class HttpClient(
     promisedResponse future
   }
 
-  private[client] def sendRawRequest(
+  def sendRawRequest(
     method: HttpMethod,
     service: String,
     expectedStatus: Set[Int],
@@ -193,7 +181,7 @@ class HttpClient(
       case _               => None
     }
 
-    doRequest(method.name, optBody, url, expectedStatus, additionalHeaders) map (json.deserializeList[String](_))
+    doRequest(method.name, optBody, url, expectedStatus, additionalHeaders) map (json.deserializeList[String])
   }
 
   private[client] def sendRequest[TResult: ClassTag](
@@ -201,14 +189,14 @@ class HttpClient(
     service: String,
     expectedStatus: Set[Int],
     additionalHeaders: Map[String, Set[String]] = Map.empty): Future[TResult] =
-    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserialize[TResult](_))
+    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserialize[TResult])
 
   private[client] def sendRequestForCollection[TResult: ClassTag](
     method: HttpMethod,
     service: String,
     expectedStatus: Set[Int],
     additionalHeaders: Map[String, Set[String]] = Map.empty): Future[IndexedSeq[TResult]] =
-    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserializeList[TResult](_))
+    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserializeList[TResult])
 
   private[client] def sendRequestForCollection[TResult](
     returnClass: Class[_],

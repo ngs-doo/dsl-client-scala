@@ -66,7 +66,7 @@ trait Dependencies {
   val asyncHttpClient = "com.ning" % "async-http-client" % "1.8.13"
 
   // Test Facade
-  val spec2 = "org.specs2" %% "specs2" % "2.3.7"
+  val spec2 = "org.specs2" %% "specs2" % "2.4.2"
   val junit = "junit" % "junit" % "4.11"
 
   // Logging for testing
@@ -100,7 +100,9 @@ object Projects
         asyncHttpClient,
         jackson,
         jacksonDatabind,
-        slf4j
+        slf4j,
+        spec2 % "test",
+        logback % "test"
       ) ++ (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, x)) if x > 10 =>
           Seq(scalaXML)
