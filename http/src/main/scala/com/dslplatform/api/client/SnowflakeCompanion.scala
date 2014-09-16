@@ -26,7 +26,7 @@ abstract class SnowflakeCompanion[TSnowflake <: Snowflake[TAggregate] : ClassTag
     val httpClient = client(locator)
     val snowflakeName: String = httpClient.getDslName[TSnowflake]
     val entityName: String = httpClient.getDslName[TAggregate]
-    val specClass: Class[_] = specification.getClass()
+    val specClass: Class[_] = specification.getClass
     val specificationName = entityName + "%2B" + specClass.getSimpleName.replace("$", "")
     val urlParams: String =
       Utils.buildArguments(

@@ -13,7 +13,7 @@ trait ApplicationProxy {
    * If remote service doesn't require any arguments it can be called using get method.
    * Provide class of result for deserialization.
    *
-   * @param TResult        result type
+   * @tparam TResult       result type
    * @param command        remote service name
    * @param expectedStatus expected status from remote call
    * @return               future with deserialized result
@@ -26,7 +26,7 @@ trait ApplicationProxy {
    * When remote service require an argument message with serialized payload will be sent.
    * Provide class of result for deserialization.
    *
-   * @param TResult       result type
+   * @tparam TResult       result type
    * @param command        remote service name
    * @param argument       remote service argument
    * @param expectedStatus expected status from remote call

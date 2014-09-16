@@ -35,19 +35,19 @@ class JsonSerialization(locator: ServiceLocator) {
 
   private val dateDeserializer = new JsonDeserializer[LocalDate] {
     override def deserialize(parser: JsonParser, context: DeserializationContext) =
-      dateFormat.parseLocalDate(parser.getValueAsString())
+      dateFormat.parseLocalDate(parser.getValueAsString)
   }
 
   // ---- TimeStamp --------------------------------------------------------------
 
   private val timestampSerializer = new JsonSerializer[DateTime] {
     override def serialize(value: DateTime, generator: JsonGenerator, x: SerializerProvider) =
-      generator.writeString(value.toString())
+      generator.writeString(value.toString)
   }
 
   private val timestampDeserializer = new JsonDeserializer[DateTime] {
     override def deserialize(parser: JsonParser, context: DeserializationContext) =
-      new DateTime(parser.getValueAsString())
+      new DateTime(parser.getValueAsString)
   }
 
   // ---- BigDecimal-------------------------------------------------------------------------
@@ -59,7 +59,7 @@ class JsonSerialization(locator: ServiceLocator) {
 
   private val bigDecimalDeserializer = new JsonDeserializer[BigDecimal] {
     override def deserialize(parser: JsonParser, context: DeserializationContext) =
-      BigDecimal(parser.getValueAsString())
+      BigDecimal(parser.getValueAsString)
   }
 
   // ---- Elem -------------------------------------------------------------------
@@ -72,7 +72,7 @@ class JsonSerialization(locator: ServiceLocator) {
   private val elemDeserializer = new JsonDeserializer[Elem] {
     override def deserialize(parser: JsonParser, context: DeserializationContext) =
       ConstructingParser
-        .fromSource(Source.fromString(parser.getValueAsString()), true)
+        .fromSource(Source.fromString(parser.getValueAsString), true)
         .document.docElem.asInstanceOf[Elem]
   }
 
@@ -115,7 +115,7 @@ class JsonSerialization(locator: ServiceLocator) {
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   }
 
-  private val typeFactory = deserializationMapper.getTypeFactory()
+  private val typeFactory = deserializationMapper.getTypeFactory
 
   // -----------------------------------------------------------------------
 

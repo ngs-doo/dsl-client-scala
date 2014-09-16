@@ -25,7 +25,7 @@ import scala.reflect.ClassTag
  * IServiceLocator locator;
  * Repository&lt;Todo.TaskList&gt; repository = locator.resolve(Todo.TaskListRepository.class);
  * </pre>
- * @param [T] domain object type
+ * @tparam TIdentifiable domain object type
  */
 class ClientRepository[TIdentifiable <: Identifiable : ClassTag](
     locator: ServiceLocator)
@@ -33,13 +33,6 @@ class ClientRepository[TIdentifiable <: Identifiable : ClassTag](
     with Repository[TIdentifiable] {
 
   protected val crudProxy: CrudProxy = locator.resolve[CrudProxy]
-
-  /**
-   * Generated class will provide class manifest and locator
-   *
-   * @param manifest domain object type
-   * @param locator  context in which domain object lives
-   */
 
   def find(uris: TraversableOnce[String]): Future[IndexedSeq[TIdentifiable]] = domainProxy.find(uris)
 

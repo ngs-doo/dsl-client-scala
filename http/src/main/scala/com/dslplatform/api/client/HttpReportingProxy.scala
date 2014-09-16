@@ -52,7 +52,7 @@ class HttpReportingProxy(httpClient: HttpClient)
         val specName: String = if (parentName == cubeName) parentName + "/" else ""
         httpClient.sendRawRequest(
           PUT(specification),
-          ReportingUri / "olap" / cubeName / specName + specClass.getSimpleName().replace("$", "") / templater + args,
+          ReportingUri / "olap" / cubeName / specName + specClass.getSimpleName.replace("$", "") / templater + args,
           Set(200))
       case _ =>
         httpClient.sendRawRequest(
@@ -83,7 +83,7 @@ class HttpReportingProxy(httpClient: HttpClient)
   }
 
   private def prepareHeaders(toPdf: Boolean) =
-    Map("Accept" -> Set((if (toPdf) "application/pdf" else "application/octet-stream")))
+    Map("Accept" -> Set(if (toPdf) "application/pdf" else "application/octet-stream"))
 
   def searchTemplater[TSearchable <: Searchable: ClassTag](
     file: String,
@@ -93,10 +93,10 @@ class HttpReportingProxy(httpClient: HttpClient)
     val domainName: String = httpClient.getDslName
     specification match {
       case Some(spec) =>
-        val specClass: Class[_] = spec.getClass()
+        val specClass: Class[_] = spec.getClass
         httpClient.sendRawRequest(
           PUT(specification),
-          ReportingUri / "templater" / file / domainName / specClass.getSimpleName().replace("$", ""),
+          ReportingUri / "templater" / file / domainName / specClass.getSimpleName.replace("$", ""),
           Set(200),
           prepareHeaders(toPdf))
       case _ =>

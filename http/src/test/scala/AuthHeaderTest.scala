@@ -55,9 +55,7 @@ class AuthHeaderTest extends Specification {
         override def getHeaders: Map[String, String] = Map("Do" -> "More")
       }))
     try {
-      val headers: Map[String, String] = locator.resolve[HttpHeaderProvider].getHeaders
-      println(headers)
-      headers("Do") === "More"
+      locator.resolve[HttpHeaderProvider].getHeaders("Do") === "More"
     } finally {
       locator.resolve[HttpClient].shutdown()
     }

@@ -15,12 +15,12 @@ class HttpDomainProxy(httpClient: HttpClient)
 
   import HttpClientUtil._
 
-  private val DomainUri = "Domain.svc";
+  private val DomainUri = "Domain.svc"
   private implicit val eC = httpClient.ec
 
   def find[TIdentifiable <: Identifiable : ClassTag](
       uris: TraversableOnce[String]): Future[IndexedSeq[TIdentifiable]] = {
-    if (uris.isEmpty) Future successful (IndexedSeq.empty[TIdentifiable])
+    if (uris.isEmpty) Future successful IndexedSeq.empty[TIdentifiable]
     else
       httpClient.sendRequestForCollection[TIdentifiable](
         PUT(uris.toArray),
@@ -36,8 +36,8 @@ class HttpDomainProxy(httpClient: HttpClient)
     val parentName: String = httpClient.getDslName
     specification match {
       case Some(spec) =>
-        val specClass: Class[_] = spec.getClass()
-        val specificationName = specClass.getSimpleName().replace("$", "")
+        val specClass: Class[_] = spec.getClass
+        val specificationName = specClass.getSimpleName.replace("$", "")
         val urlParams: String =
           Utils.buildArguments(
             Some(specificationName),
@@ -61,10 +61,10 @@ class HttpDomainProxy(httpClient: HttpClient)
     val parentName: String = httpClient.getDslName
     specification match {
       case Some(spec) =>
-        val specClass: Class[_] = specification.getClass()
+        val specClass: Class[_] = specification.getClass
         httpClient.sendRequest[Long](
           PUT(specification),
-          DomainUri / "count" / parentName / specClass.getSimpleName().replace("$", ""),
+          DomainUri / "count" / parentName / specClass.getSimpleName.replace("$", ""),
           Set(200))
       case _ =>
         httpClient.sendRequest[Long](
@@ -75,7 +75,7 @@ class HttpDomainProxy(httpClient: HttpClient)
   }
 
   def submit[TEvent <: DomainEvent](domainEvent: TEvent): Future[String] = {
-    val domainName: String = httpClient.getDslName(domainEvent.getClass())
+    val domainName: String = httpClient.getDslName(domainEvent.getClass)
     httpClient.sendRequest[String](
       POST(domainEvent), DomainUri / "submit" / domainName, Set(201))
   }
@@ -83,11 +83,11 @@ class HttpDomainProxy(httpClient: HttpClient)
   def submit[TAggregate <: AggregateRoot : ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
       domainEvent: TEvent,
       uri: String): Future[TAggregate] = {
-    val eventClazz: Class[_] = domainEvent.getClass()
+    val eventClazz: Class[_] = domainEvent.getClass
     val domainName: String = httpClient.getDslName
     httpClient.sendRequest[TAggregate](
       POST(domainEvent),
-      DomainUri / "submit" / domainName / eventClazz.getSimpleName().replace("$", "") + "?uri=" + encode(uri),
+      DomainUri / "submit" / domainName / eventClazz.getSimpleName.replace("$", "") + "?uri=" + encode(uri),
       Set(201))
   }
 }

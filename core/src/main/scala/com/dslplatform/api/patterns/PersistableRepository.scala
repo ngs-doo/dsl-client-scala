@@ -10,7 +10,7 @@ import scala.concurrent.Future
  * It should be used when Future is a preferred way of interacting with the remote server
  * or bulk operations are required.
  *
- * @param [T] type of {@link AggregateRoot aggregate root}
+ * @tparam T type of {@link AggregateRoot aggregate root}
  */
 trait PersistableRepository[T <: AggregateRoot]
     extends Repository[T] {

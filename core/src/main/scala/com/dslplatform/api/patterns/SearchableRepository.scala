@@ -16,7 +16,7 @@ import scala.concurrent.Future
  * When permissions are applied, server can restrict which results will be returned to the client.
  * Service should be used when Future is a preferred way of interacting with the remote server.
  *
- * @param [T] domain object type.
+ * @tparam T domain object type.
  */
 trait SearchableRepository[TSearchable <: Searchable] {
 
