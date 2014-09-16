@@ -63,7 +63,7 @@ class MapServiceLocator(initialComponents: Map[Object, AnyRef], cacheResult: Boo
 
   private val mirror = runtimeMirror(getClass.getClassLoader)
 
-  def resolveUnsafe[T: TypeTag]: T = {
+  def resolve[T: TypeTag]: T = {
     typeOf[T] match {
       case TypeRef(_, sym, args) if args.isEmpty =>
         resolve(mirror.runtimeClass(sym.asClass))
