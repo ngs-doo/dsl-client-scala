@@ -37,12 +37,6 @@ class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: Service
   private implicit val executionContext: ExecutionContext = locator.resolve(classOf[ExecutionContext])
 
   private val standardProxy: StandardProxy = locator.resolve[StandardProxy]
-  /**
-   * Generated class will provide class manifest and locator
-   *
-   * @param manifest domain object type
-   * @param locator  context in which domain object lives
-   */
 
   def persist(
     inserts: TraversableOnce[T],

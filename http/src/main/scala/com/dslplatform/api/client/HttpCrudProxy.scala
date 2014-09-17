@@ -34,7 +34,7 @@ class HttpCrudProxy(httpClient: HttpClient)
     httpClient.sendRequest[TAggregate](
       PUT(aggregate),
       CrudUri / domainName + "?uri=" + encode(uri),
-      Set(200));
+      Set(200))
   }
 
   def delete[TAggregateRoot <: AggregateRoot : ClassTag](

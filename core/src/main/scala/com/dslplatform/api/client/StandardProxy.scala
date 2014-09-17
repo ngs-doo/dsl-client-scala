@@ -103,7 +103,7 @@ trait StandardProxy {
    * Execute remote service (server implementation for IServerService<TArgument, TResult>)
    * Send message with serialized argument to remote service and deserialize response.
    *
-   * @param manifest deserialize result into provided type
+   * @tparam TResult deserialize result into provided type
    * @param command  remote service name
    * @param argument remote service argument
    * @return         future with deserialized result

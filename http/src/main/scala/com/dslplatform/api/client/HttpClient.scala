@@ -7,7 +7,6 @@ import com.dslplatform.api.patterns.ServiceLocator
 import java.io.IOException
 import org.slf4j.Logger
 
-import com.ning.http.util.Base64
 import com.ning.http.client.RequestBuilder
 import com.ning.http.client.AsyncCompletionHandler
 import com.ning.http.client.Response
@@ -35,7 +34,7 @@ private[client] object HttpClientUtil {
 
   trait WithBody[TArg] extends HttpMethod {
     def arg: TArg
-    def body(implicit json: JsonSerialization): Array[Byte] = json.serialize(arg).getBytes()
+    def body(implicit json: JsonSerialization): Array[Byte] = json.serialize(arg).getBytes
   }
 
   case object GET extends NoBodyRequest
@@ -83,14 +82,14 @@ class HttpClient(
   private val ahc = new AsyncHttpClient(config)
   // ---------------------------
 
-  if (logger.isDebugEnabled()) {
+  if (logger.isDebugEnabled) {
     logger.debug("""Initialized with:
     username [{}]
     api: [{}]
     pid: [{}]""",
       properties.get("username"),
       properties.get("api-url"),
-      properties.get("project-id"));
+      properties.get("project-id"))
   }
 
   private def makeNingHeaders(additionalHeaders: Map[String, Set[String]]): java.util.Map[String, java.util.Collection[String]] = {
@@ -108,16 +107,16 @@ class HttpClient(
     new AsyncCompletionHandler[Unit] {
 
       def onCompleted(response: Response) {
-        if (logger.isTraceEnabled) logger.trace("Received response status[%s] body: %s" format (response.getStatusCode(), response.getResponseBody()))
-        if (expectedHeaders contains response.getStatusCode()) {
-          resp success response.getResponseBodyAsBytes()
+        if (logger.isTraceEnabled) logger.trace("Received response status[%s] body: %s" format (response.getStatusCode, response.getResponseBody))
+        if (expectedHeaders contains response.getStatusCode) {
+          resp success response.getResponseBodyAsBytes
         }
         else {
           resp failure new IOException(
             "Unexpected return code: "
-              + response.getStatusCode()
+              + response.getStatusCode
               + ", response: "
-              + response.getResponseBody())
+              + response.getResponseBody)
         }
       }
 
@@ -181,7 +180,7 @@ class HttpClient(
       case _               => None
     }
 
-    doRequest(method.name, optBody, url, expectedStatus, additionalHeaders) map (json.deserializeList[String])
+    doRequest(method.name, optBody, url, expectedStatus, additionalHeaders) map json.deserializeList[String]
   }
 
   private[client] def sendRequest[TResult: ClassTag](
@@ -189,14 +188,14 @@ class HttpClient(
     service: String,
     expectedStatus: Set[Int],
     additionalHeaders: Map[String, Set[String]] = Map.empty): Future[TResult] =
-    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserialize[TResult])
+    sendRawRequest(method, service, expectedStatus, additionalHeaders) map json.deserialize[TResult]
 
   private[client] def sendRequestForCollection[TResult: ClassTag](
     method: HttpMethod,
     service: String,
     expectedStatus: Set[Int],
     additionalHeaders: Map[String, Set[String]] = Map.empty): Future[IndexedSeq[TResult]] =
-    sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserializeList[TResult])
+    sendRawRequest(method, service, expectedStatus, additionalHeaders) map json.deserializeList[TResult]
 
   private[client] def sendRequestForCollection[TResult](
     returnClass: Class[_],

@@ -38,7 +38,7 @@ class BootstrapTest extends Specification {
   def resolveRepository = {
     val locator = com.dslplatform.api.client.Bootstrap.init("/test-project.props")
     try {
-      locator.resolveUnsafe[PersistableRepository[M.Agg]].isInstanceOf[ClientPersistableRepository[_]] must beTrue
+      locator.resolve[PersistableRepository[M.Agg]].isInstanceOf[ClientPersistableRepository[_]] must beTrue
     } finally {
       locator.resolve[HttpClient].shutdown()
     }

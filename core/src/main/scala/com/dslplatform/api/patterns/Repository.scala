@@ -7,7 +7,7 @@ import scala.concurrent.Future
  * Finding domain objects using their URI identity is the fastest way
  * retrieve an object from the remote server.
  *
- * @param [T] IIdentifiable domain object type
+ * @tparam T IIdentifiable domain object type
  */
 trait Repository[T <: Identifiable]
     extends SearchableRepository[T] {

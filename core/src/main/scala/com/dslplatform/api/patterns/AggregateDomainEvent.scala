@@ -18,7 +18,7 @@ package com.dslplatform.api.patterns
  *   event&lt;Task&gt; MarkDone;
  * }
  * </pre></blockquote>
- * @param <T> aggregate root type
+ * @tparam T aggregate root type
  */
 trait AggregateDomainEvent[T <: AggregateRoot]
     extends Identifiable

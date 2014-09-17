@@ -5,7 +5,7 @@ import org.joda.time.DateTime
 /**
  * Snapshot of some past state of an {@link AggregateRoot aggregate root}
  *
- * @param [TAggregateRoot] type of aggregate root
+ * @tparam TAggregateRoot type of aggregate root
  */
 case class Snapshot[TAggregateRoot <: AggregateRoot](
     URI: String,

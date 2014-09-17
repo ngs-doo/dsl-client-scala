@@ -25,7 +25,7 @@ object Utils {
     order: Map[String, Boolean],
     specification: Option[String] = None): String = {
 
-    if (!contains(dimensions, order) & !contains(facts, order)) throw new IllegalArgumentException("Order must be an element of dimmensions or facts!");
+    if (!contains(dimensions, order) & !contains(facts, order)) throw new IllegalArgumentException("Order must be an element of dimensions or facts!")
     Seq(
       makeParam("dimensions", dimensions),
       makeParam("facts", facts),

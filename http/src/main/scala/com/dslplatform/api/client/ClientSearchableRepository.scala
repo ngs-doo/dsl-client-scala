@@ -28,7 +28,7 @@ import scala.reflect.ClassTag
  * ServiceLocator locator = ...
  * val repository = locator.resolve[SearchableRepository[Todo.TaskInfo]]
  * </pre>
- * @param [T] domain object type
+ * @tparam TSearchable domain object type
  */
 class ClientSearchableRepository[TSearchable <: Searchable : ClassTag](locator: ServiceLocator)
     extends SearchableRepository[TSearchable] {

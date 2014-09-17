@@ -1,8 +1,7 @@
 package com.dslplatform.api.patterns
 
-import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
-import java.lang.reflect.{ParameterizedType, Type}
+import java.lang.reflect.Type
 
 /**
  * Service for resolving other services.
@@ -33,45 +32,10 @@ trait ServiceLocator {
 
   /**
    * Resolve a service registered in the locator.
-   * Warning: generic types are erased at compile time.
    *
-   * @param T class info
+   * @tparam T Type info
    * @return  registered implementation
    */
-  def resolve[T](implicit ct: ClassTag[T]) : T =
-    resolve(ct.runtimeClass)
-
-  /**
-   * Resolve a service registered in the locator.
-   * Warning: Scala TypeTag is not thread safe, calling code must be
-   * guarded with synchronized block
-   * As a workaround, use TypeReference method
-   *
-   * @param T Type info
-   * @return  registered implementation
-   */
-  def resolveUnsafe[T: TypeTag]: T
-
-  /**
-   * Resolve a service registered in the locator.
-   * Warning: generic types are erased at compile time.
-   *
-   * @param T class info
-   * @return  registered implementation
-   */
-  def resolve[T](typeReference: TypeReference[T]) : T = {
-    require(typeReference ne null, "Type reference can't be null")
-    resolve(typeReference.tpe)
-  }
+  def resolve[T: TypeTag]: T
 }
 
-abstract class TypeReference[T] {
-  val tpe: Type = {
-    getClass.getGenericSuperclass match {
-      case sc: ParameterizedType =>
-        sc.getActualTypeArguments()(0)
-      case cl =>
-        throw new RuntimeException("Missing type parameter. Found: " + cl)
-    }
-  }
-}

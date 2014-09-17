@@ -23,6 +23,6 @@ package com.dslplatform.api.patterns
  * }
  * </pre></blockquote>
  *
- * @param <T> domain object on which search will be performed.
+ * @tparam TSearchable domain object on which search will be performed.
  */
 trait Specification[TSearchable <: Searchable]
