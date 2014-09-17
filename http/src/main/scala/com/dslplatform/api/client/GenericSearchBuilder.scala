@@ -16,7 +16,7 @@ import scala.reflect.ClassTag
  * [p]
  * It is preferable to use server side specification.
  *
- * @param [T] type of domain: Any
+ * @tparam TSearchable type of domain: Any
  */
 
 class GenericSearchBuilder[TSearchable <: Searchable: ClassTag] {

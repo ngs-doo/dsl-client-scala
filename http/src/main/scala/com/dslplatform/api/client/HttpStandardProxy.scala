@@ -31,7 +31,7 @@ class HttpStandardProxy(
     val toUpdate = if (updates != null && updates.nonEmpty) json.serialize(updates.map(t => Pair(t._1, t._2)).toArray) else null
     val toDelete = if (deletes != null && deletes.nonEmpty) json.serialize(deletes.toArray) else null
 
-    if (toInsert == null && toUpdate == null && toDelete == null) Future successful (IndexedSeq.empty[String])
+    if (toInsert == null && toUpdate == null && toDelete == null) Future successful IndexedSeq.empty[String]
     else
       httpClient.sendStandardRequest(
         POST(PersistArg(httpClient.getDslName[TAggregate], toInsert, toUpdate, toDelete)),
@@ -49,7 +49,7 @@ class HttpStandardProxy(
     val cubeName = httpClient.getDslName[TCube]
     specification match {
       case Some(spec) =>
-        val specClazz = spec.getClass()
+        val specClazz = spec.getClass
         val parentName = httpClient.getDslName(specClazz.getEnclosingClass)
         val specName: String = if (parentName != cubeName) parentName + "%2B" else ""
         val specificationName = specName + specClazz.getSimpleName.replace("$", "")

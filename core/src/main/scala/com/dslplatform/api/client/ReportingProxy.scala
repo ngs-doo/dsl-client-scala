@@ -138,7 +138,7 @@ trait ReportingProxy {
    * {@link Specification[TSearchable] specification}.
    * Optionally convert document to PDF.
    *
-   * @param manifest      domain object type
+   * @tparam TSearchable  domain object type
    * @param file          template file
    * @param specification filter domain objects using specification
    * @param toPdf         convert populated document to PDF

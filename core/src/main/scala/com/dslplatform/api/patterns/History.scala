@@ -14,7 +14,7 @@ package com.dslplatform.api.patterns
  *   }
  * }
  * </pre></blockquote>
- * @param <T> aggregate root type
+ * @tparam T aggregate root type
  */
 case class History[T <: AggregateRoot](
     snapshots: IndexedSeq[Snapshot[T]]

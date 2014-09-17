@@ -17,7 +17,7 @@ trait Default {
         "-source", "1.6",
         "-target", "1.6"
       ),
-      crossScalaVersions := Seq("2.10.4", "2.11.2"),
+      crossScalaVersions := Seq("2.10.4"),
       scalaVersion := crossScalaVersions.value.last,
       scalacOptions := Seq(
         "-unchecked",
