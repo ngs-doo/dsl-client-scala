@@ -38,4 +38,3 @@ trait ServiceLocator {
    */
   def resolve[T: TypeTag]: T
 }
-
