@@ -116,6 +116,6 @@ class SearchBuilder[TSearchable <: Searchable](
    *
    * @return  future value of the resulting sequence
    */
-  def search(): Future[Seq[TSearchable]] =
+  def search(): Future[IndexedSeq[TSearchable]] =
     repository search (specification, limit, offset, order.toList.toMap)
 }

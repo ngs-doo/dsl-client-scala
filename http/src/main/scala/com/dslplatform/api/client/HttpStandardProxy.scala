@@ -15,6 +15,8 @@ class HttpStandardProxy(
 
   import HttpClientUtil._
 
+  implicit val ec = httpClient.ec
+
   private case class PersistArg(RootName: String, ToInsert: String, ToUpdate: String, ToDelete: String)
 
   private case class Pair[T <: AggregateRoot](Key: T, Value: T)
@@ -38,6 +40,14 @@ class HttpStandardProxy(
         ApplicationUri / "PersistAggregateRoot",
         Set(200, 201))
   }
+
+  def update[TAggregate <: AggregateRoot : ClassTag](
+      updates: TraversableOnce[TAggregate]): Future[Unit] =
+    persist(updates = updates.map(t => (t, t))).map(_ => ())
+
+  def delete[TAggregate <: AggregateRoot : ClassTag](
+      deletes: TraversableOnce[TAggregate]): Future[Unit] =
+    persist(deletes = deletes).map(_ => ())
 
   def olapCube[TCube <: Cube[TSearchable] : ClassTag, TSearchable <: Searchable : ClassTag, TResult: ClassTag](
       specification: Option[Specification[TSearchable]],

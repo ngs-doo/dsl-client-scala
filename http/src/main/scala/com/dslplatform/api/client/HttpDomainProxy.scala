@@ -16,7 +16,6 @@ class HttpDomainProxy(httpClient: HttpClient)
   import HttpClientUtil._
 
   private val DomainUri = "Domain.svc"
-  private implicit val eC = httpClient.ec
 
   def find[TIdentifiable <: Identifiable : ClassTag](
       uris: TraversableOnce[String]): Future[IndexedSeq[TIdentifiable]] = {

@@ -16,9 +16,15 @@ import scala.concurrent.Future
  * When permissions are applied, server can restrict which results will be returned to the client.
  * Service should be used when Future is a preferred way of interacting with the remote server.
  *
- * @tparam T domain object type.
+ * @tparam TSearchable domain object type.
  */
 trait SearchableRepository[TSearchable <: Searchable] {
+
+  /**
+   * Returns an IndexedSeq with all domain objects.
+   * @return              future with all domain objects
+   */
+  def search: Future[IndexedSeq[TSearchable]] = search()
 
   /**
    * Returns a Seq of domain objects satisfying {@link Specification[TSearchable] specification}
@@ -36,10 +42,10 @@ trait SearchableRepository[TSearchable <: Searchable] {
    * @return              future to domain objects which satisfy search predicate
    */
   def search(
-    specification: Option[Specification[TSearchable]] = None,
-    limit: Option[Int] = None,
-    offset: Option[Int] = None,
-    order: Map[String, Boolean] = Map.empty): Future[Seq[TSearchable]]
+      specification: Option[Specification[TSearchable]] = None,
+      limit: Option[Int] = None,
+      offset: Option[Int] = None,
+      order: Map[String, Boolean] = Map.empty): Future[IndexedSeq[TSearchable]]
 
   /**
    * Helper method for searching domain objects.
@@ -49,7 +55,7 @@ trait SearchableRepository[TSearchable <: Searchable] {
    * @return              future to domain objects which satisfy search predicate
    */
   def search(
-      specification: Specification[TSearchable]): Future[Seq[TSearchable]] =
+      specification: Specification[TSearchable]): Future[IndexedSeq[TSearchable]] =
     search(Option(specification))
 
   /**
@@ -63,23 +69,30 @@ trait SearchableRepository[TSearchable <: Searchable] {
    */
   def search(
       specification: Specification[TSearchable],
-      limit: Int): Future[Seq[TSearchable]] =
+      limit: Int): Future[IndexedSeq[TSearchable]] =
     search(Option(specification), Option(limit))
 
   /**
-   * Returns a number of elements satisfying provided specification.
+   * Returns the number of elements
+   *
+   * @return              future with number of domain objects
+   */
+  def count: Future[Long] = count()
+
+  /**
+   * Returns the number of elements satisfying provided specification.
    *
    * @param specification search predicate
-   * @return              future to number of domain objects which satisfy specification
+   * @return              future with number of domain objects which satisfy specification
    */
-  def count(specification: Option[Specification[TSearchable]]): Future[Long]
+  def count(specification: Option[Specification[TSearchable]] = None): Future[Long]
 
   /**
    * Helper method for counting domain objects.
-   * Returns a number of elements satisfying provided specification.
+   * Returns the number of elements satisfying provided specification.
    *
    * @param specification search predicate
-   * @return              future to number of domain objects which satisfy specification
+   * @return              future with number of domain objects which satisfy specification
    */
   def count(
       specification: Specification[TSearchable]): Future[Long] =

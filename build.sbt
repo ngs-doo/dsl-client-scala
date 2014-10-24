@@ -1,10 +1,10 @@
-version               := "0.9.1"
+version               := "0.9.2"
 
 name                  := "dsl-client-scala"
 
 organization          := "com.dslplatform"
 
-publishTo             := Some(if (version.value endsWith "SNAPSHOT") Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging)
+publishTo             := Some(if (version.value endsWith "-SNAPSHOT") Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging)
 
 licenses              += ("BSD-style", url("http://opensource.org/licenses/BSD-3-Clause"))
 

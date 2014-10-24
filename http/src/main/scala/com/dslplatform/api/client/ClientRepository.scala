@@ -34,7 +34,9 @@ class ClientRepository[TIdentifiable <: Identifiable : ClassTag](
 
   protected val crudProxy: CrudProxy = locator.resolve[CrudProxy]
 
-  def find(uris: TraversableOnce[String]): Future[IndexedSeq[TIdentifiable]] = domainProxy.find(uris)
+  def find(uris: TraversableOnce[String]): Future[IndexedSeq[TIdentifiable]] =
+    domainProxy.find(uris)
 
-  def find(uri: String): Future[TIdentifiable] = crudProxy.read(uri)
+  def find(uri: String): Future[TIdentifiable] =
+    crudProxy.read(uri)
 }

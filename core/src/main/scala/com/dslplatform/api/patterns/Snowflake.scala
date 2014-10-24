@@ -16,16 +16,16 @@ package com.dslplatform.api.patterns
  * <blockquote><pre>
  * module Todo {
  *   aggregate Task {
- *     timestamp startedAt;
- *     timestamp? finishedAt;
- *     int? priority;
+ *     DateTime startedAt;
+ *     DateTime? finishedAt;
+ *     Int? priority;
  *     User *user;
  *   }
  *   aggregate User {
- *     string name;
- *     string email;
+ *     String name;
+ *     String email;
  *   }
- *   snowflake<Task> TaskList {
+ *   snowflake&lt;Task&gt; TaskList {
  *     startedAt;
  *     finishedAt;
  *     priority;

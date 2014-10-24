@@ -39,9 +39,9 @@ class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: Service
   private val standardProxy: StandardProxy = locator.resolve[StandardProxy]
 
   def persist(
-    inserts: TraversableOnce[T],
-    updates: TraversableOnce[(T, T)],
-    deletes: TraversableOnce[T]): Future[IndexedSeq[String]] =
+      inserts: TraversableOnce[T],
+      updates: TraversableOnce[(T, T)],
+      deletes: TraversableOnce[T]): Future[IndexedSeq[String]] =
     standardProxy.persist(inserts, updates, deletes)
 
   def insert(inserts: TraversableOnce[T]): Future[IndexedSeq[String]] =
@@ -50,13 +50,15 @@ class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: Service
   def insert(insert: T): Future[String] =
     crudProxy.create(insert).map(_.URI)
 
-  def update(updates: TraversableOnce[T]): Future[_] =
-    standardProxy.persist(Nil, updates.map { t => (t, t) }, Nil)
+  def update(updates: TraversableOnce[T]): Future[Unit] =
+    standardProxy.persist(Nil, updates.map { t => (t, t) }, Nil).map(_ => ())
 
-  def update(update: T): Future[T] = crudProxy.update(update)
+  def update(update: T): Future[Unit] =
+    crudProxy.update(update).map(_ => ())
 
-  def delete(deletes: TraversableOnce[T]): Future[IndexedSeq[String]] =
-    standardProxy.persist(Nil, Map.empty, deletes)
+  def delete(deletes: TraversableOnce[T]): Future[Unit] =
+    standardProxy.persist(Nil, Map.empty, deletes).map(_ => ())
 
-  def delete(delete: T): Future[_] = crudProxy.delete(delete.URI)
+  def delete(delete: T): Future[Unit] =
+    crudProxy.delete(delete.URI).map(_ => ())
 }

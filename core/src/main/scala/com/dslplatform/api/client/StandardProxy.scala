@@ -43,23 +43,35 @@ trait StandardProxy {
    * Helper method for persist.
    * Apply local changes to the remote server.
    *
+   * Effectivly performs:
+   *   <code>persist(updates = updates.map(t => (t, t))).map(_ => ())</code>
+   *
+   * Since mapping over futures requires an ExecutionContext,
+   * this helper method will be implemented in the proxy where one is available.
+   *
    * @param updates aggregate roots to update
    * @return        empty future which completes when done.
    */
   def update[TAggregate <: AggregateRoot : ClassTag](
-      updates: TraversableOnce[TAggregate]): Future[_] =
-    persist(updates = updates.map(t => (t, t)))
+      updates: TraversableOnce[TAggregate]): Future[Unit]
+    // persist(updates = updates.map(t => (t, t))).map(_ => ())
 
   /**
    * Helper method for persist.
    * Apply local changes to the remote server.
    *
+   * Effectivly performs:
+   *   <code>persist(deletes = deletes).map(_ => ())</code>
+   *
+   * Since mapping over futures requires an ExecutionContext,
+   * this helper method will be implemented in the proxy where one is available.
+   *
    * @param deletes aggregate roots to update
    * @return        empty future which completes when done.
    */
   def delete[TAggregate <: AggregateRoot : ClassTag](
-      deletes: TraversableOnce[TAggregate]): Future[_] =
-    persist(deletes = deletes)
+      deletes: TraversableOnce[TAggregate]): Future[Unit]
+    // persist(deletes = deletes).map(_ => ())
 
   /**
    * Perform data analysis on specified data source.

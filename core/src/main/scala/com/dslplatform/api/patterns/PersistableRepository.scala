@@ -52,7 +52,7 @@ trait PersistableRepository[T <: AggregateRoot]
    * @param updates sequence of aggregate roots to update
    * @return       future for error checking
    */
-  def update(updates: TraversableOnce[T]): Future[_]
+  def update(updates: TraversableOnce[T]): Future[Unit]
 
   /**
    * Changing state of an aggregate root.
@@ -60,7 +60,7 @@ trait PersistableRepository[T <: AggregateRoot]
    * @param update aggregate root to update
    * @return       future for error checking
    */
-  def update(update: T): Future[_]
+  def update(update: T): Future[Unit]
 
   /**
    * Bulk delete.
@@ -69,7 +69,7 @@ trait PersistableRepository[T <: AggregateRoot]
    * @param deletes aggregate roots to delete
    * @return       future for error checking
    */
-  def delete(deletes: TraversableOnce[T]): Future[_]
+  def delete(deletes: TraversableOnce[T]): Future[Unit]
 
   /**
    * Deleting an {@link AggregateRoot aggregate}.
@@ -77,5 +77,5 @@ trait PersistableRepository[T <: AggregateRoot]
    * @param delete aggregate root to delete
    * @return       future for error checking
    */
-  def delete(delete: T): Future[_]
+  def delete(delete: T): Future[Unit]
 }
