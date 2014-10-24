@@ -1,7 +1,7 @@
 package com.dslplatform.api.client
 
 import com.dslplatform.api.patterns.ServiceLocator
-import scala.collection.mutable.{Map => MMap}
+import scala.collection.mutable.{ Map => MMap }
 import org.slf4j.Logger
 import java.lang.reflect.Constructor
 import java.lang.reflect.Type
@@ -122,14 +122,14 @@ class MapServiceLocator(initialComponents: Map[Object, AnyRef], cacheResult: Boo
           val clazz = ti.getRawType
           if (clazz.isInterface || Modifier.isAbstract(clazz.getModifiers)) {
             components.get(clazz) flatMap {
-                case mt: Class[_] =>
-                  val args = ti.getActualTypeArguments
-                  val genType = ParameterizedTypeImpl.make(mt, args, null)
-                  val genClazz = genType.getRawType
-                  tryConstruct(typ, genClazz.getConstructors)
-                case impl =>
-                  Some(impl)
-              }
+              case mt: Class[_] =>
+                val args = ti.getActualTypeArguments
+                val genType = ParameterizedTypeImpl.make(mt, args, null)
+                val genClazz = genType.getRawType
+                tryConstruct(typ, genClazz.getConstructors)
+              case impl =>
+                Some(impl)
+            }
           } else {
             tryConstruct(ti, clazz.getConstructors)
           }

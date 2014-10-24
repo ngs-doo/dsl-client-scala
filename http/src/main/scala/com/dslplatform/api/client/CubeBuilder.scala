@@ -10,9 +10,8 @@ import com.dslplatform.api.patterns.Searchable
 import com.dslplatform.api.patterns.ServiceLocator
 import com.dslplatform.api.patterns.Specification
 
-/**
- * Utility class for building olap cube analysis.
- */
+/** Utility class for building olap cube analysis.
+  */
 class CubeBuilder[TCube <: Cube[TSource]: ClassTag, TSource <: Searchable: ClassTag](
     cube: Cube[TSource]) {
 
@@ -23,29 +22,26 @@ class CubeBuilder[TCube <: Cube[TSource]: ClassTag, TSource <: Searchable: Class
   private var offset: Option[Int] = None
   private val order: Buffer[(String, Boolean)] = Buffer.empty
 
-  /**
-   * Restrict analysis on data subset
-   *
-   * @param specification use provided specification to filter data used for analysis
-   * @return              self
-   */
+  /** Restrict analysis on data subset
+    *
+    * @param specification use provided specification to filter data used for analysis
+    * @return              self
+    */
   def where(specification: Specification[TSource]) = filter(specification)
-  /**
-   * Restrict analysis on data subset
-   *
-   * @param specification use provided specification to filter data used for analysis
-   * @return              self
-   */
+  /** Restrict analysis on data subset
+    *
+    * @param specification use provided specification to filter data used for analysis
+    * @return              self
+    */
   def filter(specification: Specification[TSource]) = {
     this.specification = Option(specification)
     this
   }
-  /**
-   * Add dimension or fact to the result
-   *
-   * @param dimensionOrFact dimension or fact which will be shown in result
-   * @return                self
-   */
+  /** Add dimension or fact to the result
+    *
+    * @param dimensionOrFact dimension or fact which will be shown in result
+    * @return                self
+    */
   def use(dimensionOrFact: String) = {
     require(dimensionOrFact ne null, "null value provided for dimension or fact")
     require(dimensionOrFact.length != 0, "empty value provided for dimension or fact")
@@ -67,67 +63,60 @@ class CubeBuilder[TCube <: Cube[TSource]: ClassTag, TSource <: Searchable: Class
     this
   }
 
-  /**
-   * Order result ascending using a provided property or path
-   *
-   * @param property name of domain objects property or path
-   * @return         self
-   */
+  /** Order result ascending using a provided property or path
+    *
+    * @param property name of domain objects property or path
+    * @return         self
+    */
   def ascending(property: String) = orderBy(property, true)
 
-  /**
-   * Order result descending using a provided property or path
-   *
-   * @param property name of domain objects property or path
-   * @return         self
-   */
+  /** Order result descending using a provided property or path
+    *
+    * @param property name of domain objects property or path
+    * @return         self
+    */
   def descending(property: String) = orderBy(property, false)
 
-  /**
-   * Limit total number of results to provided value
-   *
-   * @param limit maximum number of results
-   * @return      self
-   */
+  /** Limit total number of results to provided value
+    *
+    * @param limit maximum number of results
+    * @return      self
+    */
   def limit(limit: Int) = take(limit)
-  /**
-   * Limit total number of results to provided value
-   *
-   * @param limit maximum number of results
-   * @return      self
-   */
+  /** Limit total number of results to provided value
+    *
+    * @param limit maximum number of results
+    * @return      self
+    */
   def take(limit: Int): this.type = {
     this.limit = Some(limit)
     this
   }
-  /**
-   * Skip specified number of initial results
-   *
-   * @param offset number of results to skip
-   * @return       self
-   */
+  /** Skip specified number of initial results
+    *
+    * @param offset number of results to skip
+    * @return       self
+    */
   def offset(offset: Int) = skip(offset)
-  /**
-   * Skip specified number of initial results
-   *
-   * @param offset number of results to skip
-   * @return       self
-   */
+  /** Skip specified number of initial results
+    *
+    * @param offset number of results to skip
+    * @return       self
+    */
   def skip(offset: Int): this.type = {
     this.offset = Some(offset)
     this
   }
 
-  /**
-   * Runs the analysis using provided configuration.
-   * Result will be deserialized to TResult
-   *
-   * @return  sequence of specified data types
-   */
+  /** Runs the analysis using provided configuration.
+    * Result will be deserialized to TResult
+    *
+    * @return  sequence of specified data types
+    */
   def analyze[TResult: ClassTag](
-    implicit locator: ServiceLocator,
-    ec: ExecutionContext,
-    duration: Duration): Seq[TResult] = {
+      implicit locator: ServiceLocator,
+      ec: ExecutionContext,
+      duration: Duration): Seq[TResult] = {
 
     require(locator ne null, "locator not provided")
     require(ec ne null, "execution context not provided")
@@ -145,16 +134,16 @@ class CubeBuilder[TCube <: Cube[TSource]: ClassTag, TSource <: Searchable: Class
       duration)
   }
 
-  /**
-   * Runs the analysis using provided configuration.
-   * Result will be deserialized into sequence of Map[String, Any]
-   *
-   * @return  analysis result
-   */
+  /** Runs the analysis using provided configuration.
+    * Result will be deserialized into sequence of Map[String, Any]
+    *
+    * @return  analysis result
+    */
   def analyzeMap(
-    implicit locator: ServiceLocator,
-    ec: ExecutionContext,
-    duration: Duration): Seq[Map[String, Any]] = {
+      implicit locator: ServiceLocator,
+
+      ec: ExecutionContext,
+      duration: Duration): Seq[Map[String, Any]] = {
 
     require(locator ne null, "locator not provided")
     require(ec ne null, "execution context not provided")

@@ -17,7 +17,7 @@ class HttpDomainProxy(httpClient: HttpClient)
 
   private val DomainUri = "Domain.svc"
 
-  def find[TIdentifiable <: Identifiable : ClassTag](
+  def find[TIdentifiable <: Identifiable: ClassTag](
       uris: TraversableOnce[String]): Future[IndexedSeq[TIdentifiable]] = {
     if (uris.isEmpty) Future successful IndexedSeq.empty[TIdentifiable]
     else
@@ -27,7 +27,7 @@ class HttpDomainProxy(httpClient: HttpClient)
         Set(200))
   }
 
-  def search[TSearchable <: Searchable : ClassTag](
+  def search[TSearchable <: Searchable: ClassTag](
       specification: Option[Specification[TSearchable]],
       limit: Option[Int],
       offset: Option[Int],
@@ -56,7 +56,7 @@ class HttpDomainProxy(httpClient: HttpClient)
     }
   }
 
-  def count[TSearchable <: Searchable : ClassTag](specification: Option[Specification[TSearchable]]): Future[Long] = {
+  def count[TSearchable <: Searchable: ClassTag](specification: Option[Specification[TSearchable]]): Future[Long] = {
     val parentName: String = httpClient.getDslName
     specification match {
       case Some(spec) =>
@@ -79,7 +79,7 @@ class HttpDomainProxy(httpClient: HttpClient)
       POST(domainEvent), DomainUri / "submit" / domainName, Set(201))
   }
 
-  def submit[TAggregate <: AggregateRoot : ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
+  def submit[TAggregate <: AggregateRoot: ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
       domainEvent: TEvent,
       uri: String): Future[TAggregate] = {
     val eventClazz: Class[_] = domainEvent.getClass

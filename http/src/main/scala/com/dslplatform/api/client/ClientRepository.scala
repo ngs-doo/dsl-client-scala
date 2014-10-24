@@ -7,27 +7,26 @@ import com.dslplatform.api.patterns.ServiceLocator
 import scala.concurrent.Future
 import scala.reflect.ClassTag
 
-/**
- * Common base implementation for {@link Repository repository}.
- * It redirects calls to proxy services.
- * It shouldn't be used or resolved.
- * Instead domain model repositories should be resolved.
- * <p>
- * DSL example:
- * <blockquote><pre>
- * module Todo {
- *   aggregate Task;
- *   snowflake&lt;Task&gt; TaskList;
- * }
- * </pre></blockquote>
- * Java usage:
- * <pre>
- * IServiceLocator locator;
- * Repository&lt;Todo.TaskList&gt; repository = locator.resolve(Todo.TaskListRepository.class);
- * </pre>
- * @tparam TIdentifiable domain object type
- */
-class ClientRepository[TIdentifiable <: Identifiable : ClassTag](
+/** Common base implementation for {@link Repository repository}.
+  * It redirects calls to proxy services.
+  * It shouldn't be used or resolved.
+  * Instead domain model repositories should be resolved.
+  *
+  * DSL example:
+  * {{{
+  * module Todo {
+  *   aggregate Task;
+  *   snowflake&lt;Task&gt; TaskList;
+  * }
+  * }}}
+  * Usage:
+  * {{{
+  *   val locator: ServiceLocator = ...
+  *   val repostiory = locator.resolve[Repository[Todo.TaskList]]
+  * }}}
+  * @tparam TIdentifiable domain object type
+  */
+class ClientRepository[TIdentifiable <: Identifiable: ClassTag](
     locator: ServiceLocator)
     extends ClientSearchableRepository[TIdentifiable](locator)
     with Repository[TIdentifiable] {

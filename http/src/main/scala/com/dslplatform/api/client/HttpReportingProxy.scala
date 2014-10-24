@@ -27,8 +27,8 @@ class HttpReportingProxy(httpClient: HttpClient)
   }
 
   def createReport[TResult](
-    report: Report[TResult],
-    templater: String): Future[Array[Byte]] =
+      report: Report[TResult],
+      templater: String): Future[Array[Byte]] =
     httpClient.sendRawRequest(
       PUT(report),
       ReportingUri / "report" / httpClient.getDslName(report.getClass) / templater,
@@ -36,13 +36,13 @@ class HttpReportingProxy(httpClient: HttpClient)
       Map("Accept" -> Set("application/octet-stream")))
 
   def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable: ClassTag](
-    templater: String,
-    specification: Option[Specification[TSearchable]],
-    dimensions: TraversableOnce[String],
-    facts: TraversableOnce[String],
-    limit: Option[Int],
-    offset: Option[Int],
-    order: Map[String, Boolean]): Future[Array[Byte]] = {
+      templater: String,
+      specification: Option[Specification[TSearchable]],
+      dimensions: TraversableOnce[String],
+      facts: TraversableOnce[String],
+      limit: Option[Int],
+      offset: Option[Int],
+      order: Map[String, Boolean]): Future[Array[Byte]] = {
     val cubeName = httpClient.getDslName[TCube]
     val parentName: String = httpClient.getDslName[TSearchable]
     val args: String = Utils.buildOlapArguments(dimensions, facts, limit, offset, order)
@@ -61,7 +61,7 @@ class HttpReportingProxy(httpClient: HttpClient)
   }
 
   def getHistory[TAggregate <: AggregateRoot: ClassTag](
-    uris: TraversableOnce[String]): Future[IndexedSeq[History[TAggregate]]] = {
+      uris: TraversableOnce[String]): Future[IndexedSeq[History[TAggregate]]] = {
     httpClient.sendRequest[IndexedSeq[History[TAggregate]]](
       PUT(uris.toArray),
       ReportingUri / "history" / httpClient.getDslName,
@@ -69,9 +69,9 @@ class HttpReportingProxy(httpClient: HttpClient)
   }
 
   def findTemplater[TIdentifiable <: Identifiable: ClassTag](
-    file: String,
-    uri: String,
-    toPdf: Boolean): Future[Array[Byte]] = {
+      file: String,
+      uri: String,
+      toPdf: Boolean): Future[Array[Byte]] = {
     if (file == null) throw new IllegalArgumentException("file not specified")
     if (uri == null) throw new IllegalArgumentException("uri not specified")
     val domainName = httpClient.getDslName
@@ -86,9 +86,9 @@ class HttpReportingProxy(httpClient: HttpClient)
     Map("Accept" -> Set(if (toPdf) "application/pdf" else "application/octet-stream"))
 
   def searchTemplater[TSearchable <: Searchable: ClassTag](
-    file: String,
-    specification: Option[Specification[TSearchable]],
-    toPdf: Boolean): Future[Array[Byte]] = {
+      file: String,
+      specification: Option[Specification[TSearchable]],
+      toPdf: Boolean): Future[Array[Byte]] = {
     if (file == null || file.isEmpty) throw new IllegalArgumentException("file not specified")
     val domainName: String = httpClient.getDslName
     specification match {

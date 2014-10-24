@@ -1,8 +1,8 @@
-import java.util.concurrent.{Executors, ExecutorService}
+import java.util.concurrent.{ Executors, ExecutorService }
 
-import com.dslplatform.api.client.{ClientPersistableRepository, HttpClient}
+import com.dslplatform.api.client.{ ClientPersistableRepository, HttpClient }
 import com.dslplatform.api.patterns.PersistableRepository
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 import org.specs2._
 
 class BootstrapTest extends Specification {
@@ -29,7 +29,7 @@ class BootstrapTest extends Specification {
     val initialComponents: Map[Object, AnyRef] = Map(classOf[Logger] -> logger)
     val locator = com.dslplatform.api.client.Bootstrap.init("/test-project.props", initialComponents)
     try {
-      locator.resolve[Logger] mustEqual(logger)
+      locator.resolve[Logger] mustEqual (logger)
     } finally {
       locator.resolve[HttpClient].shutdown()
     }

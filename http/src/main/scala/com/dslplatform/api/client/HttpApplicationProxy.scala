@@ -11,14 +11,14 @@ class HttpApplicationProxy(httpClient: HttpClient)
   import HttpClientUtil._
 
   def get[TResult: ClassTag](
-    command: String, expectedStatus: Set[Int]): Future[TResult] =
+      command: String, expectedStatus: Set[Int]): Future[TResult] =
     httpClient.sendRequest[TResult](
       GET, ApplicationUri / command, expectedStatus)
 
   def post[TArgument, TResult: ClassTag](
-    command: String,
-    argument: TArgument,
-    expectedStatus: Set[Int]): Future[TResult] =
+      command: String,
+      argument: TArgument,
+      expectedStatus: Set[Int]): Future[TResult] =
     httpClient.sendRequest[TResult](
       POST[TArgument](argument), ApplicationUri / command,
       expectedStatus)

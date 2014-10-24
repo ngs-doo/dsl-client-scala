@@ -8,28 +8,25 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.reflect.ClassTag
 
-/**
- * Common base implementation for {@link PersistableRepository persistable repository}.
- * It redirects calls to proxy services.
- * It shouldn't be used or resolved.
- * Instead domain model repositories should be resolved.
- *
- * <p>
- * DSL example:
- * <blockquote><pre>
- *
- * module Todo {
- *   aggregate Task;
- * }
- * </blockquote></pre>
- * Java usage:
- * <pre>
- * IServiceLocator locator;
- * PersistableRepository&lt;Todo.Task&gt; repository = locator.resolve(Todo.TaskRepository.class);
- * </pre>
- *
- * @param [T] aggregate root type
- */
+/** Common base implementation for {@link PersistableRepository persistable repository}.
+  * It redirects calls to proxy services.
+  * It shouldn't be used or resolved.
+  * Instead domain model repositories should be resolved.
+  *
+  * DSL example:
+  * {{{
+  * module Todo {
+  *   aggregate Task;
+  * }
+  * }}}
+  * Scala usage:
+  * {{{
+  *   val locator: ServiceLocator = ...
+  *   val repository = locator.resolve[PersistableRepository[Todo.Task]]
+  * }}}
+  *
+  * @param [T] aggregate root type
+  */
 class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: ServiceLocator)
     extends ClientRepository[T](locator)
     with PersistableRepository[T] {

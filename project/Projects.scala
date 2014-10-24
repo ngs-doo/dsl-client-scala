@@ -3,7 +3,7 @@ import sbt.Keys._
 
 trait Default {
   val defaultSettings =
-    Defaults.defaultSettings ++
+    Defaults.coreDefaultSettings ++
     net.virtualvoid.sbt.graph.Plugin.graphSettings ++ Seq(
       scalaVersion := "2.11.2",
       scalacOptions := Seq(
@@ -36,7 +36,8 @@ trait Default {
         "-Ywarn-numeric-widen",
         "-Ywarn-unused"
       ),
-      scalacOptions in Test ++= Seq("-Yrangepos")
+      scalacOptions in Test ++= Seq("-Yrangepos"),
+//      scalacOptions in (Compile, doc) := Seq("-diagrams", "-diagrams-debug")
     )
 }
 
@@ -45,8 +46,8 @@ trait Dependencies {
   val scalaXml = "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
 
   // JodaTime
-  val jodaTime    = "joda-time" % "joda-time" % "2.5"
-  val jodaConvert = "org.joda" % "joda-convert" % "1.7" % "compile"
+  val jodaTime    = "joda-time" % "joda-time"    % "2.5"
+  val jodaConvert = "org.joda"  % "joda-convert" % "1.7" % "compile"
 
   // Json serialization
   val jackson = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.4.3"
@@ -99,20 +100,20 @@ object Projects
     )
   ) dependsOn (core)
 
-  def aggregatedCompile =  ScopeFilter(inProjects(core, http), inConfigurations(Compile))
+  def aggregatedCompile = ScopeFilter(inProjects(core, http), inConfigurations(Compile))
 
   def aggregatedTest = ScopeFilter(inProjects(core, http), inConfigurations(Test))
 
   def rootSettings = Seq(
-    sources in Compile                        := sources.all(aggregatedCompile).value.flatten,
-    unmanagedSources in Compile               := unmanagedSources.all(aggregatedCompile).value.flatten,
-    unmanagedSourceDirectories in Compile     := unmanagedSourceDirectories.all(aggregatedCompile).value.flatten,
-    unmanagedResourceDirectories in Compile   := unmanagedResourceDirectories.all(aggregatedCompile).value.flatten,
-    sources in Test                           := sources.all(aggregatedTest).value.flatten,
-    unmanagedSources in Test                  := unmanagedSources.all(aggregatedTest).value.flatten,
-    unmanagedSourceDirectories in Test        := unmanagedSourceDirectories.all(aggregatedTest).value.flatten,
-    unmanagedResourceDirectories in Test      := unmanagedResourceDirectories.all(aggregatedTest).value.flatten,
-    libraryDependencies                       := libraryDependencies.all(aggregatedCompile).value.flatten
+    sources in Compile                      := sources.all(aggregatedCompile).value.flatten,
+    unmanagedSources in Compile             := unmanagedSources.all(aggregatedCompile).value.flatten,
+    unmanagedSourceDirectories in Compile   := unmanagedSourceDirectories.all(aggregatedCompile).value.flatten,
+    unmanagedResourceDirectories in Compile := unmanagedResourceDirectories.all(aggregatedCompile).value.flatten,
+    sources in Test                         := sources.all(aggregatedTest).value.flatten,
+    unmanagedSources in Test                := unmanagedSources.all(aggregatedTest).value.flatten,
+    unmanagedSourceDirectories in Test      := unmanagedSourceDirectories.all(aggregatedTest).value.flatten,
+    unmanagedResourceDirectories in Test    := unmanagedResourceDirectories.all(aggregatedTest).value.flatten,
+    libraryDependencies                     := libraryDependencies.all(aggregatedCompile).value.flatten
   )
 
   lazy val root = (project in file(".")) settings ((defaultSettings ++ rootSettings): _*)

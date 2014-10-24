@@ -11,7 +11,7 @@ import scala.reflect.ClassTag
 class HttpStandardProxy(
     httpClient: HttpClient,
     json: JsonSerialization
-    ) extends StandardProxy {
+  ) extends StandardProxy {
 
   import HttpClientUtil._
 
@@ -24,10 +24,10 @@ class HttpStandardProxy(
   private val StandardUri    = "Commands.svc"
   private val ApplicationUri = "RestApplication.svc"
 
-  def persist[TAggregate <: AggregateRoot : ClassTag](
+  def persist[TAggregate <: AggregateRoot: ClassTag](
       inserts: TraversableOnce[TAggregate],
       updates: TraversableOnce[(TAggregate, TAggregate)],
-      deletes: TraversableOnce[TAggregate]): scala.concurrent.Future[IndexedSeq[String]] = {
+      deletes: TraversableOnce[TAggregate]): Future[IndexedSeq[String]] = {
 
     val toInsert = if (inserts != null && inserts.nonEmpty) json.serialize(inserts.toArray) else null
     val toUpdate = if (updates != null && updates.nonEmpty) json.serialize(updates.map(t => Pair(t._1, t._2)).toArray) else null
@@ -41,15 +41,15 @@ class HttpStandardProxy(
         Set(200, 201))
   }
 
-  def update[TAggregate <: AggregateRoot : ClassTag](
+  def update[TAggregate <: AggregateRoot: ClassTag](
       updates: TraversableOnce[TAggregate]): Future[Unit] =
     persist(updates = updates.map(t => (t, t))).map(_ => ())
 
-  def delete[TAggregate <: AggregateRoot : ClassTag](
+  def delete[TAggregate <: AggregateRoot: ClassTag](
       deletes: TraversableOnce[TAggregate]): Future[Unit] =
     persist(deletes = deletes).map(_ => ())
 
-  def olapCube[TCube <: Cube[TSearchable] : ClassTag, TSearchable <: Searchable : ClassTag, TResult: ClassTag](
+  def olapCube[TCube <: Cube[TSearchable]: ClassTag, TSearchable <: Searchable: ClassTag, TResult: ClassTag](
       specification: Option[Specification[TSearchable]],
       dimensions: TraversableOnce[String],
       facts: TraversableOnce[String],
@@ -63,9 +63,8 @@ class HttpStandardProxy(
         val parentName = httpClient.getDslName(specClazz.getEnclosingClass)
         val specName: String = if (parentName != cubeName) parentName + "%2B" else ""
         val specificationName = specName + specClazz.getSimpleName.replace("$", "")
-        val url: String =
-          StandardUri / "olap" / cubeName +
-              Utils.buildOlapArguments(dimensions, facts, limit, offset, order, Some(specificationName))
+        val url = StandardUri / "olap" / cubeName +
+            Utils.buildOlapArguments(dimensions, facts, limit, offset, order, Some(specificationName))
         httpClient.sendRequestForCollection[TResult](PUT(specification), url, Set(200, 201))
       case _ =>
         val url: String = StandardUri / "olap" / cubeName + Utils.buildOlapArguments(dimensions, facts, limit, offset, order)

@@ -47,48 +47,48 @@
 //    }
 //
 //    /**
-//     * Create new instance of S3.
-//     * Upload must be called before persistence to the database.
-//     */
+//      * Create new instance of S3.
+//      * Upload must be called before persistence to the database.
+//      */
 //    def S3() {
 //        instanceRepository = null;
 //    }
 //    /**
-//     * Create new instance of S3. Provide custom {@link S3Repository S3 repository}.
-//     * Upload must be called before persistence to the database.
-//     *
-//     * @param repository custom S3 repository
-//     */
+//      * Create new instance of S3. Provide custom {@link S3Repository S3 repository}.
+//      * Upload must be called before persistence to the database.
+//      *
+//      * @param repository custom S3 repository
+//      */
 //    def S3(S3Repository repository) {
 //        instanceRepository = repository;
 //    }
 //    /**
-//     * Create new instance of S3 from provided stream.
-//     * Upload will be called immediately. Stream will be read to check for length.
-//     *
-//     * @param stream Input stream which will be sent to the remote server
-//     */
+//      * Create new instance of S3 from provided stream.
+//      * Upload will be called immediately. Stream will be read to check for length.
+//      *
+//      * @param stream Input stream which will be sent to the remote server
+//      */
 //    def S3(stream InputStream) throws IOException {
 //        instanceRepository = null;
 //        upload(IOUtils.toByteArray(stream));
 //    }
 //    /**
-//     * Create new instance of S3 from provided stream.
-//     * Upload will be called immediately.
-//     *
-//     * @param stream Input stream which will be sent to the remote server
-//     * @param length size of the stream
-//     */
+//      * Create new instance of S3 from provided stream.
+//      * Upload will be called immediately.
+//      *
+//      * @param stream Input stream which will be sent to the remote server
+//      * @param length size of the stream
+//      */
 //    def S3(stream InputStream, long length) throws IOException {
 //        instanceRepository = null;
 //        upload(stream, length);
 //    }
 //    /**
-//     * Create new instance of S3 from provided byte array.
-//     * Upload will be called immediately.
-//     *
-//     * @param bytes Byte array which will be sent to the remote server
-//     */
+//      * Create new instance of S3 from provided byte array.
+//      * Upload will be called immediately.
+//      *
+//      * @param bytes Byte array which will be sent to the remote server
+//      */
 //    def S3(final byte[] bytes) throws IOException {
 //        instanceRepository = null;
 //        upload(bytes);
@@ -106,21 +106,21 @@
 //    private String bucket;
 //
 //    /**
-//     * Bucket under which data will be saved.
-//     * By default bucket is defined in the project.ini file under s3-bucket key
-//     *
-//     * @return bucket to remote server
-//     */
+//      * Bucket under which data will be saved.
+//      * By default bucket is defined in the dsl-project.props file under s3-bucket key
+//      *
+//      * @return bucket to remote server
+//      */
 //    @JsonProperty("Bucket")
 //    def String getBucket() { return bucket; }
 //
 //    private String key;
 //
 //    /**
-//     * Key for bucket in which the data was saved.
-//     *
-//     * @return key in bucket on the remote server
-//     */
+//      * Key for bucket in which the data was saved.
+//      *
+//      * @return key in bucket on the remote server
+//      */
 //    @JsonProperty("Key")
 //    def String getKey() { return key; }
 //
@@ -129,28 +129,28 @@
 //    private long length;
 //
 //    /**
-//     * Byte length of data.
-//     *
-//     * @return number of bytes
-//     */
+//      * Byte length of data.
+//      *
+//      * @return number of bytes
+//      */
 //    @JsonProperty("Length")
 //    def long getLength() { return length; }
 //
 //    private String name;
 //
 //    /**
-//     * For convenience, remote data can be assigned a name.
-//     *
-//     * @return name associated with the remote data
-//     */
+//      * For convenience, remote data can be assigned a name.
+//      *
+//      * @return name associated with the remote data
+//      */
 //    def String getName() { return name; }
 //
 //    /**
-//     * For convenience, remote data can be assigned a name.
-//     *
-//     * @param value name which will be associated with data
-//     * @return      itself
-//     */
+//      * For convenience, remote data can be assigned a name.
+//      *
+//      * @param value name which will be associated with data
+//      * @return      itself
+//      */
 //    def S3 setName(value String) {
 //        name = value;
 //        return this;
@@ -159,19 +159,19 @@
 //    private String mimeType;
 //
 //    /**
-//     * For convenience, remote data can be assigned a mime type.
-//     *
-//     * @return mime type associated with the remote data
-//     */
+//      * For convenience, remote data can be assigned a mime type.
+//      *
+//      * @return mime type associated with the remote data
+//      */
 //    @JsonProperty("MimeType")
 //    def String getMimeType() { return mimeType; }
 //
 //    /**
-//     * For convenience, remote data can be assigned a mime type.
-//     *
-//     * @param value mime type which will be associated with data
-//     * @return      itself
-//     */
+//      * For convenience, remote data can be assigned a mime type.
+//      *
+//      * @param value mime type which will be associated with data
+//      * @return      itself
+//      */
 //    def S3 setMimeType(value String) {
 //        mimeType = value;
 //        return this;
@@ -180,23 +180,23 @@
 //    private final HashMap<String, String> metadata = new HashMap<String, String>();
 //
 //    /**
-//     * For convenience, various metadata can be associated with the remote data.
-//     * Metadata is a map of string keys and values
-//     *
-//     * @return associated metadata
-//     */
+//      * For convenience, various metadata can be associated with the remote data.
+//      * Metadata is a map of string keys and values
+//      *
+//      * @return associated metadata
+//      */
 //    @JsonProperty("Metadata")
 //    def Map<String, String> getMetadata() { return metadata; }
 //
 //    private byte[] cachedContent;
 //
 //    /**
-//     * Get bytes saved on the remote server.
-//     * Data will be cached, so subsequent request will reuse downloaded bytes.
-//     *
-//     * @return             bytes saved on the remote server
-//     * @throws IOException in case of communication failure
-//     */
+//      * Get bytes saved on the remote server.
+//      * Data will be cached, so subsequent request will reuse downloaded bytes.
+//      *
+//      * @return             bytes saved on the remote server
+//      * @throws IOException in case of communication failure
+//      */
 //    def byte[] getContent() throws IOException {
 //        if (cachedContent != null)
 //            cachedContent = getBytes();
@@ -204,12 +204,12 @@
 //    }
 //
 //    /**
-//     * Get stream saved on the remote server.
-//     * Data will not be cached, so subsequent request will download stream again.
-//     *
-//     * @return             stream saved on the remote server
-//     * @throws IOException in case of communication failure
-//     */
+//      * Get stream saved on the remote server.
+//      * Data will not be cached, so subsequent request will download stream again.
+//      *
+//      * @return             stream saved on the remote server
+//      * @throws IOException in case of communication failure
+//      */
 //    def InputStream getStream() throws IOException {
 //        if(key == null || key == "")
 //            return null;
@@ -223,12 +223,12 @@
 //    }
 //
 //    /**
-//     * Get bytes saved on the remote server.
-//     * Data will not be cached, so subsequent request will download bytes again.
-//     *
-//     * @return             bytes saved on the remote server
-//     * @throws IOException in case of communication failure
-//     */
+//      * Get bytes saved on the remote server.
+//      * Data will not be cached, so subsequent request will download bytes again.
+//      *
+//      * @return             bytes saved on the remote server
+//      * @throws IOException in case of communication failure
+//      */
 //    def byte[] getBytes() throws IOException {
 //        if (key == null || key == "")
 //            return null;
@@ -244,44 +244,44 @@
 //    }
 //
 //    /**
-//     * Upload provided stream to remote S3 server.
-//     * If key is already defined, this stream will overwrite remote stream,
-//     * otherwise new key will be created.
-//     *
-//     * @param stream       upload provided stream
-//     * @return             key under which data was saved
-//     * @throws IOException in case of communication error
-//     */
+//      * Upload provided stream to remote S3 server.
+//      * If key is already defined, this stream will overwrite remote stream,
+//      * otherwise new key will be created.
+//      *
+//      * @param stream       upload provided stream
+//      * @return             key under which data was saved
+//      * @throws IOException in case of communication error
+//      */
 //    def String upload(stream ByteArrayInputStream) throws IOException {
 //        return upload(IOUtils.toByteArray(stream));
 //    }
 //
 //    /**
-//     * Upload provided stream to remote S3 server.
-//     * If key is already defined, this stream will overwrite remote stream,
-//     * otherwise new key will be created.
-//     *
-//     * @param stream       upload provided stream
-//     * @param length       size of provided stream
-//     * @return             key under which data was saved
-//     * @throws IOException in case of communication error
-//     */
+//      * Upload provided stream to remote S3 server.
+//      * If key is already defined, this stream will overwrite remote stream,
+//      * otherwise new key will be created.
+//      *
+//      * @param stream       upload provided stream
+//      * @param length       size of provided stream
+//      * @return             key under which data was saved
+//      * @throws IOException in case of communication error
+//      */
 //    def String upload(InputStream stream, long length) throws IOException {
 //        return upload(bucket != null && bucket.length() > 0 ? bucket : bucketName, stream, length);
 //    }
 //
 //    /**
-//     * Upload provided stream to remote S3 server.
-//     * If key is already defined, this stream will overwrite remote stream,
-//     * otherwise new key will be created.
-//     * If key was already defined, bucket name can't be changed.
-//     *
-//     * @param bucket       bucket under data will be saved
-//     * @param stream       upload provided stream
-//     * @param length       size of provided stream
-//     * @return             key under which data was saved
-//     * @throws IOException in case of communication error
-//     */
+//      * Upload provided stream to remote S3 server.
+//      * If key is already defined, this stream will overwrite remote stream,
+//      * otherwise new key will be created.
+//      * If key was already defined, bucket name can't be changed.
+//      *
+//      * @param bucket       bucket under data will be saved
+//      * @param stream       upload provided stream
+//      * @param length       size of provided stream
+//      * @return             key under which data was saved
+//      * @throws IOException in case of communication error
+//      */
 //    def String upload(String bucket, InputStream stream, long length) throws IOException {
 //        if (stream == null)
 //            throw new IllegalArgumentException("Stream can't be null.");
@@ -305,29 +305,29 @@
 //    }
 //
 //    /**
-//     * Upload provided bytes to remote S3 server.
-//     * If key is already defined, this bytes will overwrite remote bytes,
-//     * otherwise new key will be created.
-//     *
-//     * @param bytes        upload provided bytes
-//     * @return             key under which data was saved
-//     * @throws IOException in case of communication error
-//     */
+//      * Upload provided bytes to remote S3 server.
+//      * If key is already defined, this bytes will overwrite remote bytes,
+//      * otherwise new key will be created.
+//      *
+//      * @param bytes        upload provided bytes
+//      * @return             key under which data was saved
+//      * @throws IOException in case of communication error
+//      */
 //    def String upload(byte[] bytes) throws IOException {
 //        return upload(bucket != null && bucket.length() > 0 ? bucket : bucketName, bytes);
 //    }
 //
 //    /**
-//     * Upload provided bytes to remote S3 server.
-//     * If key is already defined, this bytes will overwrite remote bytes,
-//     * otherwise new key will be created.
-//     * If key was already defined, bucket name can't be changed.
-//     *
-//     * @param bucket       bucket under data will be saved
-//     * @param bytes        upload provided bytes
-//     * @return             key under which data was saved
-//     * @throws IOException in case of communication error
-//     */
+//      * Upload provided bytes to remote S3 server.
+//      * If key is already defined, this bytes will overwrite remote bytes,
+//      * otherwise new key will be created.
+//      * If key was already defined, bucket name can't be changed.
+//      *
+//      * @param bucket       bucket under data will be saved
+//      * @param bytes        upload provided bytes
+//      * @return             key under which data was saved
+//      * @throws IOException in case of communication error
+//      */
 //    def String upload(bucket String, final byte[] bytes) throws IOException {
 //        if (bytes == null)
 //            throw new IllegalArgumentException("Stream can't be null.");
@@ -354,10 +354,10 @@
 //    }
 //
 //    /**
-//     * Remote data from the remote S3 server.
-//     *
-//     * @throws IOException in case of communication error
-//     */
+//      * Remote data from the remote S3 server.
+//      *
+//      * @throws IOException in case of communication error
+//      */
 //    def void delete() throws IOException {
 //        if (key == null || key == "")
 //            throw new IllegalArgumentException("S3 object is empty.");

@@ -8,18 +8,19 @@ import scala.reflect.ClassTag
 import scala.concurrent.duration.Duration
 import scala.concurrent.Await
 
-abstract class SnowflakeCompanion[TSnowflake <: Snowflake[TAggregate] : ClassTag, TAggregate <: AggregateRoot : ClassTag]
+abstract class SnowflakeCompanion[TSnowflake <: Snowflake[TAggregate]: ClassTag, TAggregate <: AggregateRoot: ClassTag]
     extends IdentifiableCompanion[TSnowflake] {
   import HttpClientUtil._
 
   protected def client(locator: ServiceLocator): HttpClient = locator.resolve[HttpClient]
 
   def searchWith(
-    specification: Specification[TAggregate],
-    limit: Option[Int] = None,
-    offset: Option[Int] = None,
-    order: Map[String, Boolean] = Map.empty)
-    (implicit locator: ServiceLocator, duration: Duration): IndexedSeq[TSnowflake] = {
+      specification: Specification[TAggregate],
+      limit: Option[Int] = None,
+      offset: Option[Int] = None,
+      order: Map[String, Boolean] = Map.empty)(
+        implicit locator: ServiceLocator,
+        duration: Duration): IndexedSeq[TSnowflake] = {
 
     require(specification ne null, "specification not provided")
 
