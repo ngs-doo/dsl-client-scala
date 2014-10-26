@@ -6,23 +6,23 @@ package com.dslplatform.api.patterns
   * Cube can be made from various data sources: aggregates, snowflakes, SQL, LINQ, etc...
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Finance {
   *   aggregate Payment {
   *     DateTime createdAt { versioning; }
-  *     String account;
-  *     Money total;
+  *     String   account;
+  *     Money    total;
   *     calculated Int year from 'it => it.Year';
   *   }
   *
   *   cube&lt;Payment&gt; Analysis {
   *     dimension account;
   *     dimension year;
-  *     count createdAt;
-  *     sum total;
+  *     count     createdAt;
+  *     sum       total;
   *   }
   * }
-  * }}}
+  * </pre>
   */
 trait Cube[TSource <: Searchable] {
   val dimensions: Set[String]

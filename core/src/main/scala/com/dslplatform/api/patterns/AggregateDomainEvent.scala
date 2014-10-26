@@ -11,12 +11,12 @@ package com.dslplatform.api.patterns
   * unapplied events and apply them during reconstruction.
   *
   * AggregateDomainEvent is defined in DSL with keyword {@code event}.
-  * {{{
+  * <pre>
   * module Todo {
   *   aggregate Task;
   *   event&lt;Task&gt; markDone;
   * }
-  * }}}
+  * </pre>
   * @tparam T aggregate root type
   */
 trait AggregateDomainEvent[T <: AggregateRoot]

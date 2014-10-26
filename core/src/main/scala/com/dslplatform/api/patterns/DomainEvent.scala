@@ -18,15 +18,14 @@ import org.joda.time.DateTime
   *
   * DomainEvent is defined in DSL with keyword {@code event}.
   *
-  * {{{
+  * <pre>
   * module Todo {
   *   aggregate Task;
   *   event MarkDone {
   *     Task task;
   *   }
   * }
-  * }}}
-  *
+  * </pre>
   */
 trait DomainEvent
     extends Identifiable {

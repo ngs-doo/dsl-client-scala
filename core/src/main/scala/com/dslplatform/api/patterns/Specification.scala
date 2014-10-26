@@ -10,7 +10,7 @@ package com.dslplatform.api.patterns
   * can be used too.
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Todo {
   *   aggregate Task {
   *     DateTime createdOn;
@@ -21,7 +21,7 @@ package com.dslplatform.api.patterns
   *     }
   *   }
   * }
-  * }}}
+  * </pre>
   *
   * @tparam TSearchable domain object on which search will be performed.
   */

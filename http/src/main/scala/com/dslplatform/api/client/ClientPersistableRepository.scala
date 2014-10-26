@@ -14,12 +14,13 @@ import scala.reflect.ClassTag
   * Instead domain model repositories should be resolved.
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Todo {
   *   aggregate Task;
   * }
-  * }}}
-  * Scala usage:
+  * </pre>
+  *
+  * Usage:
   * {{{
   *   val locator: ServiceLocator = ...
   *   val repository = locator.resolve[PersistableRepository[Todo.Task]]

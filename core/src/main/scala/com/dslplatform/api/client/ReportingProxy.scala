@@ -18,20 +18,20 @@ import scala.reflect.ClassTag
   * It is preferred to use domain patterns instead of this proxy service.
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Todo {
   *   aggregate Task {
-  *     timestamp createdAt;
-  *     timestamp? finishedAt;
+  *     DateTime  createdAt;
+  *     DateTime? finishedAt;
   *   }
   *
   *   report LoadData {
-  *     int maxUnfinished;
+  *     Int maxUnfinished;
   *     List&lt;Task&gt; unfinishedTasks 'it => it.finishedAt == null' LIMIT maxUnfinished ORDER BY createdAt;
   *     List&lt;Task&gt; recentlyFinishedTasks 'it => it.finishedAt != null' LIMIT 10 ORDER BY finishedAt DESC;
   *   }
   * }
-  * }}}
+  * </pre>
   */
 trait ReportingProxy {
   /** Populate report. Send message to server with serialized report specification.
@@ -46,14 +46,14 @@ trait ReportingProxy {
     * Server will return template populated with found data.
     *
     * DSL example:
-    * {{{
+    * <pre>
     * module Todo {
     *   report LoadData {
     *     List&lt;Task&gt; unfinishedTasks 'it => it.finishedAt == null' ORDER BY createdAt;
     *     templater createDocument 'Tasks.docx' pdf;
     *   }
     * }
-    * }}}
+    * </pre>
     * @param report    report specification
     * @param templater templater name
     * @return          future to document content

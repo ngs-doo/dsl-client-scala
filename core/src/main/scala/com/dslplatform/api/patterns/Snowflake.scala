@@ -12,13 +12,13 @@ package com.dslplatform.api.patterns
   * onto the snowflake and fetching them all at once.
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Todo {
   *   aggregate Task {
-  *     DateTime startedAt;
+  *     DateTime  startedAt;
   *     DateTime? finishedAt;
-  *     Int? priority;
-  *     User *user;
+  *     Int?      priority;
+  *     User*     user;
   *   }
   *   aggregate User {
   *     String name;
@@ -33,8 +33,7 @@ package com.dslplatform.api.patterns
   *     order by priority asc, startedAt desc;
   *   }
   * }
-  * }}}
-  *
+  * </pre>
   */
 trait Snowflake[TAggregate <: AggregateRoot]
     extends Identifiable

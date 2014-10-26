@@ -14,14 +14,15 @@ import scala.reflect.ClassTag
   * Instead domain model repositories should be resolved.
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Todo {
-  *   sql TaskInfo 'SELECT name, description FROM Task' {
+  *   sql TaskInfo 'SELECT name, description FROM "Todo"."Task"' {
   *     String name;
   *     String description;
   *   }
   * }
-  * }}}
+  * </pre>
+  *
   * Usage:
   * {{{
   *   val locator: ServiceLocator = ...

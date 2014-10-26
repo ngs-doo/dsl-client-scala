@@ -36,7 +36,7 @@ trait Default {
         "-Ywarn-numeric-widen",
         "-Ywarn-unused"
       ),
-      scalacOptions in Test ++= Seq("-Yrangepos"),
+      scalacOptions in Test ++= Seq("-Yrangepos")
 //      scalacOptions in (Compile, doc) := Seq("-diagrams", "-diagrams-debug")
     )
 }

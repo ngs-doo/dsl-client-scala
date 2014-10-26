@@ -13,12 +13,13 @@ import scala.reflect.ClassTag
   * Instead domain model repositories should be resolved.
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Todo {
   *   aggregate Task;
   *   snowflake&lt;Task&gt; TaskList;
   * }
-  * }}}
+  * </pre>
+  *
   * Usage:
   * {{{
   *   val locator: ServiceLocator = ...

@@ -5,21 +5,21 @@ package com.dslplatform.api.patterns
   * order, limit and offset using LINQ data will be populated on the server.
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Blog {
   *   aggregate Post {
   *     DateTime createdAt { versioning; }
-  *     String author;
-  *     String content;
+  *     String   author;
+  *     String   content;
   *   }
   *
   *   report FindPosts {
   *     String? byAuthor;
-  *     Date? from;
+  *     Date?   from;
   *     Set&lt;Post&gt; postsFromAuthor 'it => it.author == byAuthor' ORDER BY createdAt;
   *     Array&lt;Task&gt; recentPosts 'it => it.createdAt >= from' LIMIT 20 ORDER BY createdAt DESC;
   *   }
   * }
-  * }}}
+  * </pre>
   */
 trait Report[TResult]

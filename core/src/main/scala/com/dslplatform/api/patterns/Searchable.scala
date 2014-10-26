@@ -6,13 +6,13 @@ package com.dslplatform.api.patterns
   * and other methods
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Legacy {
   *   sql Town 'SELECT id, name FROM town' {
-  *     Int id;
+  *     Int    id;
   *     String name;
   *   }
   * }
-  * }}}
+  * </pre>
   */
 trait Searchable

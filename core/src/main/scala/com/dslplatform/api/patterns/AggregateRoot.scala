@@ -10,21 +10,21 @@ package com.dslplatform.api.patterns
   * identification represented by its URI.
   *
   * DSL example:
-  * {{{
+  * <pre>
   * module Todo {
   *   aggregate Task {
-  *     DateTime startedAt;
+  *     DateTime  startedAt;
   *     DateTime? finishedAt;
-  *     Int? priority;
+  *     Int?      priority;
   *     Seq&lt;Note&gt; notes;
   *   }
+  *
   *   value Note {
-  *     Date entered;
+  *     Date   entered;
   *     String remark;
   *   }
   * }
-  * }}}
-  *
+  * </pre>
   */
 trait AggregateRoot
     extends Identifiable
