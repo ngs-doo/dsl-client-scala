@@ -1,5 +1,7 @@
 package com.dslplatform.api.client
 
+import com.fasterxml.jackson.module.scala.ser.CustomDefaultScalaModule
+
 import scala.io.Source
 import scala.reflect.ClassTag
 import scala.xml.Elem
@@ -18,8 +20,6 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.module.scala.ser.CustomDefaultScalaModule
 import com.dslplatform.api.patterns.ServiceLocator
 import com.fasterxml.jackson.databind.JavaType
 
@@ -90,7 +90,8 @@ class JsonSerialization(locator: ServiceLocator) {
 
   private val serializationMapper =
     new ObjectMapper()
-      .registerModule(CustomDefaultScalaModule)
+      .registerModule(com.fasterxml.jackson.module.scala.DefaultScalaModule)
+      //.registerModule(DefaultScalaModule)
       .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
       .registerModule(serializationModule)
       //.configure(MapperFeature.AUTO_DETECT_GETTERS, false)
@@ -109,7 +110,7 @@ class JsonSerialization(locator: ServiceLocator) {
 
   private val deserializationMapper = {
     val mapper = new ObjectMapper()
-    mapper.registerModule(DefaultScalaModule)
+    mapper.registerModule(CustomDefaultScalaModule)
       .registerModule(deserializationModule)
       .setInjectableValues(new InjectableValues.Std addValue ("__locator", locator))
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

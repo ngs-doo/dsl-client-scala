@@ -1,8 +1,9 @@
-import java.util.concurrent.{ Executors, ExecutorService }
+import java.util.concurrent.{Executors, ExecutorService}
 
-import com.dslplatform.api.client.{ ClientPersistableRepository, HttpClient }
-import com.dslplatform.api.patterns.PersistableRepository
-import org.slf4j.{ Logger, LoggerFactory }
+import com.dslplatform.mock._
+import com.dslplatform.api.client.{ClientSearchableRepository, ClientPersistableRepository, HttpClient}
+import com.dslplatform.api.patterns.{SearchableRepository, PersistableRepository}
+import org.slf4j.{Logger, LoggerFactory}
 import org.specs2._
 
 class BootstrapTest extends Specification {
@@ -12,7 +13,8 @@ class BootstrapTest extends Specification {
     resolve default                           $defaults
     resolve provided logger                   $initial
     resolve provided initial Executor         $initialExecutor
-    resolve a repository                      $resolveRepository
+    resolve a persistable repository          $resolvePersistableRepository
+    resolve a searchable repository           $resolveSearchableRepository
   """
 
   def defaults = {
@@ -35,10 +37,19 @@ class BootstrapTest extends Specification {
     }
   }
 
-  def resolveRepository = {
+  def resolvePersistableRepository = {
     val locator = com.dslplatform.api.client.Bootstrap.init("/test-project.props")
     try {
-      locator.resolve[PersistableRepository[M.Agg]].isInstanceOf[ClientPersistableRepository[_]] must beTrue
+      locator.resolve[PersistableRepository[Agg]].isInstanceOf[ClientPersistableRepository[_]] must beTrue
+    } finally {
+      locator.resolve[HttpClient].shutdown()
+    }
+  }
+
+  def resolveSearchableRepository = {
+    val locator = com.dslplatform.api.client.Bootstrap.init("/test-project.props")
+    try {
+      locator.resolve[SearchableRepository[AggGrid]].isInstanceOf[ClientSearchableRepository[_]] must beTrue
     } finally {
       locator.resolve[HttpClient].shutdown()
     }

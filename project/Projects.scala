@@ -96,25 +96,105 @@ object Projects
         scalaXml,
         spec2 % "test",
         logback % "test"
+      ),
+      unmanagedJars in Test += Revenj.testLibTask.value,
+      testOptions in Test ++= Seq(
+        Tests.Setup(Revenj.setup.value),
+        Tests.Cleanup(Revenj.shutdown.value)
       )
     )
-  ) dependsOn (core)
+  ) dependsOn core
 
   def aggregatedCompile = ScopeFilter(inProjects(core, http), inConfigurations(Compile))
 
   def aggregatedTest = ScopeFilter(inProjects(core, http), inConfigurations(Test))
 
   def rootSettings = Seq(
-    sources in Compile                      := sources.all(aggregatedCompile).value.flatten,
-    unmanagedSources in Compile             := unmanagedSources.all(aggregatedCompile).value.flatten,
-    unmanagedSourceDirectories in Compile   := unmanagedSourceDirectories.all(aggregatedCompile).value.flatten,
-    unmanagedResourceDirectories in Compile := unmanagedResourceDirectories.all(aggregatedCompile).value.flatten,
-    sources in Test                         := sources.all(aggregatedTest).value.flatten,
-    unmanagedSources in Test                := unmanagedSources.all(aggregatedTest).value.flatten,
-    unmanagedSourceDirectories in Test      := unmanagedSourceDirectories.all(aggregatedTest).value.flatten,
-    unmanagedResourceDirectories in Test    := unmanagedResourceDirectories.all(aggregatedTest).value.flatten,
-    libraryDependencies                     := libraryDependencies.all(aggregatedCompile).value.flatten
+    sources in Compile                        := sources.all(aggregatedCompile).value.flatten,
+    unmanagedSources in Compile               := unmanagedSources.all(aggregatedCompile).value.flatten,
+    unmanagedSourceDirectories in Compile     := unmanagedSourceDirectories.all(aggregatedCompile).value.flatten,
+    unmanagedResourceDirectories in Compile   := unmanagedResourceDirectories.all(aggregatedCompile).value.flatten,
+    sources in Test                           := sources.all(aggregatedTest).value.flatten,
+    unmanagedSources in Test                  := unmanagedSources.all(aggregatedTest).value.flatten,
+    unmanagedSourceDirectories in Test        := unmanagedSourceDirectories.all(aggregatedTest).value.flatten,
+    unmanagedResourceDirectories in Test      := unmanagedResourceDirectories.all(aggregatedTest).value.flatten,
+    libraryDependencies                       := libraryDependencies.all(aggregatedCompile).value.flatten,
+    unmanagedJars in Test                     := unmanagedJars.all(aggregatedTest).value.flatten,
+    testOptions in Test                       ++= (testOptions in (http, Test)).value,
+    parallelExecution in ThisBuild            := false
   )
 
-  lazy val root = (project in file(".")) settings ((defaultSettings ++ rootSettings): _*)
+  lazy val root = (project in file(".")) settings (defaultSettings ++ rootSettings: _*)
+}
+
+object Revenj {
+
+  private val scalaclienttest = "scalaclienttest"
+  private val packageName = "com.dslplatform.test"
+
+  private var revenjProcess: Option[Process] = None
+
+  private val credentials = System.getProperty("user.home") + "/.config/dsl-platform/test.credentials"
+
+  private val testLib: Def.Initialize[Task[File]] = Def.task {
+    baseDirectory.value / "test-lib" / "scala-client.jar"
+  }
+
+  val testLibTask: Def.Initialize[Task[File]] = Def.taskDyn {
+    makeScalaClientTestJar.value
+    Def.task { testLib.value }
+  }
+
+  private def makeRevenj(base: File) = {
+    val basePath = base.getAbsolutePath
+    com.dslplatform.compiler.client.Main.main(Array(
+      s"-revenj=${basePath}/revenj/test.dll",
+      s"-dependency:revenj=${basePath}/revenj",
+      s"-namespace=$packageName",
+      s"-db=localhost:5432/$scalaclienttest?user=$scalaclienttest&password=$scalaclienttest",
+      "-dsl=http/src/test/resources/dsl",
+      "-download",
+      "-no-colors",
+      "-apply",
+      s"-properties=$credentials"))
+  }
+
+  private def makeScalaClientTestJarCall(f: File) =
+    com.dslplatform.compiler.client.Main.main(Array(
+      s"-scala_client=${f.getAbsolutePath}",
+      s"-namespace=$packageName",
+      "-no-colors",
+      "-dsl=http/src/test/resources/dsl",
+      "-download",
+      "-active-record",
+      s"-properties=$credentials"))
+
+  private def makeScalaClientTestJar = Def.task {
+    val testLibFile: File = testLib.value
+    if (!testLibFile.getParentFile.exists()) testLibFile.getParentFile.mkdir()
+    if (!testLibFile.exists()) makeScalaClientTestJarCall(testLibFile)
+  }
+
+  private def startRevenj(f: File) = {
+    Option(s"mono $f/revenj/Revenj.Http.exe".run)
+  }
+
+  def setup: Def.Initialize[Task[() => Unit]] = Def.task {
+    () =>
+      makeScalaClientTestJar.value
+      val bD: File = baseDirectory.value
+      /*
+      makeRevenj(bD)
+      IO.copyFile(
+        bD / "test-lib" / "Revenj.Http.exe.config",
+        bD / "revenj" / "Revenj.Http.exe.config"
+      )*/
+      revenjProcess = startRevenj(bD)
+      Thread.sleep(111) // some time is needed till actual successfully start
+  }
+
+  def shutdown: Def.Initialize[Task[() => Unit]] = Def.task {
+    () =>
+      revenjProcess.map(_.destroy).getOrElse()
+  }
 }
