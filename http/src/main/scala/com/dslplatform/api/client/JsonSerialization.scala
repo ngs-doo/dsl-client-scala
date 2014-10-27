@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.module.scala.ser.CustomDefaultScalaModule
 import com.dslplatform.api.patterns.ServiceLocator
 import com.fasterxml.jackson.databind.JavaType
 
@@ -89,8 +90,7 @@ class JsonSerialization(locator: ServiceLocator) {
 
   private val serializationMapper =
     new ObjectMapper()
-      .registerModule(com.fasterxml.jackson.module.scala.DefaultScalaModule)
-      //.registerModule(DefaultScalaModule)
+      .registerModule(CustomDefaultScalaModule)
       .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
       .registerModule(serializationModule)
       //.configure(MapperFeature.AUTO_DETECT_GETTERS, false)
