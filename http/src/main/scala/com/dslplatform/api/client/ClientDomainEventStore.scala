@@ -14,13 +14,13 @@ class ClientDomainEventStore(domainProxy: DomainProxy)
   def submit[TEvent <: DomainEvent](event: TEvent): Future[String] =
     domainProxy.submit[TEvent](event)
 
-  def submit[TAggregate <: AggregateRoot : ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
-    event: TEvent,
-    uri: String): Future[TAggregate] =
+  def submit[TAggregate <: AggregateRoot: ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
+      event: TEvent,
+      uri: String): Future[TAggregate] =
     domainProxy.submit[TAggregate, TEvent](event, uri)
 
   def submit[TAggregate <: AggregateRoot: ClassTag, TEvent <: AggregateDomainEvent[TAggregate]](
-    event: TEvent,
-    aggregate: TAggregate): Future[TAggregate] =
+      event: TEvent,
+      aggregate: TAggregate): Future[TAggregate] =
     submit[TAggregate, TEvent](event, aggregate.URI)
 }

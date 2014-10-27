@@ -1,6 +1,6 @@
 import java.io.ByteArrayInputStream
 
-import com.dslplatform.api.client.{HttpHeaderProvider, SettingsHeaderProvider, HttpClient}
+import com.dslplatform.api.client.{ HttpHeaderProvider, SettingsHeaderProvider, HttpClient }
 import org.specs2._
 
 class AuthHeaderTest extends Specification {

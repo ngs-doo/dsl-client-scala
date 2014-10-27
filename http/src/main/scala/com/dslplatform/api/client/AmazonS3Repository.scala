@@ -29,7 +29,7 @@ class AmazonS3Repository extends S3Repository {
 
     private void checkBucket(name String) throws IOException {
         if(name == null || name == "")
-            throw new IOException("Bucket not specified. If you wish to use default bucket name, add it as s3-bucket to dsl-project.ini");
+            throw new IOException("Bucket not specified. If you wish to use default bucket name, add it as s3-bucket to dsl-project.props");
     }
 
     @Override

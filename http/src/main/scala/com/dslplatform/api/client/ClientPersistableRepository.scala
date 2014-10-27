@@ -8,28 +8,26 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.reflect.ClassTag
 
-/**
- * Common base implementation for {@link PersistableRepository persistable repository}.
- * It redirects calls to proxy services.
- * It shouldn't be used or resolved.
- * Instead domain model repositories should be resolved.
- *
- * <p>
- * DSL example:
- * <blockquote><pre>
- *
- * module Todo {
- *   aggregate Task;
- * }
- * </blockquote></pre>
- * Java usage:
- * <pre>
- * IServiceLocator locator;
- * PersistableRepository&lt;Todo.Task&gt; repository = locator.resolve(Todo.TaskRepository.class);
- * </pre>
- *
- * @param [T] aggregate root type
- */
+/** Common base implementation for {@link PersistableRepository persistable repository}.
+  * It redirects calls to proxy services.
+  * It shouldn't be used or resolved.
+  * Instead domain model repositories should be resolved.
+  *
+  * DSL example:
+  * <pre>
+  * module Todo {
+  *   aggregate Task;
+  * }
+  * </pre>
+  *
+  * Usage:
+  * {{{
+  *   val locator: ServiceLocator = ...
+  *   val repository = locator.resolve[PersistableRepository[Todo.Task]]
+  * }}}
+  *
+  * @param [T] aggregate root type
+  */
 class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: ServiceLocator)
     extends ClientRepository[T](locator)
     with PersistableRepository[T] {
@@ -39,9 +37,9 @@ class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: Service
   private val standardProxy: StandardProxy = locator.resolve[StandardProxy]
 
   def persist(
-    inserts: TraversableOnce[T],
-    updates: TraversableOnce[(T, T)],
-    deletes: TraversableOnce[T]): Future[IndexedSeq[String]] =
+      inserts: TraversableOnce[T],
+      updates: TraversableOnce[(T, T)],
+      deletes: TraversableOnce[T]): Future[IndexedSeq[String]] =
     standardProxy.persist(inserts, updates, deletes)
 
   def insert(inserts: TraversableOnce[T]): Future[IndexedSeq[String]] =
@@ -50,13 +48,15 @@ class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: Service
   def insert(insert: T): Future[String] =
     crudProxy.create(insert).map(_.URI)
 
-  def update(updates: TraversableOnce[T]): Future[_] =
-    standardProxy.persist(Nil, updates.map { t => (t, t) }, Nil)
+  def update(updates: TraversableOnce[T]): Future[Unit] =
+    standardProxy.persist(Nil, updates.map { t => (t, t) }, Nil).map(_ => ())
 
-  def update(update: T): Future[T] = crudProxy.update(update)
+  def update(update: T): Future[Unit] =
+    crudProxy.update(update).map(_ => ())
 
-  def delete(deletes: TraversableOnce[T]): Future[IndexedSeq[String]] =
-    standardProxy.persist(Nil, Map.empty, deletes)
+  def delete(deletes: TraversableOnce[T]): Future[Unit] =
+    standardProxy.persist(Nil, Map.empty, deletes).map(_ => ())
 
-  def delete(delete: T): Future[_] = crudProxy.delete(delete.URI)
+  def delete(delete: T): Future[Unit] =
+    crudProxy.delete(delete.URI).map(_ => ())
 }

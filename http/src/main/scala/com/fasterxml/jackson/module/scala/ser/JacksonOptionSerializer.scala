@@ -75,7 +75,7 @@ private class CustomOptionSerializer(
                 case Some(bp) =>
                   provider.findValueSerializer(clazz, bp) match {
                     case bs: BeanSerializer =>
-                      var cbs = new CustomBeanSerializer(bs)
+                      val cbs = new CustomBeanSerializer(bs)
                       cbs.serializeWithType(v, jgen, provider, jti, jtn)
                     case vs =>
                       vs.serialize(v.asInstanceOf[AnyRef], jgen, provider)

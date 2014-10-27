@@ -1,13 +1,12 @@
 package com.dslplatform.api.client
 
-import com.dslplatform.api.patterns.{ServiceLocator, AggregateRoot}
+import com.dslplatform.api.patterns.{ ServiceLocator, AggregateRoot }
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Future, ExecutionContext, Await}
+import scala.concurrent.{ Future, ExecutionContext, Await }
 
-/**
- * @tparam TRoot type of an Aggregate Root.
- */
-abstract class AggregateRootCompanion[TRoot <: AggregateRoot : scala.reflect.ClassTag]
+/** @tparam TRoot type of an Aggregate Root.
+  */
+abstract class AggregateRootCompanion[TRoot <: AggregateRoot: scala.reflect.ClassTag]
     extends IdentifiableCompanion[TRoot] {
   def create(t: TRoot)(implicit locator: ServiceLocator, duration: Duration) = Await.result(locator.resolve[CrudProxy].create(t), duration)
 

@@ -59,11 +59,11 @@ class HttpClient(
   private val remoteUrl = Option(properties.getProperty("api-url"))
     .getOrElse(throw new RuntimeException("Missing api-url from the properties."))
   private val domainPrefix = Option(properties.getProperty("package-name"))
-    .getOrElse{throw new RuntimeException("Missing package-name from the properties.")}
+    .getOrElse { throw new RuntimeException("Missing package-name from the properties.") }
   private val domainPrefixLength = if (domainPrefix.length > 0) domainPrefix.length + 1 else 0
   private val auth = authHeaders.getHeaders.mapValues(Set(_))
   private val MimeType = "application/json"
-  private [client] implicit val ec = ExecutionContext.fromExecutorService(executorService)
+  private[client] implicit val ec = ExecutionContext.fromExecutorService(executorService)
   private val commonHeaders: Headers = Map(
     "Accept" -> Set(MimeType),
     "Content-Type" -> Set(MimeType)
@@ -103,15 +103,14 @@ class HttpClient(
   }
 
   private def httpResponseHandler(
-    resp: Promise[Array[Byte]], expectedHeaders: Set[Int]) =
+      resp: Promise[Array[Byte]], expectedHeaders: Set[Int]) =
     new AsyncCompletionHandler[Unit] {
 
       def onCompleted(response: Response) {
         if (logger.isTraceEnabled) logger.trace("Received response status[%s] body: %s" format (response.getStatusCode, response.getResponseBody))
         if (expectedHeaders contains response.getStatusCode) {
           resp success response.getResponseBodyAsBytes
-        }
-        else {
+        } else {
           resp failure new IOException(
             "Unexpected return code: "
               + response.getStatusCode
@@ -126,11 +125,11 @@ class HttpClient(
     }
 
   private def doRequest(
-    method: String,
-    optBody: Option[Array[Byte]],
-    url: String,
-    expectedStatus: Set[Int],
-    additionalHeaders: Headers): Future[Array[Byte]] = {
+      method: String,
+      optBody: Option[Array[Byte]],
+      url: String,
+      expectedStatus: Set[Int],
+      additionalHeaders: Headers): Future[Array[Byte]] = {
     val request = new RequestBuilder()
       .setUrl(url)
       .setHeaders(makeNingHeaders(additionalHeaders))
@@ -145,17 +144,18 @@ class HttpClient(
 
     val promisedResponse = Promise[Array[Byte]]
 
-    ahc.executeRequest(request.build(),
+    ahc.executeRequest(
+      request.build(),
       httpResponseHandler(promisedResponse, expectedStatus))
 
     promisedResponse future
   }
 
   def sendRawRequest(
-    method: HttpMethod,
-    service: String,
-    expectedStatus: Set[Int],
-    additionalHeaders: Map[String, Set[String]] = Map.empty): Future[Array[Byte]] = {
+      method: HttpMethod,
+      service: String,
+      expectedStatus: Set[Int],
+      additionalHeaders: Map[String, Set[String]] = Map.empty): Future[Array[Byte]] = {
 
     val url = remoteUrl + service
 
@@ -168,10 +168,10 @@ class HttpClient(
   }
 
   private[client] def sendStandardRequest(
-    method: HttpMethod,
-    service: String,
-    expectedStatus: Set[Int],
-    additionalHeaders: Map[String, Set[String]] = Map.empty): Future[IndexedSeq[String]] = {
+      method: HttpMethod,
+      service: String,
+      expectedStatus: Set[Int],
+      additionalHeaders: Map[String, Set[String]] = Map.empty): Future[IndexedSeq[String]] = {
 
     val url = remoteUrl + service
 
@@ -184,28 +184,27 @@ class HttpClient(
   }
 
   private[client] def sendRequest[TResult: ClassTag](
-    method: HttpMethod,
-    service: String,
-    expectedStatus: Set[Int],
-    additionalHeaders: Map[String, Set[String]] = Map.empty): Future[TResult] =
+      method: HttpMethod,
+      service: String,
+      expectedStatus: Set[Int],
+      additionalHeaders: Map[String, Set[String]] = Map.empty): Future[TResult] =
     sendRawRequest(method, service, expectedStatus, additionalHeaders) map json.deserialize[TResult]
 
   private[client] def sendRequestForCollection[TResult: ClassTag](
-    method: HttpMethod,
-    service: String,
-    expectedStatus: Set[Int],
-    additionalHeaders: Map[String, Set[String]] = Map.empty): Future[IndexedSeq[TResult]] =
+      method: HttpMethod,
+      service: String,
+      expectedStatus: Set[Int],
+      additionalHeaders: Map[String, Set[String]] = Map.empty): Future[IndexedSeq[TResult]] =
     sendRawRequest(method, service, expectedStatus, additionalHeaders) map json.deserializeList[TResult]
 
   private[client] def sendRequestForCollection[TResult](
-    returnClass: Class[_],
-    method: HttpMethod,
-    service: String,
-    expectedStatus: Set[Int],
-    additionalHeaders: Map[String, Set[String]]): Future[IndexedSeq[TResult]] =
+      returnClass: Class[_],
+      method: HttpMethod,
+      service: String,
+      expectedStatus: Set[Int],
+      additionalHeaders: Map[String, Set[String]]): Future[IndexedSeq[TResult]] =
     sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserializeList(returnClass, _))
 
-  def shutdown() {
+  def shutdown(): Unit =
     ahc.close()
-  }
 }
