@@ -48,4 +48,3 @@ trait Common {
   def rFloat = scala.util.Random.nextFloat()
   def rDouble = scala.util.Random.nextDouble()
 }
-

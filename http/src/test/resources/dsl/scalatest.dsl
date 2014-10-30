@@ -33,7 +33,7 @@ module simple
 
   root SimpleRoot
   {
-    //History;
+    History;
 
     Int i { default scala '5'; }
     Float f;
