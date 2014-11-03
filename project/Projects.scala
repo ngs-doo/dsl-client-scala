@@ -1,9 +1,5 @@
-import java.util.Locale
-
 import sbt._
 import sbt.Keys._
-
-import scala.util.Try
 
 trait Default {
   val defaultSettings =
@@ -139,8 +135,16 @@ object Revenj {
 
   private val credentials = System.getProperty("user.home") + "/.config/dsl-platform/test.credentials"
 
-  private val testLib: Def.Initialize[Task[File]] = Def.task {
+  private val testLib: Def.Initialize[File] = Def.setting {
     baseDirectory.value / "test-lib" / "scala-client.jar"
+  }
+
+  private val revenjExe: Def.Initialize[File] = Def.setting {
+    baseDirectory.value / "revenj" / "Revenj.Http.exe"
+  }
+
+  private val testDll: Def.Initialize[File] = Def.setting {
+    baseDirectory.value / "revenj" / "test.dll"
   }
 
   val testLibTask: Def.Initialize[Task[File]] = Def.taskDyn {
@@ -148,18 +152,25 @@ object Revenj {
     Def.task { testLib.value }
   }
 
-  private def makeRevenj(base: File) = {
+  private def makeRevenj = Def.task {
+    val base = baseDirectory.value
     val basePath = base.getAbsolutePath
-    com.dslplatform.compiler.client.Main.main(Array(
-      s"-revenj=${basePath}/revenj/test.dll",
-      s"-dependency:revenj=${basePath}/revenj",
-      s"-namespace=$packageName",
-      s"-db=localhost:5432/$scalaclienttest?user=$scalaclienttest&password=$scalaclienttest",
-      "-dsl=http/src/test/resources/dsl",
-      "-download",
-      "-no-colors",
-      "-apply",
-      s"-properties=$credentials"))
+    if (!testDll.value.exists()) {
+      com.dslplatform.compiler.client.Main.main(Array(
+        s"-revenj=${basePath}/revenj/test.dll",
+        s"-dependency:revenj=${basePath}/revenj",
+        s"-namespace=$packageName",
+        s"-db=localhost:5432/$scalaclienttest?user=$scalaclienttest&password=$scalaclienttest",
+        s"-dsl=${basePath}/src/test/resources/dsl",
+        "-download",
+        "-no-colors",
+        "-apply",
+        s"-properties=$credentials"))
+      IO.copyFile(
+        base / "test-lib" / "Revenj.Http.exe.config",
+        base / "revenj" / "Revenj.Http.exe.config"
+      )
+    }
   }
 
   private def makeScalaClientTestJarCall(f: File) =
@@ -178,27 +189,24 @@ object Revenj {
     if (!testLibFile.exists()) makeScalaClientTestJarCall(testLibFile)
   }
 
-  private def startRevenj(f: File) = Try {
-    if (sys.props("os.name").toLowerCase(Locale.ENGLISH).contains("windows")) {
-      Seq("$f/revenj/Revenj.Http.exe").run
-    }
-    else {
-      Seq("mono", "$f/revenj/Revenj.Http.exe").run
+  private def startRevenj = Def.task {
+    scala.util.Try {
+      if (sys.props("os.name").toLowerCase(java.util.Locale.ENGLISH).contains("windows")) {
+        Seq(revenjExe.value.getPath).run
+      }
+      else {
+        Seq("mono", revenjExe.value.getPath).run
+      }
     }
   }
 
-  def setup: Def.Initialize[Task[() => Unit]] = Def.task {
-    () =>
+  def setup: Def.Initialize[Task[() => Unit]] = Def.taskDyn {
       makeScalaClientTestJar.value
-      val bD: File = baseDirectory.value
-      /*
-      makeRevenj(bD)
-      IO.copyFile(
-        bD / "test-lib" / "Revenj.Http.exe.config",
-        bD / "revenj" / "Revenj.Http.exe.config"
-      )*/
-      revenjProcess = startRevenj(bD)
-      Thread.sleep(111) // some time is needed till actual successfully start
+      makeRevenj.value
+      Def.taskDyn{
+        revenjProcess = startRevenj.value.toOption
+        Def.task { () => ()}
+      }
   }
 
   def shutdown: Def.Initialize[Task[() => Unit]] = Def.task {
