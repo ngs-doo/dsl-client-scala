@@ -201,12 +201,12 @@ object Revenj {
   }
 
   def setup: Def.Initialize[Task[() => Unit]] = Def.taskDyn {
-      makeScalaClientTestJar.value
-      makeRevenj.value
-      Def.taskDyn{
-        revenjProcess = startRevenj.value.toOption
-        Def.task { () => ()}
-      }
+    makeScalaClientTestJar.value
+    makeRevenj.value
+    Def.taskDyn {
+      revenjProcess = startRevenj.value.toOption
+      Def.task { () => () }
+    }
   }
 
   def shutdown: Def.Initialize[Task[() => Unit]] = Def.task {

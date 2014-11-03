@@ -79,21 +79,21 @@ class SerializationTest extends Specification {
     val cl = classOf[SimpleRoot]
     val fld = cl.getDeclaredField("__locator")
     fld.setAccessible(true)
-    fld.get(simpleRoot) !== null
+    (fld.get(simpleRoot) !== null)
   }
 
   def deserializeNonOptionalObjectsInAValue = { jsonSerialization: JsonSerialization =>
     val dtd = jsonSerialization.deserialize[ValDTD]("{}".getBytes("UTF-8"))
     dtd.T.withMillis(0) === DateTime.now().withMillis(0)
-    dtd.D === BigDecimal(0)
-    dtd.DT === LocalDate.now()
+    (dtd.D === BigDecimal(0)) &
+      (dtd.DT === LocalDate.now())
   }
 
   def deserializeNonOptionalObjectsInAEntity = { jsonSerialization: JsonSerialization =>
     val dtd = jsonSerialization.deserialize[RootDTD]("{}".getBytes("UTF-8"))
     dtd.T.withMillis(0) === DateTime.now().withMillis(0)
-    dtd.D === BigDecimal(0)
-    dtd.DT === LocalDate.now()
+    (dtd.D === BigDecimal(0)) &
+      (dtd.DT === LocalDate.now())
   }
 
   def enumSerializeDeserialize = { jsonSerialization: JsonSerialization =>
@@ -134,16 +134,14 @@ class SerializationTest extends Specification {
   def traitSerialization = { jsonSerialization: JsonSerialization =>
     val cl2 = clone1(m = V(url = java.net.URI.create("http://dsl-platform.com")))
     val json = jsonSerialization.serialize(cl2)
-    json.contains("$type") must beTrue
-    json.contains("http://dsl-platform.com") must beTrue
+    (json.contains("$type") must beTrue) &
+      (json.contains("http://dsl-platform.com") must beTrue)
   }
 
   def serverTraitSerialization = { implicit locator: ServiceLocator => // 404
     val cl2_new = clone1(m = V(url = java.net.URI.create("http://dsl-platform.com")))
     val repository: PersistableRepository[clone1] = locator.resolve[PersistableRepository[clone1]]
-    repository.insert(cl2_new)
-    val cl2_find = clone1.find(cl2_new.URI)
-    cl2_new === cl2_find
+    repository.insert(cl2_new).map { uri => clone1.find(uri).m.isInstanceOf[V]} must beTrue.await
   }
 
   def traitDeserialization = { jsonSerialization: JsonSerialization =>
