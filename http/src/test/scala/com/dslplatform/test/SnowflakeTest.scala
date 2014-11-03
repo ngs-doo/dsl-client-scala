@@ -1,14 +1,10 @@
+package com.dslplatform.test
+
+import com.dslplatform.api.patterns.{PersistableRepository, Repository, SearchableRepository, ServiceLocator}
+import com.dslplatform.test.simple.{Self, Selfy, SimpleRoot, SimpleSnow}
 import org.specs2._
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
-import com.dslplatform.test.simple.SimpleRoot
-import com.dslplatform.api.patterns.{ServiceLocator, PersistableRepository, SearchableRepository, Repository}
-import com.dslplatform.test.simple.SimpleSnow
-import com.dslplatform.test.simple.Self
-import com.dslplatform.test.simple.Selfy
 import org.specs2.specification.Step
 
-@RunWith(classOf[JUnitRunner])
 class SnowflakeTest extends Specification with Common {
 
   def is = sequential ^ s2"""
@@ -29,7 +25,7 @@ class SnowflakeTest extends Specification with Common {
 
   private def countOdds(e: Int*) = e.count(_ % 2 == 0)
 
-  val located = new located {}
+  val located = new Located
 
   def queryRepository = { implicit locator: ServiceLocator =>
     await(locator.resolve[PersistableRepository[SimpleRoot]].insert(arrSR))

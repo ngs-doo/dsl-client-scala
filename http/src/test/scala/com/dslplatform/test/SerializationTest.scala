@@ -1,11 +1,12 @@
+package com.dslplatform.test
+
 import com.dslplatform.api.client.JsonSerialization
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
-import com.dslplatform.test.complex.{EmptyRoot, BaseRoot}
-import com.dslplatform.test.concept.{rootWithConcept, emptyConcept, fieldedConcept}
+import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
+import com.dslplatform.test.concept.{emptyConcept, fieldedConcept, rootWithConcept}
 import com.dslplatform.test.simple._
-import com.fasterxml.jackson.annotation.{JsonProperty, JsonTypeInfo, JsonTypeName, JsonSubTypes}
-import org.joda.time.{LocalDate, DateTime}
-
+import com.fasterxml.jackson.annotation.{JsonProperty, JsonSubTypes, JsonTypeInfo, JsonTypeName}
+import org.joda.time.{DateTime, LocalDate}
 import org.specs2._
 import org.specs2.specification.Step
 
@@ -39,7 +40,7 @@ class SerializationTest extends Specification {
                                                         ${Step(located.close())}
   """
 
-  val located = new located {}
+  val located = new Located
   val jsonSerialization = located.resolved[JsonSerialization]
 
   implicit val duration: scala.concurrent.duration.Duration = scala.concurrent.duration.Duration(10,

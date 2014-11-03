@@ -1,7 +1,9 @@
+package com.dslplatform.test
+
+import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
+import com.dslplatform.test.simple._
 import org.specs2._
 import org.specs2.specification.Step
-import com.dslplatform.test.simple._
-import com.dslplatform.api.patterns.{ServiceLocator, PersistableRepository}
 
 class CubeTest extends Specification with Common {
 
@@ -18,7 +20,7 @@ class CubeTest extends Specification with Common {
                                           ${Step(located.close())}
   """
 
-  private val located = new located {}
+  private val located = new Located
 
   private val name1 = rName
   private val name2 = rName

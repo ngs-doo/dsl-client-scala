@@ -1,11 +1,15 @@
+import java.util.Locale
+
 import sbt._
 import sbt.Keys._
+
+import scala.util.Try
 
 trait Default {
   val defaultSettings =
     Defaults.coreDefaultSettings ++
     net.virtualvoid.sbt.graph.Plugin.graphSettings ++ Seq(
-      scalaVersion := "2.11.2",
+      scalaVersion := "2.11.4",
       scalacOptions := Seq(
         "-deprecation",
         "-encoding", "UTF-8",
@@ -60,7 +64,6 @@ trait Dependencies {
 
   // Test Facade
   val spec2 = "org.specs2" %% "specs2" % "2.4.2"
-  val junit = "junit" % "junit" % "4.11"
 
   // Logging for testing
   val logback = "ch.qos.logback" % "logback-classic" % "1.1.2"
@@ -175,8 +178,13 @@ object Revenj {
     if (!testLibFile.exists()) makeScalaClientTestJarCall(testLibFile)
   }
 
-  private def startRevenj(f: File) = {
-    Option(s"mono $f/revenj/Revenj.Http.exe".run)
+  private def startRevenj(f: File) = Try {
+    if (sys.props("os.name").toLowerCase(Locale.ENGLISH).contains("windows")) {
+      Seq("$f/revenj/Revenj.Http.exe").run
+    }
+    else {
+      Seq("mono", "$f/revenj/Revenj.Http.exe").run
+    }
   }
 
   def setup: Def.Initialize[Task[() => Unit]] = Def.task {

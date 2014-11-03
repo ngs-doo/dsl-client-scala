@@ -1,12 +1,10 @@
+package com.dslplatform.test
 
-import org.specs2._
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
+import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.snapshottest._
-import com.dslplatform.api.patterns.{ServiceLocator, PersistableRepository}
+import org.specs2._
 import org.specs2.specification.Step
 
-@RunWith(classOf[JUnitRunner])
 class SnapshotTest extends Specification with Common{
 
   def is = s2"""
@@ -16,7 +14,7 @@ class SnapshotTest extends Specification with Common{
                                 ${Step(located.close())}
   """
 
-  val located = new located {}
+  val located = new Located
 
   def persistSnapshot  = { implicit locator : ServiceLocator =>
     val name1 = rName

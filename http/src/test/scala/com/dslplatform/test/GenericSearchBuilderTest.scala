@@ -1,13 +1,11 @@
+package com.dslplatform.test
+
 import com.dslplatform.api.client.GenericSearchBuilder
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
-
-import org.specs2._
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
 import com.dslplatform.test.simple._
+import org.specs2._
 import org.specs2.specification.Step
 
-@RunWith(classOf[JUnitRunner])
 class GenericSearchBuilderTest extends Specification with Common {
 
   def is = sequential ^ s2"""
@@ -17,7 +15,7 @@ class GenericSearchBuilderTest extends Specification with Common {
                                 ${Step(located.close())}
   """
 
-  private val located = new located {}
+  private val located = new Located
 
   private val numOfRoots = 27
   private val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt, rFloat, rName)

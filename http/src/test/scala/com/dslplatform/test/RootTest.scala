@@ -1,13 +1,11 @@
+package com.dslplatform.test
+
 import com.dslplatform.api.patterns.ServiceLocator
-import org.specs2._
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
+import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
 import com.dslplatform.test.simple.SimpleRoot
-import com.dslplatform.test.complex.BaseRoot
-import com.dslplatform.test.complex.EmptyRoot
+import org.specs2._
 import org.specs2.specification.Step
 
-@RunWith(classOf[JUnitRunner])
 class RootTest extends Specification with Common {
 
   def is = s2"""
@@ -22,7 +20,7 @@ class RootTest extends Specification with Common {
                                 ${Step(located.close())}
     """
 
-  val located = new located {}
+  val located = new Located
 
   def justInstantiate = {
     val sr = SimpleRoot(1, 2f, "3")

@@ -1,16 +1,18 @@
+package com.dslplatform.test
+
 import com.dslplatform.api.client.HttpClient
-import com.dslplatform.api.patterns.{PersistableRepository, AggregateRoot, ServiceLocator}
-import org.specs2.specification.{Scope, Outside}
-import scala.concurrent.{ExecutionContext, Await, Awaitable}
+import com.dslplatform.api.patterns.{AggregateRoot, PersistableRepository, ServiceLocator}
+import org.specs2.specification.{Outside, Scope}
+
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Awaitable, ExecutionContext}
 import scala.reflect.runtime.universe.TypeTag
 
-trait Located {
+trait WithLocator {
   val locator = com.dslplatform.api.client.Bootstrap.init("/test-project.props")
 }
 
-trait located extends Outside[ServiceLocator] with Scope with Located with Close with Clean {
-
+class Located extends Outside[ServiceLocator] with Scope with WithLocator with Close with Clean {
   def outside: ServiceLocator = locator
 
   def resolved[D: TypeTag] = new Outside[D] {
@@ -18,11 +20,11 @@ trait located extends Outside[ServiceLocator] with Scope with Located with Close
   }
 }
 
-trait Close { this: Located =>
+trait Close { this: WithLocator =>
   def close() = locator.resolve[HttpClient].shutdown()
 }
 
-trait Clean  { this: Located =>
+trait Clean  { this: WithLocator =>
   def clean[T <: AggregateRoot: TypeTag] = {
     val repository = locator.resolve[PersistableRepository[T]]
     Await.result(repository.search().map(all => repository.delete(all))(locator.resolve[ExecutionContext]), Duration(10, SECONDS))
