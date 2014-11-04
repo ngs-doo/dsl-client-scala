@@ -1,8 +1,9 @@
-import com.dslplatform.api.client.{ReportingProxy, DomainProxy, StandardProxy}
-import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
-import com.dslplatform.test.complex.{EmptyRoot, BaseRoot}
-import com.dslplatform.test.simple._
+package com.dslplatform.test
 
+import com.dslplatform.api.client.{DomainProxy, ReportingProxy, StandardProxy}
+import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
+import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
+import com.dslplatform.test.simple._
 import org.specs2._
 import org.specs2.specification.Step
 
@@ -46,7 +47,7 @@ class DomainAndStandardProxyTest extends Specification with Common {
                                                         ${Step(located.close())}
   """
 
-  val located = new located {}
+  val located = new Located
   val standardProxy = located.resolved[StandardProxy]
   val domainProxy = located.resolved[DomainProxy]
 

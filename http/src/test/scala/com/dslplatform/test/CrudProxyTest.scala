@@ -1,8 +1,9 @@
+package com.dslplatform.test
+
 import com.dslplatform.api.client.CrudProxy
 import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
 import com.dslplatform.test.simple.SimpleRoot
 import org.specs2._
-
 import org.specs2.specification.Step
 
 class CrudProxyTest extends Specification with Common {
@@ -20,7 +21,7 @@ class CrudProxyTest extends Specification with Common {
                           ${Step(located.close())}
       """
 
-  val located = new located {}
+  val located = new Located
 
   val crudProxy = located.resolved[CrudProxy]
 

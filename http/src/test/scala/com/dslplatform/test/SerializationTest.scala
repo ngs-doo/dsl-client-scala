@@ -1,11 +1,12 @@
+package com.dslplatform.test
+
 import com.dslplatform.api.client.JsonSerialization
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
-import com.dslplatform.test.complex.{EmptyRoot, BaseRoot}
-import com.dslplatform.test.concept.{rootWithConcept, emptyConcept, fieldedConcept}
+import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
+import com.dslplatform.test.concept.{emptyConcept, fieldedConcept, rootWithConcept}
 import com.dslplatform.test.simple._
-import com.fasterxml.jackson.annotation.{JsonProperty, JsonTypeInfo, JsonTypeName, JsonSubTypes}
-import org.joda.time.{LocalDate, DateTime}
-
+import com.fasterxml.jackson.annotation.{JsonProperty, JsonSubTypes, JsonTypeInfo, JsonTypeName}
+import org.joda.time.{DateTime, LocalDate}
 import org.specs2._
 import org.specs2.specification.Step
 
@@ -39,7 +40,7 @@ class SerializationTest extends Specification {
                                                         ${Step(located.close())}
   """
 
-  val located = new located {}
+  val located = new Located
   val jsonSerialization = located.resolved[JsonSerialization]
 
   implicit val duration: scala.concurrent.duration.Duration = scala.concurrent.duration.Duration(10,
@@ -78,21 +79,21 @@ class SerializationTest extends Specification {
     val cl = classOf[SimpleRoot]
     val fld = cl.getDeclaredField("__locator")
     fld.setAccessible(true)
-    fld.get(simpleRoot) !== null
+    (fld.get(simpleRoot) !== null)
   }
 
   def deserializeNonOptionalObjectsInAValue = { jsonSerialization: JsonSerialization =>
     val dtd = jsonSerialization.deserialize[ValDTD]("{}".getBytes("UTF-8"))
     dtd.T.withMillis(0) === DateTime.now().withMillis(0)
-    dtd.D === BigDecimal(0)
-    dtd.DT === LocalDate.now()
+    (dtd.D === BigDecimal(0)) &
+      (dtd.DT === LocalDate.now())
   }
 
   def deserializeNonOptionalObjectsInAEntity = { jsonSerialization: JsonSerialization =>
     val dtd = jsonSerialization.deserialize[RootDTD]("{}".getBytes("UTF-8"))
     dtd.T.withMillis(0) === DateTime.now().withMillis(0)
-    dtd.D === BigDecimal(0)
-    dtd.DT === LocalDate.now()
+    (dtd.D === BigDecimal(0)) &
+      (dtd.DT === LocalDate.now())
   }
 
   def enumSerializeDeserialize = { jsonSerialization: JsonSerialization =>
@@ -133,16 +134,14 @@ class SerializationTest extends Specification {
   def traitSerialization = { jsonSerialization: JsonSerialization =>
     val cl2 = clone1(m = V(url = java.net.URI.create("http://dsl-platform.com")))
     val json = jsonSerialization.serialize(cl2)
-    json.contains("$type") must beTrue
-    json.contains("http://dsl-platform.com") must beTrue
+    (json.contains("$type") must beTrue) &
+      (json.contains("http://dsl-platform.com") must beTrue)
   }
 
   def serverTraitSerialization = { implicit locator: ServiceLocator => // 404
     val cl2_new = clone1(m = V(url = java.net.URI.create("http://dsl-platform.com")))
     val repository: PersistableRepository[clone1] = locator.resolve[PersistableRepository[clone1]]
-    repository.insert(cl2_new)
-    val cl2_find = clone1.find(cl2_new.URI)
-    cl2_new === cl2_find
+    repository.insert(cl2_new).map { uri => clone1.find(uri).m.isInstanceOf[V]} must beTrue.await
   }
 
   def traitDeserialization = { jsonSerialization: JsonSerialization =>

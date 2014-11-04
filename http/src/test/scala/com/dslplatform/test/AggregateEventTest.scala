@@ -1,11 +1,10 @@
+package com.dslplatform.test
+
 import com.dslplatform.api.patterns.ServiceLocator
-import org.specs2._
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
 import com.dslplatform.test.simple.SimpleRoot
+import org.specs2._
 import org.specs2.specification.Step
 
-@RunWith(classOf[JUnitRunner])
 class AggregateEventTest extends Specification {
 
   def is = s2"""Aggregate Event simple
@@ -15,10 +14,9 @@ class AggregateEventTest extends Specification {
                                           ${Step(located.close())}
   """
 
-  val located = new located {}
+  val located = new Located
 
-  implicit val duration: scala.concurrent.duration.FiniteDuration = scala.concurrent.duration.FiniteDuration(1,
-    "seconds")
+  implicit val duration = scala.concurrent.duration.FiniteDuration(1, "seconds")
 
   def instantiateEventOnPersistedRoot = { implicit locator : ServiceLocator =>
     val uri = SimpleRoot().create()

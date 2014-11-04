@@ -1,8 +1,10 @@
-import java.util.concurrent.{Executors, ExecutorService}
+package com.dslplatform.test
 
+import java.util.concurrent.{ExecutorService, Executors}
+
+import com.dslplatform.api.client.{ClientPersistableRepository, ClientSearchableRepository, HttpClient}
+import com.dslplatform.api.patterns.{PersistableRepository, SearchableRepository}
 import com.dslplatform.mock._
-import com.dslplatform.api.client.{ClientSearchableRepository, ClientPersistableRepository, HttpClient}
-import com.dslplatform.api.patterns.{SearchableRepository, PersistableRepository}
 import org.slf4j.{Logger, LoggerFactory}
 import org.specs2._
 

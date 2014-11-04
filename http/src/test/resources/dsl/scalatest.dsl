@@ -445,11 +445,11 @@ module connected
 module concept
 {
   mixin Concept;
- 
+
   value emptyConcept {
     has mixin Concept;
   }
- 
+
   value fieldedConcept {
     has mixin Concept;
     String s1;

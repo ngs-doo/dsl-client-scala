@@ -1,14 +1,13 @@
-import org.specs2._
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
+package com.dslplatform.test
+
+import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
+import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
 import com.dslplatform.test.simple.SimpleRoot
-import com.dslplatform.api.patterns.{ServiceLocator, PersistableRepository}
-import com.dslplatform.test.complex.EmptyRoot
-import com.dslplatform.test.complex.BaseRoot
+import org.specs2._
 import org.specs2.specification.Step
 
-@RunWith(classOf[JUnitRunner])
 class RootRepositoryTest extends Specification with Common {
+  val located = new Located
 
   def is = sequential ^ s2"""
     Simple root repository
@@ -20,8 +19,6 @@ class RootRepositoryTest extends Specification with Common {
       find all, delete all (Base)         ${located(findAllDeleteAllBase)}
                                           ${Step(located.close())}
   """
-
-  val located = new located {}
 
   def insert1 = { locator: ServiceLocator =>
     val sr = SimpleRoot(1, 2f, "3")
@@ -42,7 +39,7 @@ class RootRepositoryTest extends Specification with Common {
 
   def insert20 = { locator: ServiceLocator =>
     val numOfRoots = 20
-    val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(i, i, i.toString)
+    val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(i, i.toFloat, i.toString)
 
     locator.resolve[PersistableRepository[SimpleRoot]].insert(simpleRoots).map(_.size) must beEqualTo(numOfRoots).await
   }

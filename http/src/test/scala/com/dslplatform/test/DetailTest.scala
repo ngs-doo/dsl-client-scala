@@ -1,11 +1,10 @@
-import org.specs2._
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
+package com.dslplatform.test
+
+import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.detailtest._
-import com.dslplatform.api.patterns.{ServiceLocator, PersistableRepository}
+import org.specs2._
 import org.specs2.specification.Step
 
-@RunWith(classOf[JUnitRunner])
 class DetailTest extends Specification with Common {
 
   def is = sequential ^ s2"""
@@ -16,7 +15,7 @@ class DetailTest extends Specification with Common {
                                       ${Step(located.close())}
   """
 
-  private val located = new located {}
+  private val located = new Located
 
   private val myNodeName = rString
   private val numOfLeafs = 27
