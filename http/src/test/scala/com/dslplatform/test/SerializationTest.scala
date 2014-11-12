@@ -10,7 +10,7 @@ import org.joda.time.{DateTime, LocalDate}
 import org.specs2._
 import org.specs2.specification.Step
 
-class SerializationTest extends Specification {
+class SerializationTest extends Specification with Common {
 
   def is = s2"""
     JsonSerialization is used to serialize object for transport
@@ -42,9 +42,6 @@ class SerializationTest extends Specification {
 
   val located = new Located
   val jsonSerialization = located.resolved[JsonSerialization]
-
-  implicit val duration: scala.concurrent.duration.Duration = scala.concurrent.duration.Duration(10,
-    "seconds")
 
   def resolve = { jsonSerialization: JsonSerialization =>
     jsonSerialization.isInstanceOf[JsonSerialization] must beTrue
@@ -79,7 +76,7 @@ class SerializationTest extends Specification {
     val cl = classOf[SimpleRoot]
     val fld = cl.getDeclaredField("__locator")
     fld.setAccessible(true)
-    (fld.get(simpleRoot) !== null)
+    fld.get(simpleRoot) !== null
   }
 
   def deserializeNonOptionalObjectsInAValue = { jsonSerialization: JsonSerialization =>
@@ -104,9 +101,9 @@ class SerializationTest extends Specification {
   def enumSerializeDeserializeFromServer = { implicit locator: ServiceLocator => //404
     val root = SimpleRoot(e = E.B)
     val srRepo = locator.resolve[PersistableRepository[SimpleRoot]]
-    srRepo.insert(root)
+    val rootURI = await(srRepo.insert(root))
     (root.e === E.B) & {
-      val remote = SimpleRoot.find(root.URI)
+      val remote = SimpleRoot.find(rootURI)
       remote.e === E.B
     }
   }
@@ -114,15 +111,15 @@ class SerializationTest extends Specification {
   def deserializeNonOptionalObjectsInASnowflake = { jsonSerialization: JsonSerialization =>
     val dtd = jsonSerialization.deserialize[snowDTD]("{}".getBytes("UTF-8"))
     dtd.T.withMillis(0) === DateTime.now().withMillis(0)
-    dtd.D === BigDecimal(0)
-    dtd.DT === LocalDate.now()
+    (dtd.D === BigDecimal(0)) &
+    (dtd.DT === LocalDate.now())
   }
 
   def deserializeNonOptionalObjectsInAnEvent = { jsonSerialization: JsonSerialization =>
     val dtd = jsonSerialization.deserialize[EveDTD]("{}".getBytes("UTF-8"))
     dtd.T.withMillis(0) === DateTime.now().withMillis(0)
-    dtd.D === BigDecimal(0)
-    dtd.DT === LocalDate.now()
+    (dtd.D === BigDecimal(0)) &
+    (dtd.DT === LocalDate.now())
   }
 
   def doubleDeserialization = { jsonSerialization: JsonSerialization =>

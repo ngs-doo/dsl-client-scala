@@ -11,7 +11,7 @@ class AuthHeaderTest extends Specification {
   Header Provider is resolved from the ServiceLocator
     provide with auth header                    $auth
     provide with project id                     $pid
-    privide custom                              $custom
+    provide custom                              $custom
   """
 
   private val withAuthHeader =
