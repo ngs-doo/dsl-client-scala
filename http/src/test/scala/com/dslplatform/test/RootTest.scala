@@ -24,9 +24,8 @@ class RootTest extends Specification with Common {
 
   def justInstantiate = {
     val sr = SimpleRoot(1, 2f, "3")
-    pending
-    //invalid now
-    sr.URI === null
+
+    sr.URI !== null
   }
 
   def persist = { implicit locator: ServiceLocator =>
