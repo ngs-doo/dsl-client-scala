@@ -56,10 +56,10 @@ trait Dependencies {
   val slf4jApi = "org.slf4j" % "slf4j-api" % "1.7.7"
 
   //Asynchronous Http and WebSocket Client library
-  val asyncHttpClient = "com.ning" % "async-http-client" % "1.8.13"
+  val asyncHttpClient = "com.ning" % "async-http-client" % "1.8.14"
 
   // Test Facade
-  val spec2 = "org.specs2" %% "specs2" % "2.4.2"
+  val spec2 = "org.specs2" %% "specs2-core" % "2.4.11"
 
   // Logging for testing
   val logback = "ch.qos.logback" % "logback-classic" % "1.1.2"
