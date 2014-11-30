@@ -62,7 +62,7 @@ class HttpReportingProxy(httpClient: HttpClient)
 
   def getHistory[TAggregate <: AggregateRoot: ClassTag](
       uris: TraversableOnce[String]): Future[IndexedSeq[History[TAggregate]]] = {
-    httpClient.sendRequest[IndexedSeq[History[TAggregate]]](
+    httpClient.sendRequestForHistoryCollection(
       PUT(uris.toArray),
       ReportingUri / "history" / httpClient.getDslName,
       Set(200))

@@ -23,7 +23,7 @@ class SnowflakeTest extends Specification with Common {
   private val myName = names(0)
   private val arrSR = for (i <- 0 to numOfRoots - 1) yield SimpleRoot(rInt, rFloat, names(rInt(numOfNames)))
 
-  private def countOdds(e: Int*) = e.count(_ % 2 == 0)
+//  private def countOdds(e: Int*) = e.count(_ & 1 == 1)
 
   val located = new Located
 

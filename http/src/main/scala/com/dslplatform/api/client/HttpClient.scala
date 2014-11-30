@@ -2,6 +2,8 @@ package com.dslplatform.api.client
 
 import java.util.Properties
 
+import com.dslplatform.api.patterns.AggregateRoot
+import com.dslplatform.api.patterns.History
 import com.dslplatform.api.patterns.ServiceLocator
 
 import java.io.IOException
@@ -204,6 +206,13 @@ class HttpClient(
       expectedStatus: Set[Int],
       additionalHeaders: Map[String, Set[String]]): Future[IndexedSeq[TResult]] =
     sendRawRequest(method, service, expectedStatus, additionalHeaders) map (json.deserializeList(returnClass, _))
+
+  private[client] def sendRequestForHistoryCollection[TResult <: AggregateRoot: ClassTag](
+      method: HttpMethod,
+      service: String,
+      expectedStatus: Set[Int],
+      additionalHeaders: Map[String, Set[String]] = Map.empty): Future[IndexedSeq[History[TResult]]] =
+    sendRawRequest(method, service, expectedStatus, additionalHeaders) map json.deserializeHistoryList[TResult]
 
   def shutdown(): Unit =
     ahc.close()

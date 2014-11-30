@@ -1,7 +1,6 @@
 package com.dslplatform.api.client
 
 import com.fasterxml.jackson.module.scala.ser.CustomDefaultScalaModule
-
 import scala.io.Source
 import scala.reflect.ClassTag
 import scala.xml.Elem
@@ -20,7 +19,10 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.dslplatform.api.patterns.AggregateRoot
+import com.dslplatform.api.patterns.History
 import com.dslplatform.api.patterns.ServiceLocator
+import com.dslplatform.api.patterns.Snapshot
 import com.fasterxml.jackson.databind.JavaType
 
 class JsonSerialization(locator: ServiceLocator) {
@@ -142,4 +144,43 @@ class JsonSerialization(locator: ServiceLocator) {
 
   private def buildCollectionType(clazz: Class[_]) =
     typeFactory.constructCollectionLikeType(classOf[IndexedSeq[_]], clazz)
+
+  def deserializeHistoryList[TResult <: AggregateRoot: ClassTag](data: Array[Byte]): IndexedSeq[History[TResult]] =
+    deserializeHistoryList(getClassTag[TResult].runtimeClass.asInstanceOf[Class[TResult]], data)
+
+  def deserializeHistoryList[TResult <: AggregateRoot](clazz: Class[TResult], data: Array[Byte]): IndexedSeq[History[TResult]] = {
+    import JsonSerialization._
+
+    val historyCollectionType =
+      typeFactory.constructCollectionLikeType(
+        classOf[IndexedSeq[_]],
+        typeFactory.constructParametricType(classOf[HistoryDelegate[_]], clazz))
+
+    val historyDelegates = deserializationMapper.readValue[IndexedSeq[HistoryDelegate[TResult]]](data, historyCollectionType)
+
+    historyDelegates map { history =>
+      History(
+        snapshots = history.Snapshots.map { snapshot =>
+          Snapshot(
+            URI = snapshot.Value.URI
+          , at = snapshot.At
+          , action = snapshot.Action
+          , value = snapshot.Value
+          )
+        }
+      )
+    }
+  }
+}
+
+private object JsonSerialization {
+  class HistoryDelegate[T <: AggregateRoot](
+    val Snapshots: IndexedSeq[SnapshotDelegate[T]]
+  )
+
+  class SnapshotDelegate[TAggregateRoot <: AggregateRoot](
+    val At: DateTime,
+    val Action: String,
+    val Value: TAggregateRoot
+  )
 }
