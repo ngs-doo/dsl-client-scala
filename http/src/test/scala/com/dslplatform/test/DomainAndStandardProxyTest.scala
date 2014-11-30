@@ -4,14 +4,14 @@ import com.dslplatform.api.client.{DomainProxy, ReportingProxy, StandardProxy}
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
 import com.dslplatform.test.simple._
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 import scala.concurrent.Future
 
 class DomainAndStandardProxyTest extends Specification with Common {
 
-  def is = sequential ^ s2"""
+  override def is = sequential ^ s2"""
     Standard proxy is used for CRUD operations
       StandardProxy resolves from a locator             ${standardProxy(resolve)}
       insert simple with standard proxy                 ${standardProxy(insertSimpleRootWithStandardProxy)}
@@ -21,7 +21,6 @@ class DomainAndStandardProxyTest extends Specification with Common {
 
     Reporting proxy
       can call history                                  ${located(canCallHistory)}
-
                                                         ${Step(located.clean[SimpleRoot])}
     Standard Proxy is used to pull olap calculations from the remote service.
       without Predicate                                 ${standardProxy(withoutPredicate)}
@@ -30,7 +29,6 @@ class DomainAndStandardProxyTest extends Specification with Common {
       with Cubes Predicate                              ${standardProxy(withCubesPredicate)}
       with all parameters                               ${standardProxy(withAllParameters)}
       with all parameters, (without specification)      ${standardProxy(withoutSpecification)}
-
                                                         ${Step(located.clean[SimpleRoot])}
     Domain Proxy is used to find domain objects and submit events over the remote service
       find all                                          ${located(findAll)}
@@ -45,7 +43,7 @@ class DomainAndStandardProxyTest extends Specification with Common {
       search for snowflake with snow predicate          ${domainProxy(searchForSnowflakeWithSnowPredicate)}
       events                                            ${domainProxy(events)}
                                                         ${Step(located.close())}
-  """
+"""
 
   val located = new Located
   val standardProxy = located.resolved[StandardProxy]

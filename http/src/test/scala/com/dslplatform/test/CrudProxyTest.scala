@@ -3,23 +3,23 @@ package com.dslplatform.test
 import com.dslplatform.api.client.CrudProxy
 import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
 import com.dslplatform.test.simple.SimpleRoot
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class CrudProxyTest extends Specification with Common {
 
-  def is = s2"""
-    Crude Proxy is used to persist single instance of domain object.
+  override def is = s2"""
+    Crud Proxy is used to persist single instance of domain object.
       persist             ${crudProxy(persist)}
       read                ${crudProxy(read)}
       persist             ${crudProxy(delete)}
 
-    Crude Proxy persists BaseRoot.
+    Crud Proxy persists BaseRoot.
       persist             ${crudProxy(persistBase)}
       read                ${crudProxy(readBase)}
       persist             ${crudProxy(deleteBase)}
                           ${Step(located.close())}
-      """
+"""
 
   val located = new Located
 

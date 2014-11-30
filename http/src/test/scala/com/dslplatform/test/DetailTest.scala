@@ -2,18 +2,18 @@ package com.dslplatform.test
 
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.detailtest._
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class DetailTest extends Specification with Common {
 
-  def is = sequential ^ s2"""
+  override def is = sequential ^ s2"""
     Detail are elements grouped by association with reference to it.
       make a group                    ${located(makeAGroup)}
       add elements to the group       ${located(addElementsToTheGroup)}
       assert elements int the group   ${located(assertElementsInTheGroup)}
                                       ${Step(located.close())}
-  """
+"""
 
   private val located = new Located
 

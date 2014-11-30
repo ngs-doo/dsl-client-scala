@@ -18,7 +18,7 @@ class HistoryTest extends Specification with Common {
       Single CRUD (via active record)      ${located(singleCrudViaActiveRecord)}
       Multiple CRUD (via repositories)     ${located(multipleCrudViaRepositories)}
                                            ${Step(located.close())}
-    """
+"""
 
   val located = new Located
 

@@ -32,13 +32,13 @@ class SerializationTest extends Specification with Common {
       optional empty mixin                              ${jsonSerialization(optionalEmptyMixin)}
       optional mixin with props                         ${jsonSerialization(optionalMixinWithProps)}
       optional mixin with signature                     ${jsonSerialization(optionalMixinWithSignature)}
-      deser                                             ${jsonSerialization(deser)}
+      mixin deserialization                             ${jsonSerialization(mixinDeserialization)}
       history deserialization                           ${jsonSerialization(historyDeserialization)}
 
       enum serialize/deserialize from server            ${located(enumSerializeDeserializeFromServer)}"
       server trait serialization                        ${located(serverTraitSerialization)}
                                                         ${Step(located.close())}
-  """
+"""
 
   val located = new Located
   val jsonSerialization = located.resolved[JsonSerialization]
@@ -179,7 +179,7 @@ class SerializationTest extends Specification with Common {
     t1.contains("$type") must beTrue
   }
 
-  def deser = { jsonSerialization: JsonSerialization =>
+  def mixinDeserialization = { jsonSerialization: JsonSerialization =>
     val t1 = jsonSerialization.deserialize[TestMe](
       "{\"signature\":{\"$type\":\"my.Implementation\"}}".getBytes("UTF-8"))
     t1.signature === Some(KnownImplementation())

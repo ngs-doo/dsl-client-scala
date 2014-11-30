@@ -2,23 +2,22 @@ package com.dslplatform.test
 
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.simple._
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class CubeTest extends Specification with Common {
 
-  def is = sequential ^ s2"""
-  Cube simple
-                                          ${Step(located.clean[SimpleRoot])}
-    analyze with string dimension         ${located(analyzeWithStringDimension)}
-    analyze with enumeration dimension    ${located(analyzeWithEnumerationDimension)}
-    analyze with both dimension           ${located(analyzeWithBothDimension)}
-    analyze with specification            ${located(analyzeWithSpecification)}
-    analyze with all parameters           ${located(analyzeWithAllParameters)}
-    analyze with all but specification    ${located(analyzeWithAllButSpecification)}
-    with builder                          ${located(withBuilder)}
-                                          ${Step(located.close())}
-  """
+  override def is = sequential ^ s2"""
+    Cube simple                             ${Step(located.clean[SimpleRoot])}
+      analyze with string dimension         ${located(analyzeWithStringDimension)}
+      analyze with enumeration dimension    ${located(analyzeWithEnumerationDimension)}
+      analyze with both dimension           ${located(analyzeWithBothDimension)}
+      analyze with specification            ${located(analyzeWithSpecification)}
+      analyze with all parameters           ${located(analyzeWithAllParameters)}
+      analyze with all but specification    ${located(analyzeWithAllButSpecification)}
+      with builder                          ${located(withBuilder)}
+                                            ${Step(located.close())}
+"""
 
   private val located = new Located
 

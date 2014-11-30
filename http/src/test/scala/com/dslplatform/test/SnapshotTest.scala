@@ -2,17 +2,17 @@ package com.dslplatform.test
 
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.snapshottest._
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class SnapshotTest extends Specification with Common{
 
-  def is = s2"""
+  override def is = s2"""
     Snapshots will ...
       Persist Snapshot              ${located(persistSnapshot)}
       Persist Snapshot Collection   ${located(persistSnapshotCollection)}
-                                ${Step(located.close())}
-  """
+                                    ${Step(located.close())}
+"""
 
   val located = new Located
 

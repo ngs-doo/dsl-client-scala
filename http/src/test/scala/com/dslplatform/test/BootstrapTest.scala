@@ -6,18 +6,18 @@ import com.dslplatform.api.client.{ClientPersistableRepository, ClientSearchable
 import com.dslplatform.api.patterns.{PersistableRepository, SearchableRepository}
 import com.dslplatform.mock._
 import org.slf4j.{Logger, LoggerFactory}
-import org.specs2._
+import org.specs2.mutable._
 
 class BootstrapTest extends Specification {
 
-  def is = s2"""
-  This specification checks the dependency management
-    resolve default                           $defaults
-    resolve provided logger                   $initial
-    resolve provided initial Executor         $initialExecutor
-    resolve a persistable repository          $resolvePersistableRepository
-    resolve a searchable repository           $resolveSearchableRepository
-  """
+  override def is = s2"""
+    This specification checks the dependency management
+      resolve default                           $defaults
+      resolve provided logger                   $initial
+      resolve provided initial Executor         $initialExecutor
+      resolve a persistable repository          $resolvePersistableRepository
+      resolve a searchable repository           $resolveSearchableRepository
+"""
 
   def defaults = {
     val locator = com.dslplatform.api.client.Bootstrap.init("/test-project.props")

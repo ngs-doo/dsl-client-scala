@@ -3,17 +3,17 @@ package com.dslplatform.test
 import com.dslplatform.api.client.GenericSearchBuilder
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.simple._
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class GenericSearchBuilderTest extends Specification with Common {
 
-  def is = sequential ^ s2"""
+  override def is = sequential ^ s2"""
     Domain Proxy is used to find domain objects and submit events over the remote service
       insert Roots              ${located(insertRoots)}
       search generic            ${located(searchGeneric)}
                                 ${Step(located.close())}
-  """
+"""
 
   private val located = new Located
 

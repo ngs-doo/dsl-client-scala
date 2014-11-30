@@ -2,17 +2,18 @@ package com.dslplatform.test
 
 import com.dslplatform.api.patterns.ServiceLocator
 import com.dslplatform.test.simple.SimpleRoot
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class AggregateEventTest extends Specification {
 
-  def is = s2"""Aggregate Event simple
-    instantiate event on persisted root   ${located(instantiateEventOnPersistedRoot)}
-    just instantiate                      $justInstantiate
-    submit event                          ${located(submitEvent)}
-                                          ${Step(located.close())}
-  """
+  override def is = s2"""
+    Aggregate Event simple
+      instantiate event on persisted root   ${located(instantiateEventOnPersistedRoot)}
+      just instantiate                      $justInstantiate
+      submit event                          ${located(submitEvent)}
+                                            ${Step(located.close())}
+"""
 
   val located = new Located
 
