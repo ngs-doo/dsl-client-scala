@@ -5,7 +5,7 @@ import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
 import com.dslplatform.test.concept.{emptyConcept, fieldedConcept, rootWithConcept}
 import com.dslplatform.test.simple._
-import com.fasterxml.jackson.annotation.{JsonProperty, JsonSubTypes, JsonTypeInfo, JsonTypeName}
+import com.fasterxml.jackson.annotation._
 import org.joda.time.{DateTime, LocalDate}
 import org.specs2.mutable._
 import org.specs2.specification.Step
@@ -185,28 +185,6 @@ class SerializationTest extends Specification with Common {
     t1.signature === Some(KnownImplementation())
   }
 
-
-  @JsonSubTypes(Array(new JsonSubTypes.Type(classOf[KnownImplementation])))
-  trait BaseSignature
-
-  @JsonTypeName("my.Implementation")
-  case class KnownImplementation() extends BaseSignature
-
-  class TestMe(
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "$type")
-    @JsonProperty("signature")
-    __signature: BaseSignature) {
-    private var _signature: Option[BaseSignature] = Option(__signature)
-
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "$type")
-    @JsonProperty("signature")
-    def signature = _signature
-
-    def signature_=(value: Option[BaseSignature]) {
-      _signature = value
-    }
-  }
-
   def historyDeserialization = { jsonSerialization: JsonSerialization =>
     val historyPayload = """[
       {"Snapshots":[
@@ -227,5 +205,26 @@ class SerializationTest extends Specification with Common {
 
     history(1).snapshots.size === 1
     history(1).snapshots(0).value.s === "qwe"
+  }
+}
+
+@JsonSubTypes(Array(new JsonSubTypes.Type(classOf[KnownImplementation])))
+trait BaseSignature
+
+@JsonTypeName("my.Implementation")
+case class KnownImplementation() extends BaseSignature
+
+class TestMe (
+               @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "$type")
+               @JsonProperty("signature")
+               __signature: BaseSignature) {
+  private var _signature: Option[BaseSignature] = Option(__signature)
+
+  @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "$type")
+  @JsonProperty("signature")
+  def signature = _signature
+
+  def signature_=(value: Option[BaseSignature]) {
+    _signature = value
   }
 }
