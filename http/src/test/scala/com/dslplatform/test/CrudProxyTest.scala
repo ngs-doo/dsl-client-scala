@@ -26,7 +26,7 @@ class CrudProxyTest extends Specification with Common {
   val crudProxy = located.resolved[CrudProxy]
 
   def persist = { crudProxy: CrudProxy =>
-    val name = rName
+    val name = rName()
     val simpleRoot = SimpleRoot(s = name)
     val remoteRoot = await(crudProxy.create(simpleRoot))
 
@@ -34,7 +34,7 @@ class CrudProxyTest extends Specification with Common {
   }
 
   def read = { crudProxy: CrudProxy =>
-    val simpleRoot = SimpleRoot(s = rName)
+    val simpleRoot = SimpleRoot(s = rName())
     val remoteCreatedRoot = await(crudProxy.create(simpleRoot))
     val remoteReadRoot = await(crudProxy.read[SimpleRoot](remoteCreatedRoot.URI))
 
@@ -42,7 +42,7 @@ class CrudProxyTest extends Specification with Common {
   }
 
   def delete = { crudProxy: CrudProxy =>
-    val simpleRoot = await(crudProxy.create(SimpleRoot(s = rName)))
+    val simpleRoot = await(crudProxy.create(SimpleRoot(s = rName())))
     crudProxy.read[SimpleRoot](simpleRoot.URI).map(_.s) must beEqualTo(simpleRoot.s).await
   }
 
@@ -59,7 +59,7 @@ class CrudProxyTest extends Specification with Common {
   }
 
   def deleteBase = { crudProxy: CrudProxy =>
-    val simpleRoot = await(crudProxy.create(SimpleRoot(s = rName)))
+    val simpleRoot = await(crudProxy.create(SimpleRoot(s = rName())))
 
     crudProxy.read[SimpleRoot](simpleRoot.URI).map(_.s) must beEqualTo(simpleRoot.s).await
   }

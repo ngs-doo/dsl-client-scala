@@ -21,19 +21,19 @@ class CubeTest extends Specification with Common {
 
   private val located = new Located
 
-  private val name1 = rName
-  private val name2 = rName
-  private val name3 = rName
+  private val name1 = rName()
+  private val name2 = rName()
+  private val name3 = rName()
 
-  private val int1 = rInt
-  private val int2 = rInt
-  private val int3 = rInt
+  private val int1 = rInt()
+  private val int2 = rInt()
+  private val int3 = rInt()
 
   private val numOfRoot = 13
   private val numOfNames = 4
-  private val namesC = for (i <- 1 to 4) yield rName
+  private val namesC = for (i <- 1 to 4) yield rName()
   private val myNameC = namesC(0)
-  private val srarr = for (i <- 0 to numOfRoot) yield SimpleRoot(rInt, rFloat, namesC(rInt(numOfNames)), E.C)
+  private val srarr = for (i <- 0 to numOfRoot) yield SimpleRoot(rInt(), rFloat(), namesC(rInt(numOfNames)), E.C)
 
   private val computedMaxStr = Seq(int1, int3).max
   private val computedMinStr = Seq(int1, int3).min

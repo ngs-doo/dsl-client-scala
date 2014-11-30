@@ -17,7 +17,7 @@ class DetailTest extends Specification with Common {
 
   private val located = new Located
 
-  private val myNodeName = rString
+  private val myNodeName = rString()
   private val numOfLeafs = 27
 
   def makeAGroup = { implicit locator: ServiceLocator =>
@@ -27,7 +27,7 @@ class DetailTest extends Specification with Common {
 
   def addElementsToTheGroup = { implicit locator: ServiceLocator =>
     val myNode = Node.find(myNodeName)
-    val otherGroup = Node(rName, Some(myNode)).create()
+    val otherGroup = Node(rName(), Some(myNode)).create()
     val someElements = for (i <- 0 to numOfLeafs - 1) yield Leaf(node = Some(myNode))
     await(locator.resolve[PersistableRepository[Leaf]].insert(someElements))
     success

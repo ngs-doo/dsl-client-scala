@@ -18,7 +18,7 @@ class GenericSearchBuilderTest extends Specification with Common {
   private val located = new Located
 
   private val numOfRoots = 27
-  private val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt, rFloat, rName)
+  private val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), rName())
 
   def insertRoots = { locator: ServiceLocator =>
     await(locator.resolve[PersistableRepository[SimpleRoot]].insert(simpleRoots))

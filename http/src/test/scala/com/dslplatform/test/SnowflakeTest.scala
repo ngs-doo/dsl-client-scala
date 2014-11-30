@@ -18,9 +18,9 @@ class SnowflakeTest extends Specification with Common {
 
   private val numOfRoots = 13
   private val numOfNames = 4
-  private val names = for (i <- 1 to 4) yield rName
+  private val names = for (i <- 1 to 4) yield rName()
   private val myName = names(0)
-  private val arrSR = for (i <- 0 to numOfRoots - 1) yield SimpleRoot(rInt, rFloat, names(rInt(numOfNames)))
+  private val arrSR = for (i <- 0 to numOfRoots - 1) yield SimpleRoot(rInt(), rFloat(), names(rInt(numOfNames)))
 
 //  private def countOdds(e: Int*) = e.count(_ & 1 == 1)
 
