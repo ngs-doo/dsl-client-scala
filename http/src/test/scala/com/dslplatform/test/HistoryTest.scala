@@ -78,15 +78,12 @@ class HistoryTest extends Specification with Common {
     val repository = locator.resolve[PersistableRepository[SimpleRoot]]
     val reportingProxy = locator.resolve[ReportingProxy]
 
-    def getHistories[T <: AggregateRoot: ClassTag](roots: Seq[T]) =
-      await(reportingProxy.getHistory[T](roots.map(_.URI)))
-
     // CREATE / INSERT
-    val srs1 = (1 to 10) map { i => SimpleRoot(i = i) }
+    val srs1 = (1 to 10) map { i => SimpleRoot(i = 100 + i) }
     val uris = await(repository.insert(srs1))
 
     locally {
-      val h1s = getHistories(srs1)
+      val h1s = await(reportingProxy.getHistory[SimpleRoot](uris))
       h1s.size === srs1.size
       for ((h1, sr1) <- h1s zip srs1) {
         h1.snapshots.size === 1
@@ -99,11 +96,11 @@ class HistoryTest extends Specification with Common {
     val srs2 = await(repository.find(uris))
 
     // UPDATE
-    srs2 foreach { _.i *= 10 }
+    srs2 foreach { _.i += 100 }
     await(repository.update(srs2))
 
     locally {
-      val h2s = getHistories(srs2)
+      val h2s = await(reportingProxy.getHistory[SimpleRoot](uris))
       h2s.size === srs2.size
       for (((h2, sr1), sr2) <- h2s zip srs1 zip srs2) {
         h2.snapshots.size === 2
@@ -119,11 +116,9 @@ class HistoryTest extends Specification with Common {
     await(repository.delete(srs3))
 
     locally {
-      val h2s = getHistories(srs3)
+      val h2s = await(reportingProxy.getHistory[SimpleRoot](uris))
       h2s.size === srs3.size
       for ((((h3, sr1), sr2), sr3) <- h2s zip srs1 zip srs2 zip srs3) {
-        println(sr3)
-
         h3.snapshots.size === 3
         h3.snapshots(0).action === "INSERT"
         h3.snapshots(0).value.i === sr1.i
