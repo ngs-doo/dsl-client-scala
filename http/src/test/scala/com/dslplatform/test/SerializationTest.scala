@@ -7,12 +7,11 @@ import com.dslplatform.test.concept.{emptyConcept, fieldedConcept, rootWithConce
 import com.dslplatform.test.simple._
 import com.fasterxml.jackson.annotation.{JsonProperty, JsonSubTypes, JsonTypeInfo, JsonTypeName}
 import org.joda.time.{DateTime, LocalDate}
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class SerializationTest extends Specification with Common {
-
-  def is = s2"""
+  override def is = s2"""
     JsonSerialization is used to serialize object for transport
       JsonSerialization resolves from a locator         ${jsonSerialization(resolve)}
       serialize a value                                 ${jsonSerialization(serializeAValue)}
@@ -34,6 +33,7 @@ class SerializationTest extends Specification with Common {
       optional mixin with props                         ${jsonSerialization(optionalMixinWithProps)}
       optional mixin with signature                     ${jsonSerialization(optionalMixinWithSignature)}
       deser                                             ${jsonSerialization(deser)}
+      history deserialization                           ${jsonSerialization(historyDeserialization)}
 
       enum serialize/deserialize from server            ${located(enumSerializeDeserializeFromServer)}"
       server trait serialization                        ${located(serverTraitSerialization)}
@@ -207,4 +207,25 @@ class SerializationTest extends Specification with Common {
     }
   }
 
+  def historyDeserialization = { jsonSerialization: JsonSerialization =>
+    val historyPayload = """[
+      {"Snapshots":[
+        {"At":"2013","Value":{"ID":1001,"s":"foo","URI":"1001"},"Action":"INSERT"},
+        {"At":"2014","Value":{"ID":1001,"s":"bar","URI":"1001"},"Action":"UPDATE"}]
+      },
+      {"Snapshots":[
+        {"At":"2015","Value":{"ID":1002,"s":"qwe","URI":"1002"},"Action":"INSERT"}]
+      }
+    ]""" getBytes "UTF-8"
+
+    val history = jsonSerialization.deserializeHistoryList[SimpleRoot](historyPayload)
+
+    history.size === 2
+    history(0).snapshots.size === 2
+    history(0).snapshots(0).value.s === "foo"
+    history(0).snapshots(1).value.s === "bar"
+
+    history(1).snapshots.size === 1
+    history(1).snapshots(0).value.s === "qwe"
+  }
 }
