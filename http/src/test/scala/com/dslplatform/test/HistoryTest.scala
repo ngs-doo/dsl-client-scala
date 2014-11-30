@@ -70,8 +70,6 @@ class HistoryTest extends Specification with Common {
       h3.snapshots(2).action === "DELETE"
       h3.snapshots(2).value.i === sr3.i
     }
-
-    true
   }
 
   def multipleCrudViaRepositories = { implicit locator: ServiceLocator =>

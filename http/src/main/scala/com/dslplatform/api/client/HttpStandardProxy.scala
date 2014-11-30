@@ -43,7 +43,7 @@ class HttpStandardProxy(
 
   def update[TAggregate <: AggregateRoot: ClassTag](
       updates: TraversableOnce[TAggregate]): Future[Unit] =
-    persist(updates = updates.map(t => (t, t))).map(_ => ())
+    persist(updates = updates.map(t => (null.asInstanceOf[TAggregate], t))).map(_ => ())
 
   def delete[TAggregate <: AggregateRoot: ClassTag](
       deletes: TraversableOnce[TAggregate]): Future[Unit] =
