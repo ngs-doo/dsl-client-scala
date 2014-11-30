@@ -49,7 +49,7 @@ class ClientPersistableRepository[T <: AggregateRoot: ClassTag](locator: Service
     crudProxy.create(insert).map(_.URI)
 
   def update(updates: TraversableOnce[T]): Future[Unit] =
-    standardProxy.persist(Nil, updates.map { t => (t, t) }, Nil).map(_ => ())
+    standardProxy.persist(Nil, updates.map { t => (null.asInstanceOf[T], t) }, Nil).map(_ => ())
 
   def update(update: T): Future[Unit] =
     crudProxy.update(update).map(_ => ())
