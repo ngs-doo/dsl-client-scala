@@ -3,13 +3,13 @@ package com.dslplatform.test
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
 import com.dslplatform.test.simple.SimpleRoot
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class RootRepositoryTest extends Specification with Common {
   val located = new Located
 
-  def is = sequential ^ s2"""
+  override def is = sequential ^ s2"""
     Simple root repository
       insert 1                            ${located(insert1)}
       insert 2                            ${located(insert2)}
@@ -18,7 +18,7 @@ class RootRepositoryTest extends Specification with Common {
       find all, delete all (Simple)       ${located(findAllDeleteAllSimple)}
       find all, delete all (Base)         ${located(findAllDeleteAllBase)}
                                           ${Step(located.close())}
-  """
+"""
 
   def insert1 = { locator: ServiceLocator =>
     val sr = SimpleRoot(1, 2f, "3")

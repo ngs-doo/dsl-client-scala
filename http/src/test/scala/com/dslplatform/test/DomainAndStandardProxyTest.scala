@@ -4,14 +4,14 @@ import com.dslplatform.api.client.{DomainProxy, ReportingProxy, StandardProxy}
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
 import com.dslplatform.test.simple._
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 import scala.concurrent.Future
 
 class DomainAndStandardProxyTest extends Specification with Common {
 
-  def is = sequential ^ s2"""
+  override def is = sequential ^ s2"""
     Standard proxy is used for CRUD operations
       StandardProxy resolves from a locator             ${standardProxy(resolve)}
       insert simple with standard proxy                 ${standardProxy(insertSimpleRootWithStandardProxy)}
@@ -21,7 +21,6 @@ class DomainAndStandardProxyTest extends Specification with Common {
 
     Reporting proxy
       can call history                                  ${located(canCallHistory)}
-
                                                         ${Step(located.clean[SimpleRoot])}
     Standard Proxy is used to pull olap calculations from the remote service.
       without Predicate                                 ${standardProxy(withoutPredicate)}
@@ -30,7 +29,6 @@ class DomainAndStandardProxyTest extends Specification with Common {
       with Cubes Predicate                              ${standardProxy(withCubesPredicate)}
       with all parameters                               ${standardProxy(withAllParameters)}
       with all parameters, (without specification)      ${standardProxy(withoutSpecification)}
-
                                                         ${Step(located.clean[SimpleRoot])}
     Domain Proxy is used to find domain objects and submit events over the remote service
       find all                                          ${located(findAll)}
@@ -45,7 +43,7 @@ class DomainAndStandardProxyTest extends Specification with Common {
       search for snowflake with snow predicate          ${domainProxy(searchForSnowflakeWithSnowPredicate)}
       events                                            ${domainProxy(events)}
                                                         ${Step(located.close())}
-  """
+"""
 
   val located = new Located
   val standardProxy = located.resolved[StandardProxy]
@@ -58,14 +56,14 @@ class DomainAndStandardProxyTest extends Specification with Common {
   private val numOfRoots = 27
   private val indexedNamedSimpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(i = i, s = toSearchFor)
   private val numberOfOddNamedSimpleRoots = indexedNamedSimpleRoots.count(_.i % 2 == 0)
-  private val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt, rFloat, rName)
+  private val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), rName())
 
   def resolve = { standardProxy: StandardProxy =>
     standardProxy.isInstanceOf[StandardProxy] must beTrue
   }
 
   def insertSimpleRootWithStandardProxy = { standardProxy: StandardProxy =>
-    val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt, rFloat, rName)
+    val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), rName())
     standardProxy.persist(simpleRoots, null, null).map(_.size) must beEqualTo(numOfRoots).await(1, duration)
   }
 
@@ -78,7 +76,7 @@ class DomainAndStandardProxyTest extends Specification with Common {
   }
 
   def updateWithStandardProxy = { locator: ServiceLocator =>
-    val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt, rFloat, rName)
+    val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), rName())
     val standardProxy: StandardProxy = locator.resolve[StandardProxy]
     val domainProxy: DomainProxy = locator.resolve[DomainProxy]
     standardProxy.persist(simpleRoots, null, null).flatMap {
@@ -95,7 +93,7 @@ class DomainAndStandardProxyTest extends Specification with Common {
   }
 
   def delete = { locator: ServiceLocator =>
-    val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt, rFloat, rName)
+    val simpleRoots = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), rName())
     val standardProxy: StandardProxy = locator.resolve[StandardProxy]
     val domainProxy: DomainProxy = locator.resolve[DomainProxy]
     val fInsertedUris = standardProxy.persist(simpleRoots, null, null)
@@ -108,9 +106,9 @@ class DomainAndStandardProxyTest extends Specification with Common {
   }
 
   def canCallHistory = { implicit locator: ServiceLocator =>
-    val sr = SimpleRoot(rInt, rFloat)
+    val sr = SimpleRoot(rInt(), rFloat())
     sr.create
-    sr.i = rInt
+    sr.i = rInt()
     sr.update
 
     val reportingProxy = locator.resolve[ReportingProxy]
@@ -124,9 +122,9 @@ class DomainAndStandardProxyTest extends Specification with Common {
 
   def withoutPredicate = { standardProxy: StandardProxy =>
     val numOfNames = 4
-    val names = for (i <- 1 to 4) yield rName
+    val names = for (i <- 1 to 4) yield rName()
     val myName = names(0)
-    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt, rFloat, names(rInt(numOfNames)))
+    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), names(rInt(numOfNames)))
 
     await(standardProxy.persist(sr, null, null))
 
@@ -157,9 +155,9 @@ class DomainAndStandardProxyTest extends Specification with Common {
 
   def withPredicate = { standardProxy: StandardProxy =>
     val numOfNames = 4
-    val names = for (i <- 1 to 4) yield rName
+    val names = for (i <- 1 to 4) yield rName()
     val myName = names(0)
-    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt, rFloat, names(rInt(numOfNames)))
+    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), names(rInt(numOfNames)))
 
     await(standardProxy.persist(sr, null, null))
 
@@ -170,18 +168,23 @@ class DomainAndStandardProxyTest extends Specification with Common {
     val fCube = standardProxy.olapCube[com.dslplatform.test.simple.SimpleCube.type, SimpleRoot](specification,
       dimensions, facts)
 
-    await(fCube.map {
-      cube =>
-        cube.head.get("min_f") must beSome(min_f(sr.filter(sr => sr.s == myName && sr.i % 2 == 0))) // todo - fails nearly
-        (cube.size === 1) &
-          (cube.head.get("max_i") must beSome(max_i(sr.filter(sr => sr.s == myName && sr.i % 2 == 0))))
+    await(fCube map { cube =>
+      val calc_min_f = min_f(sr.filter(sr => sr.s == myName && sr.i % 2 == 0))
+      val cube_min_f = cube.head.get("min_f").get.asInstanceOf[Double].toFloat
+
+      val calc_max_i = max_i(sr.filter(sr => sr.s == myName && sr.i % 2 == 0))
+      val cube_max_i = cube.head.get("max_i").get.asInstanceOf[Int]
+
+      cube.size === 1
+      calc_min_f must beCloseTo(cube_min_f +/- 0.001f)
+      calc_max_i === cube_max_i
     })
   }
 
   def withRootsPredicate = { standardProxy: StandardProxy =>
     val numOfNames = 4
-    val names = for (i <- 1 to 4) yield rName
-    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt, rFloat, names(rInt(numOfNames)))
+    val names = for (i <- 1 to 4) yield rName()
+    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), names(rInt(numOfNames)))
 
     await(standardProxy.persist(sr, null, null))
 
@@ -201,8 +204,8 @@ class DomainAndStandardProxyTest extends Specification with Common {
 
   def withCubesPredicate = { standardProxy: StandardProxy =>
     val numOfNames = 4
-    val names = for (i <- 1 to 4) yield rName
-    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt, rFloat, names(rInt(numOfNames)))
+    val names = for (i <- 1 to 4) yield rName()
+    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), names(rInt(numOfNames)))
 
     await(standardProxy.persist(sr, null, null))
 
@@ -222,8 +225,8 @@ class DomainAndStandardProxyTest extends Specification with Common {
 
   def withAllParameters = { standardProxy: StandardProxy =>
     val numOfNames = 4
-    val names = for (i <- 1 to 4) yield rName
-    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt, rFloat, names(rInt(numOfNames)))
+    val names = for (i <- 1 to 4) yield rName()
+    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), names(rInt(numOfNames)))
 
     await(standardProxy.persist(sr, null, null))
 
@@ -244,8 +247,8 @@ class DomainAndStandardProxyTest extends Specification with Common {
 
   def withoutSpecification = { standardProxy: StandardProxy =>
     val numOfNames = 4
-    val names = for (i <- 1 to 4) yield rName
-    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt, rFloat, names(rInt(numOfNames)))
+    val names = for (i <- 1 to 4) yield rName()
+    val sr = for (i <- 0 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), names(rInt(numOfNames)))
 
     await(standardProxy.persist(sr, null, null))
 

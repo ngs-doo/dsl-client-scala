@@ -2,30 +2,30 @@ package com.dslplatform.test
 
 import com.dslplatform.api.patterns.{PersistableRepository, ServiceLocator}
 import com.dslplatform.test.snapshottest._
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class SnapshotTest extends Specification with Common{
 
-  def is = s2"""
+  override def is = s2"""
     Snapshots will ...
       Persist Snapshot              ${located(persistSnapshot)}
       Persist Snapshot Collection   ${located(persistSnapshotCollection)}
-                                ${Step(located.close())}
-  """
+                                    ${Step(located.close())}
+"""
 
   val located = new Located
 
   def persistSnapshot  = { implicit locator : ServiceLocator =>
-    val name1 = rName
-    val name2 = rName
-    val sr = SimpleRoot(rInt, rFloat, rDouble, name1)
-    sr.create
+    val name1 = rName()
+    val name2 = rName()
+    val sr = SimpleRoot(rInt(), rFloat(), rDouble(), name1)
+    sr.create()
     val srr = SimpleRootReferent(Some(sr))
-    srr.create
+    srr.create()
     val srClone = sr.copy()
     sr.s = name2
-    sr.update
+    sr.update()
 
     val remoteReferent = SimpleRootReferent.find(srr.URI)
 
@@ -33,22 +33,22 @@ class SnapshotTest extends Specification with Common{
   }
 
   def persistSnapshotCollection = { implicit locator : ServiceLocator =>
-    val name1 = rName
-    val name2 = rName
+    val name1 = rName()
+    val name2 = rName()
 
     val srs = simpleRoots(name1)
     val simplerRootRepository = locator.resolve[PersistableRepository[SimpleRoot]]
     val persistedSrs = await(simplerRootRepository.insert(srs).flatMap(simplerRootRepository.find))
 
     val srr = SimpleRootReferent(None, persistedSrs.toArray)
-    srr.create
+    srr.create()
 
-    persistedSrs.foreach(_.s = rName)
+    persistedSrs.foreach(_.s = rName())
     await(simplerRootRepository.update(persistedSrs))
 
-    SimpleRootReferent.find(srr.URI).srs.map{ _.s must beEqualTo(name1) }.toIndexedSeq
+    SimpleRootReferent.find(srr.URI).srs.map{ _.s === name1 }.toIndexedSeq
   }
 
   private val numOfRoots = 27
-  private def simpleRoots(name: String) = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt, rFloat, rDouble, name)
+  private def simpleRoots(name: String) = for (i <- 1 to numOfRoots) yield SimpleRoot(rInt(), rFloat(), rDouble(), name)
 }

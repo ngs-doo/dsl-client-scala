@@ -2,17 +2,17 @@ package com.dslplatform.test
 
 import com.dslplatform.api.patterns.ServiceLocator
 import com.dslplatform.test.simple.TrivialEvent
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class EventSubmitTest extends Specification with Common {
 
-  def is = s2"""
+  override def is = s2"""
     Event Simple
       just instantiate    $justInstantiate
       submit event        ${located(submit)}
                           ${Step(located.close())}
-  """
+"""
 
   val located = new Located
 

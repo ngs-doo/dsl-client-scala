@@ -3,16 +3,16 @@ package com.dslplatform.test
 import java.io.ByteArrayInputStream
 
 import com.dslplatform.api.client.{HttpClient, HttpHeaderProvider, SettingsHeaderProvider}
-import org.specs2._
+import org.specs2.mutable._
 
 class AuthHeaderTest extends Specification {
 
-  def is = s2"""
-  Header Provider is resolved from the ServiceLocator
-    provide with auth header                    $auth
-    provide with project id                     $pid
-    provide custom                              $custom
-  """
+  override def is = s2"""
+    Header Provider is resolved from the ServiceLocator
+      provide with auth header                    $auth
+      provide with project id                     $pid
+      provide custom                              $custom
+"""
 
   private val withAuthHeader =
     """

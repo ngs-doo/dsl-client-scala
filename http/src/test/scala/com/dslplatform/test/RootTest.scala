@@ -3,12 +3,12 @@ package com.dslplatform.test
 import com.dslplatform.api.patterns.ServiceLocator
 import com.dslplatform.test.complex.{BaseRoot, EmptyRoot}
 import com.dslplatform.test.simple.SimpleRoot
-import org.specs2._
+import org.specs2.mutable._
 import org.specs2.specification.Step
 
 class RootTest extends Specification with Common {
 
-  def is = s2"""
+  override def is = s2"""
     Root Simple
       just instantiate          $justInstantiate
       persist                   ${located(persist)}
@@ -18,7 +18,7 @@ class RootTest extends Specification with Common {
       persist                   ${located(persistBase)}
       update                    ${located(updateBase)}
                                 ${Step(located.close())}
-    """
+"""
 
   val located = new Located
 

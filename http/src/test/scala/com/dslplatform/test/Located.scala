@@ -42,11 +42,11 @@ trait Common {
     await(repository.search().map(all => repository.delete(all))(locator.resolve[ExecutionContext]))
   }
 
-  def rName = "name " + rString
-  def rString: String = rString(100000)
+  def rName() = "name " + rString()
+  def rString(): String = rString(100000)
   def rString(x: Int ) = rInt(x).toString
-  def rInt: Int = rInt(100000)
+  def rInt(): Int = rInt(100000)
   def rInt(x: Int) = scala.util.Random.nextInt(x)
-  def rFloat = scala.util.Random.nextFloat()
-  def rDouble = scala.util.Random.nextDouble()
+  def rFloat() = scala.util.Random.nextFloat()
+  def rDouble() = scala.util.Random.nextDouble()
 }
